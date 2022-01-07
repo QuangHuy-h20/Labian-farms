@@ -1,0 +1,7 @@
+node_modules
+
+yarn.lock
+
+packages/api/dist
+
+packages/api/node_modules

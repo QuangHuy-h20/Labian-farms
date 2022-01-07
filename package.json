@@ -1,0 +1,12 @@
+{
+  "name": "labian-farms",
+  "version": "1.0.0",
+  "author": "Quang Huy",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
