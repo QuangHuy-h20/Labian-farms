@@ -11,14 +11,17 @@ import { User } from "./entities/User";
 import { UserRole } from "./entities/UserRole";
 import { Product } from "./entities/Product";
 import { Category } from "./entities/Category";
-import { Context } from "./shop/types/Context";
+import { Context } from "./types/Context";
+import { Farm } from "./entities/Farm";
+import { Address } from "./entities/Address";
 import {
   COOKIE_NAME,
   EXPIRE_TIMEOUT,
   __prod__,
 } from "./constants";
 import MongoStore from "connect-mongo";
-import { Farm } from "./entities/Farm";
+import { buildDataLoaders } from "./utils/dataLoader";
+import { graphqlUploadExpress } from "graphql-upload";
 // import { UserResolver } from "./shop/services/user/user.resolver";
 
 const main = async () => {
@@ -29,7 +32,7 @@ const main = async () => {
     password: process.env.DB_PASSWORD_DEV,
     logging: true,
     synchronize: true,
-    entities: [User, UserRole, Product, Category, Farm],
+    entities: [User, UserRole, Product, Category, Farm, Address],
   });
 
   const app = express();
@@ -67,7 +70,8 @@ const main = async () => {
     schema,
     context: ({ req, res }): Context => ({
       req,
-      res
+      res,
+      dataLoaders: buildDataLoaders()
     }),
     introspection: true,
     plugins: [
@@ -79,6 +83,8 @@ const main = async () => {
     ],
   });
   await apolloServer.start();
+
+  app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),)
 
   apolloServer.applyMiddleware({ app, cors: false });
 

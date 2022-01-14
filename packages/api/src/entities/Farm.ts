@@ -1,24 +1,17 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
-  BaseEntity,
   Column,
   Entity,
-  CreateDateColumn,
-  UpdateDateColumn,
-  PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
 } from "typeorm";
+import { CoreEntity } from "./CoreEntity";
 import { Product } from "./Product";
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Farm extends BaseEntity {
-  @Field((_type) => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
-
+export class Farm extends CoreEntity {
   @Field()
   @Column({ unique: true })
   name!: string;
@@ -31,7 +24,7 @@ export class Farm extends BaseEntity {
   @Column()
   address!: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Column({nullable: true })
   description: string;
 
@@ -45,20 +38,13 @@ export class Farm extends BaseEntity {
 
   @Field()
   @Column()
-  userId!: number;
+  ownerId!: number;
 
   @Field((_return) => User)
-  @ManyToOne(() => User, (user) => user.farms)
-  user: User;
+  @ManyToOne(() => User, (owner) => owner.farms)
+  owner: User;
 
-  @OneToMany(()=> Product, produtc => produtc.farm)
+  @OneToMany(()=> Product, product => product.farm)
   products: Product[]
 
-  @Field()
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt: Date;
 }

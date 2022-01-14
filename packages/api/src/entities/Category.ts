@@ -1,21 +1,16 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
-  BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
 } from "typeorm";
+import { CoreEntity } from "./CoreEntity";
 import { Product } from "./Product";
 
 @ObjectType()
 @Entity()
-export class Category extends BaseEntity {
-  @Field((_type) => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
-
+export class Category extends CoreEntity {
+ 
   @Field()
   @Column({ unique: true })
   name!: string;
@@ -27,7 +22,4 @@ export class Category extends BaseEntity {
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 
-  @Field()
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt: Date;
 }

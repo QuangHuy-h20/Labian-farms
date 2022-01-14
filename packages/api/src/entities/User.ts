@@ -1,23 +1,18 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
-  BaseEntity,
   Column,
-  CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
+import { Address } from "./Address";
+import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";
 import { UserRole } from "./UserRole";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
-  @Field((_type) => ID)
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class User extends CoreEntity {
 
   @Field()
   @Column({ unique: true })
@@ -32,7 +27,15 @@ export class User extends BaseEntity {
 
   @Field()
   @Column({ nullable: true })
+  nickname: string
+
+  @Field()
+  @Column({ nullable: true })
   fullName: string;
+  
+  @Field()
+  @Column({ nullable: true })
+  gender: string;
 
   @Field()
   @Column({ nullable: true })
@@ -50,22 +53,18 @@ export class User extends BaseEntity {
   @Column({ default: "customer" })
   roleId!: string;
 
-  @Field()
+  @Field(_return => UserRole)
   @ManyToOne(() => UserRole, (role) => role.users)
   role: UserRole;
 
-  @OneToMany(() => Farm, (farm) => farm.user)
+  @OneToMany(()=> Address, (address) => address.user)
+  addresses: Address[];
+
+  @OneToMany(() => Farm, (farm) => farm.owner)
   farms: Farm[];
 
   @Field()
   @Column({ default: 1 })
   status: number;
 
-  @Field()
-  @CreateDateColumn({ type: "timestamptz" })
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn({ type: "timestamptz" })
-  updatedAt: Date;
 }

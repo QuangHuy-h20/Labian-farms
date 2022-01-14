@@ -4,4 +4,9 @@ yarn.lock
 
 packages/api/dist
 
+packages/api/images
+
 packages/api/node_modules
+
+packages/api/yarn-error.log
+
