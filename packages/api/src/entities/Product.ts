@@ -19,7 +19,7 @@ export class Product extends CoreEntity {
   @Column()
   slug!: string;
 
-  @Field({ nullable: true })
+  @Field()
   @Column({ nullable: true })
   description: string;
 
@@ -33,8 +33,24 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ nullable: true })
-  image: string;
-
+  image1: string;
+  
+  @Field()
+  @Column({ nullable: true })
+  image2: string;
+  
+  @Field()
+  @Column({ nullable: true })
+  image3: string;
+  
+  @Field()
+  @Column({ nullable: true })
+  image4: string;
+  
+  @Field()
+  @Column({ nullable: true })
+  image5: string;
+  
   @Field()
   @Column()
   categoryId!: number;

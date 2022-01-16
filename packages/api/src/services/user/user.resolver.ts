@@ -20,11 +20,7 @@ import { checkAuth } from "../../middleware/checkAuth";
 import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { TokenModel } from "../../models/Token";
 import { sendEmail } from "../../utils/sendEmail";
-import {
-  deleteFile,
-  // s3, s3DefaultParams,
-  uploadFile
-} from "../../utils/s3";
+import { deleteFile, singleUpload } from "../../utils/s3";
 
 @Resolver((_of) => User)
 export class UserResolver {
@@ -297,26 +293,19 @@ export class UserResolver {
       const existingUser = await User.findOne(id)
       if (!existingUser) return false
       new Promise(reject => {
-        uploadFile(file, folderName, (err: any, data: any) => {
+        singleUpload(file, folderName, (err: any, data: any) => {
           if (err) reject(err)
 
           imageUrl = data.Location
-
           const existingFile = existingUser?.avatar
-          console.log('existingFile: ', existingFile)
-          console.log('imageUrl: ', imageUrl)
 
           if (existingFile) {
             deleteFile(existingFile.split("/").pop() as string, folderName)
           }
-
           existingUser.avatar = imageUrl
           existingUser.save();
         })
       })
-
-
-
       return true
     } catch (error) {
       return false

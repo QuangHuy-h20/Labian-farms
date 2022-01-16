@@ -30,11 +30,15 @@ export class Farm extends CoreEntity {
 
   @Field()
   @Column({ nullable: true })
-  image: string;
+  logo: string;
 
   @Field()
-  @Column({ default: 1 })
-  status: number;
+  @Column({ nullable: true })
+  coverImage: string;
+
+  @Field()
+  @Column({ default: false })
+  isActive: boolean;
 
   @Field()
   @Column()
