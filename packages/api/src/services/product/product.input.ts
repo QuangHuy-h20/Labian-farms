@@ -13,6 +13,6 @@ export class CreateProductInput{
     categoryId: number
 
     @Field()
-    farmId: number
+    farmId: string
 
 }

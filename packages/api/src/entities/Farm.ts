@@ -30,7 +30,7 @@ export class Farm extends CoreEntity {
 
   @Field()
   @Column({ nullable: true })
-  logo: string;
+  logoImage: string;
 
   @Field()
   @Column({ nullable: true })
