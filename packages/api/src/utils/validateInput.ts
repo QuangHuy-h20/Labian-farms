@@ -1,21 +1,27 @@
 import { ChangePasswordInput, RegisterInput } from "../services/user/user.input";
 
-export const MIN_LENGTH = 6;
-export const MAX_LENGTH = 16;
+const MIN_LENGTH = 6;
+const MAX_LENGTH = 16;
+const REGEXP_PHONE_NUMBER = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 
-export const validateRegisterInput = (registerInput: RegisterInput) => {
-  const { email, phoneNumber, password } = registerInput;
+export const validateEmailAndPhone = (email: string, phone: string) => {
   if (!email.includes("@"))
     return {
       message: "Email không hợp lệ.",
       errors: [{ field: "email", message: "Email phải bao gồm ký tự @." }],
     };
-  const regExp = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
 
-  if (!phoneNumber.match(regExp))
+  if (!phone.match(REGEXP_PHONE_NUMBER))
     return {
       message: "Số điện thoại không hợp lệ."
     };
+
+  return null
+}
+
+export const validateRegisterInput = (registerInput: RegisterInput) => {
+  const { email, phone, password } = registerInput;
+  validateEmailAndPhone(email, phone)
 
   if (password.length >= MAX_LENGTH || password.length <= MIN_LENGTH)
     return {

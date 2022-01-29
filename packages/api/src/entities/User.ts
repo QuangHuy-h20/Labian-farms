@@ -4,11 +4,18 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  RelationId,
 } from "typeorm";
 import { Address } from "./Address";
 import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";
 import { UserRole } from "./UserRole";
+
+export enum Gender {
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other"
+}
 
 @ObjectType()
 @Entity()
@@ -20,34 +27,34 @@ export class User extends CoreEntity {
 
   @Field()
   @Column({ unique: true })
-  phoneNumber!: string;
+  phone!: string;
 
   @Column()
   password!: string;
 
   @Field()
-  @Column({ nullable: true })
-  nickname: string
+  @Column({ nullable: true , default: ""})
+  nickname?: string
 
   @Field()
-  @Column({ nullable: true })
-  fullName: string;
-  
-  @Field()
-  @Column({ nullable: true })
-  gender: string;
+  @Column({ nullable: true, default: "" })
+  fullName?: string;
 
   @Field()
-  @Column({ nullable: true })
-  dateOfBirth: Date;
+  @Column({ type: "enum", enum: Gender, default: Gender.OTHER })
+  gender?: Gender;
 
   @Field()
-  @Column({ nullable: true })
-  address: string;
+  @Column({ nullable: true, type: "timestamp without time zone" })
+  dateOfBirth?: Date;
 
   @Field()
-  @Column({ nullable: true })
-  avatar: string;
+  @Column({ nullable: true, default: "" })
+  address?: string;
+
+  @Field({nullable: true})
+  @Column({ nullable: true, default: "" })
+  avatar?: string;
 
   @Field()
   @Column({ default: "customer" })
@@ -57,14 +64,24 @@ export class User extends CoreEntity {
   @ManyToOne(() => UserRole, (role) => role.users)
   role: UserRole;
 
-  @OneToMany(()=> Address, (address) => address.user)
+  @Field((_type) => [Address], { nullable: true })
+  @OneToMany(() => Address, (address) => address.customer, { cascade: true })
   addresses: Address[];
+  @RelationId((user: User) => user.addresses)
+  userAddressIds: number[]
 
-  @OneToMany(() => Farm, (farm) => farm.owner)
+  @Field(_type => [Farm], { nullable: true })
+  @OneToMany(() => Farm, (farm) => farm.owner, { cascade: true })
   farms: Farm[];
+  @RelationId((user: User) => user.farms)
+  userFarmIds: number[]
 
   @Field()
   @Column({ default: 1 })
   status: number;
+
+  @Field()
+  @Column({ default: false })
+  isActiveEmail: boolean
 
 }

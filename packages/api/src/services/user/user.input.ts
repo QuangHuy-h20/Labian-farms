@@ -1,3 +1,4 @@
+import { Gender } from "../../entities/User";
 import { Field, InputType } from "type-graphql";
 
 @InputType()
@@ -17,7 +18,7 @@ export class RegisterInput {
     email: string
 
     @Field()
-    phoneNumber: string
+    phone: string
 
     @Field()
     password: string
@@ -32,8 +33,8 @@ export class ProfileInput {
     @Field()
     nickname: string
 
-    @Field()
-    gender: string
+    @Field(_type => Gender)
+    gender: Gender
 
     @Field()
     dateOfBirth: Date

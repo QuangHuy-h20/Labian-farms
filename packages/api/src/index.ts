@@ -1,6 +1,7 @@
 require("dotenv").config();
 import "reflect-metadata";
 import express from "express";
+import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { createConnection } from "typeorm";
@@ -36,6 +37,13 @@ const main = async () => {
   });
 
   const app = express();
+
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true,
+    })
+  );
 
   //Session/Cookie store
 

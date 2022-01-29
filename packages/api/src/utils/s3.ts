@@ -9,10 +9,9 @@ const accessKeyId = process.env.S3_ACCESS_ID;
 const secretAccessKey = process.env.S3_SECRET_KEY;
 
 AWS.config.update({ region, accessKeyId, secretAccessKey })
-export const s3 = new S3({ region })
+const s3 = new S3({ region })
 
-
-export const s3DefaultParams = {
+const s3DefaultParams = {
 	ACL: 'public-read',
 	Bucket: process.env.S3_BUCKET_NAME!,
 	Conditions: [
@@ -21,32 +20,32 @@ export const s3DefaultParams = {
 	]
 }
 
-export const singleUpload = (file: FileUpload, folder: string | null, next: Function) => {
-	const { createReadStream, filename } = file
-	return new Promise(reject => {
-		s3.upload({ ...s3DefaultParams, Body: createReadStream(), Key: `${folder}/${filename}` }, (err, data) => {
-			if (err) reject(err)
-			return next(err, data)
-		})
+export const singleUpload = async (file: FileUpload, folder: string | null) => {
+	let { createReadStream, filename } = file
+	const stream = createReadStream()
+	filename = `${shortid.generate()}-${filename}`
+	const key = `${folder}/${filename}`
+	return new Promise(async resolve => {
+		const data = await s3.upload({ ...s3DefaultParams, Body: stream, Key: key }).promise()
+		const getUrl = data.Location
+		resolve(getUrl)
 	})
 }
 
-export const deleteFile = (filename: string, folder: string) => {
-	return new Promise((reject) => {
-		s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME!, Key: `${folder}/${filename}` }, err => {
-			if (err) reject(err)
-		})
+export const deleteFile = async (folder: string, filename?: string | undefined) => {
+	let key = filename !== undefined ? `${folder}/${filename}` : `${folder}`
+	return new Promise(async(_) => {
+		await s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME!, Key: key }).promise()
 	})
 }
 
-
-export const uploadMultipleFiles = async (files: FileUpload[], folder: string | null):Promise<string[]> => {
+export const multipleUploads = async (files: FileUpload[], folder: string | null, name: string): Promise<string[]> => {
 	let list: string[] = []
 	return new Promise(async (resolve) => {
 		for await (let file of files) {
 			new Promise(async resolve => {
 				let { createReadStream, filename } = file
-				filename = `${shortid.generate()}-${filename}`
+				filename = `${shortid.generate()}-${name}`
 				const stream = createReadStream()
 				const data = await s3.upload({ ...s3DefaultParams, Body: stream, Key: `${folder}/${filename}` }).promise()
 				const sendData = data.Location

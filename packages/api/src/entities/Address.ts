@@ -9,7 +9,7 @@ export class Address extends CoreEntity {
 
 	@Field()
 	@Column()
-	name!: string
+	fullName!: string
 
 	@Field()
 	@Column()
@@ -25,9 +25,8 @@ export class Address extends CoreEntity {
 
 	@Field()
 	@Column()
-	userId!: number;
-
-	@Field(_return => User)
+	customerId!: number;
+	
 	@ManyToOne(() => User, user => user.addresses)
-	user: User
+	customer: User
 }

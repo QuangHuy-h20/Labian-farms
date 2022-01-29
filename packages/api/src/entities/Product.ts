@@ -29,25 +29,29 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ default: 0 })
-  inventoryTotal!: number;
+  totalInventory!: number;
 
-  @Field()
+  @Field({ nullable: true })
+  @Column({nullable: true})
+  unit: string
+
+  @Field({ nullable: true })
   @Column({ nullable: true })
   image1: string;
   
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   image2: string;
   
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   image3: string;
   
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   image4: string;
   
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   image5: string;
   

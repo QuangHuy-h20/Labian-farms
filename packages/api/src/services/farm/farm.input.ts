@@ -13,17 +13,8 @@ export class CreateFarmInput {
 }
 
 @InputType()
-export class UpdateFarmInput {
+export class UpdateFarmInput extends CreateFarmInput{
 
   @Field()
   id: string
-
-  @Field({ nullable: true })
-  name: string;
-
-  @Field({ nullable: true })
-  address: string;
-
-  @Field({ nullable: true })
-  description: string;
 }

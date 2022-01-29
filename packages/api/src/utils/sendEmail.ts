@@ -22,9 +22,8 @@ export const sendEmail = async (to: string, html: string) => {
 		<html>
 		<body>
 		<h2>Xin chào,</h2>
-		<p>Ấn vào đường dẫn bên dưới để thay đổi mật khẩu của bạn</p>
 		<div>${html}</div>
-		<p>Vui lòng hoàn thành việc cập nhật mật khẩu, đường dẫn sẽ hết hạn sau 15 phút.</p>
+		<hr/>
 		<p>Labian Farms</p>
 		<b>Đây là thư gửi tự động, vui lòng không phản hồi ở đây.</b>
 		</body>
