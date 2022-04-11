@@ -15,6 +15,10 @@ export class Category extends CoreEntity {
   @Column({ unique: true })
   slug!: string;
 
+  @Field()
+  @Column({ nullable: true })
+  image: string
+    
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 

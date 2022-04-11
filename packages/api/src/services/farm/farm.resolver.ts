@@ -9,6 +9,7 @@ import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { toSlug } from "../../utils/toSlug";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { deleteFile, singleUpload, multipleUploads } from "../../utils/s3";
+import { Product } from "../../entities/Product";
 
 @Resolver(_of => Farm)
 export class FarmResolver {
@@ -17,6 +18,15 @@ export class FarmResolver {
   @FieldResolver(_return => User)
   async owner(@Root() root: Farm, @Ctx() { dataLoaders: { userLoader } }: Context) {
     return await userLoader.load(root.ownerId)
+  }
+
+  @FieldResolver(_return => [Product], { nullable: true })
+  async products(@Root() root: Farm, @Ctx() { dataLoaders: { productLoader } }: Context) {
+    try {
+      return await productLoader.loadMany(root.productFarmIds)
+    } catch (error) {
+      return null
+    }
   }
 
   //----------------------- Query -----------------------
@@ -164,6 +174,32 @@ export class FarmResolver {
       })
       return true
     } catch (error) {
+      return false
+    }
+  }
+
+  @Mutation((_return) => Boolean, {
+    description: "Delete product",
+  })
+  @UseMiddleware(checkRole)
+  async deleteFarm(
+    @Arg("id", (_type) => ID) id: number,
+    @Ctx() { req }: Context
+  ): Promise<Boolean> {
+    try {
+      const existingFarm = await Farm.findOne({ ownerId: req.session.userId });
+
+      if (!existingFarm) return false
+
+
+      const farmFolder = `farms/${existingFarm.slug}`;
+      const productFolder = `products/${existingFarm.slug}`;
+
+      await Farm.delete({ id });
+      await Promise.all([() => deleteFile(farmFolder), () => deleteFile(productFolder)])
+
+      return true
+    } catch {
       return false
     }
   }

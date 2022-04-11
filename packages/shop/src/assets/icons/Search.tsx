@@ -1,8 +1,8 @@
 
-interface IIconProps {
-	width: string
-	height: string
-	fill: string
+export interface IIconProps {
+	width?: string
+	height?: string
+	fill?: string
 }
 
 const Search = (props: IIconProps) => {

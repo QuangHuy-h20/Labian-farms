@@ -10,6 +10,9 @@ export class CreateProductInput {
     description: string
 
     @Field()
+    priceRoot: number
+
+    @Field()
     price: number
 
     @Field()
@@ -18,6 +21,9 @@ export class CreateProductInput {
     @Field()
     unit: string
 
+    @Field()
+    categoryQuery: string
+    
     @Field()
     categoryId: number
 
@@ -28,7 +34,7 @@ export class CreateProductInput {
 }
 
 @InputType()
-export class UpdateProductInput extends CreateProductInput{
+export class UpdateProductInput extends CreateProductInput {
 
     @Field()
     id: string

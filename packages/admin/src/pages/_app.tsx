@@ -1,15 +1,22 @@
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-import '../styles/index.css'
+import { ApolloProvider } from "@apollo/client";
+import '@assets/css/index.css'
+import { useApollo } from '@lib/apolloClient';
+import Layout from '@components/Layout';
+
+
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const apolloClient = useApollo(pageProps);
   return (
     <>
       <Head>
-        <title>NextJS TailwindCSS TypeScript Starter</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <title>Admin | Labian Farms</title>
       </Head>
-      <Component {...pageProps} />
+      <ApolloProvider client={apolloClient}>
+            <Component {...pageProps} />
+      </ApolloProvider>
     </>
   )
 }

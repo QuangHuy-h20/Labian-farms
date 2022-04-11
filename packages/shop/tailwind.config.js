@@ -3,7 +3,7 @@ module.exports = {
     './src/components/**/*.{ts,tsx,js,jsx}',
     './src/pages/**/*.{ts,tsx,js,jsx}'
   ],
-  theme: {
+  theme: {  
     extend: {
       height: {
         'screen-85': '85vh',

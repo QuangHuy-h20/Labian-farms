@@ -1,4 +1,4 @@
-import { ChangePasswordInput, RegisterInput } from "../services/user/user.input";
+import { ChangePasswordInput, RegisterInput, ResetPasswordInput } from "../services/user/user.input";
 
 const MIN_LENGTH = 6;
 const MAX_LENGTH = 16;
@@ -21,7 +21,16 @@ export const validateEmailAndPhone = (email: string, phone: string) => {
 
 export const validateRegisterInput = (registerInput: RegisterInput) => {
   const { email, phone, password } = registerInput;
-  validateEmailAndPhone(email, phone)
+  if (!email.includes("@"))
+    return {
+      message: "Email không hợp lệ.",
+      errors: [{ field: "email", message: "Email phải bao gồm ký tự @." }],
+    };
+
+  if (!phone.match(REGEXP_PHONE_NUMBER))
+    return {
+      message: "Số điện thoại không hợp lệ."
+    };
 
   if (password.length >= MAX_LENGTH || password.length <= MIN_LENGTH)
     return {
@@ -61,7 +70,7 @@ export const validateChangePasswordInput = (changePasswordInput: ChangePasswordI
       errors: [
         {
           field: "newPassword",
-          message: "Mật khẩu mới và cũ bị trùng."
+          message: "Mật khẩu mới phải khác với mật khẩu cũ."
         }
       ]
     }
@@ -77,20 +86,28 @@ export const validateChangePasswordInput = (changePasswordInput: ChangePasswordI
 }
 
 
-export const validateResetPasswordInput = (resetPassword: string) => {
+export const validateResetPasswordInput = ({ newPassword, confirmPassword }: ResetPasswordInput) => {
 
-  if (resetPassword.length >= MAX_LENGTH || resetPassword.length <= MIN_LENGTH)
+  if (newPassword.length >= MAX_LENGTH || newPassword.length <= MIN_LENGTH)
     return {
       message: "Mật khẩu không hợp lệ",
       errors: [
         {
-          field: "password",
-          message: `${resetPassword.length <= MIN_LENGTH
+          field: "newPassword",
+          message: `${newPassword.length <= MIN_LENGTH
             ? "Độ dài mật khẩu phải lớn hơn 6."
             : "Độ dài mật khẩu phải nhỏ hơn 16."
             }`,
         },
       ],
     };
+
+  if (confirmPassword !== newPassword)
+    return {
+      code: 400, success: false, message: "Xác nhận mật khẩu không khớp với mật khẩu mới.", errors: [{
+        field: "confirmPassword",
+        message: "Xác nhận mật khẩu không khớp với mật khẩu mới."
+      }]
+    }
   return null;
 }

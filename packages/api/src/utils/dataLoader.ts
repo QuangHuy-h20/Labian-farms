@@ -1,4 +1,5 @@
 import DataLoader from "dataloader";
+import { Product } from "../entities/Product";
 import { Address } from "../entities/Address";
 import { Category } from "../entities/Category";
 import { Farm } from "../entities/Farm";
@@ -24,9 +25,15 @@ const batchGetCategories = async (categoryIds: number[]) => {
 	return categoryIds.map(categoryId => categories.find(category => category.id === categoryId))
 }
 
+const batchGetProducts = async (productIds: number[]) => {
+	const products = await Product.findByIds(productIds)
+	return productIds.map(productId => products.find(product => product.id === productId))
+}
+
 export const buildDataLoaders = () => ({
 	userLoader: new DataLoader<number, User | undefined>(userIds => batchGetUsers(userIds as number[])),
 	addressLoader: new DataLoader<number, Address | undefined>(addressIds => batchGetAddresses(addressIds as number[])),
 	farmLoader: new DataLoader<number, Farm | undefined>(farmIds => batchGetFarms(farmIds as number[])),
-	categoryLoader: new DataLoader<number, Category | undefined>(categoryIds => batchGetCategories(categoryIds as number[]))
+	categoryLoader: new DataLoader<number, Category | undefined>(categoryIds => batchGetCategories(categoryIds as number[])),
+	productLoader: new DataLoader<number, Product | undefined>(productIds => batchGetProducts(productIds as number[]))
 })

@@ -23,9 +23,9 @@ export const sendEmail = async (to: string, html: string) => {
 		<body>
 		<h2>Xin chào,</h2>
 		<div>${html}</div>
-		<hr/>
-		<p>Labian Farms</p>
-		<b>Đây là thư gửi tự động, vui lòng không phản hồi ở đây.</b>
+		<p>Trân trọng,</p>
+		<b style="display:block;color:#059669;">Labian Farms</b>
+		<i>Đây là thư gửi tự động, vui lòng không phản hồi ở đây.</i>
 		</body>
 		</html>`
 	})

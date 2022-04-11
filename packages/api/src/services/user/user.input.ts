@@ -27,32 +27,40 @@ export class RegisterInput {
 @InputType()
 export class ProfileInput {
 
-    @Field()
-    fullName: string
-    
-    @Field()
-    nickname: string
+    @Field({ nullable: true })
+    fullName?: string
 
-    @Field(_type => Gender)
+    @Field({ nullable: true })
+    nickname?: string
+
+    @Field(_type => Gender, { nullable: true })
     gender: Gender
 
-    @Field()
-    dateOfBirth: Date
+    @Field({ nullable: true })
+    dateOfBirth?: Date
 
-    @Field()
-    address: string
+    @Field({ nullable: true })
+    address?: string
 }
 
 @InputType()
-export class ChangePasswordInput {
-
+export class ForgotPasswordInput {
     @Field()
-    oldPassword: string
+    email: string
+}
 
+@InputType()
+export class ResetPasswordInput {
     @Field()
     newPassword: string
 
     @Field()
     confirmPassword: string
+}
+
+@InputType()
+export class ChangePasswordInput extends ResetPasswordInput {
+    @Field()
+    oldPassword: string
 }
 

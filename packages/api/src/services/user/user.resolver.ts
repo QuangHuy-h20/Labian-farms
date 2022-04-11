@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import argon2 from "argon2";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { validateRegisterInput, validateChangePasswordInput, validateResetPasswordInput } from "../../utils/validateInput"
-import { ChangePasswordInput, LoginInput, ProfileInput, RegisterInput } from "./user.input";
+import { ChangePasswordInput, ForgotPasswordInput, LoginInput, ProfileInput, RegisterInput, ResetPasswordInput } from "./user.input";
 import { UserMutationResponse } from "./user.mutation";
 import { Gender, User } from "../../entities/User";
 import { Address } from "../../entities/Address";
@@ -65,7 +65,7 @@ export class UserResolver {
   //----------------------- Mutation -----------------------
 
   @Mutation((_return) => UserMutationResponse, { description: "Register for customer." })
-  async register(@Arg("registerInput") registerInput: RegisterInput): Promise<UserMutationResponse> {
+  async register(@Arg("registerInput") registerInput: RegisterInput, @Ctx() { req }: Context): Promise<UserMutationResponse> {
     try {
       const { phone, email, password } = registerInput;
       const validateRegisterInputError = validateRegisterInput(registerInput);
@@ -102,15 +102,8 @@ export class UserResolver {
       });
       await newUser.save();
 
-      await TokenModel.findOneAndDelete({ userId: `${newUser.id}` })
-
-      const activeToken = uuidv4();
-      const hashedToken = await argon2.hash(activeToken)
-
-      await new TokenModel({ userId: `${newUser.id}`, token: hashedToken }).save();
-
-      let html = `<p>Ấn vào đường dẫn bên dưới để kích hoạt email của bạn.</p><a href="http://localhost:3000/confirm-email?token=${activeToken}&userId=${newUser.id}}">Nhấn vào đây để kích hoạt email.</a> `
-      await sendEmail(email, html)
+      req.session.userId = newUser.id
+      req.session.roleId = newUser.roleId
 
       return { code: 200, success: true, message: "Đăng ký thành công!", user: newUser }
 
@@ -120,7 +113,7 @@ export class UserResolver {
   }
 
   @Mutation((_return) => UserMutationResponse, { description: "Register for farmer" })
-  async farmerRegister(@Arg("registerInput") registerInput: RegisterInput): Promise<UserMutationResponse> {
+  async farmerRegister(@Arg("registerInput") registerInput: RegisterInput, @Ctx() { req }: Context): Promise<UserMutationResponse> {
     try {
       const { phone, email, password } = registerInput;
       const validateRegisterInputError = validateRegisterInput(registerInput);
@@ -153,15 +146,8 @@ export class UserResolver {
       const newFarmer = User.create({ email, phone, password: hashedPassword, roleId: "farmer" });
       await newFarmer.save();
 
-      await TokenModel.findOneAndDelete({ userId: `${newFarmer.id}` })
-
-      const activeToken = uuidv4();
-      const hashedToken = await argon2.hash(activeToken)
-
-      await new TokenModel({ userId: `${newFarmer.id}`, token: hashedToken }).save();
-
-      let html = `<p>Nhấn vào đường dẫn bên dưới để kích hoạt email của bạn.</p><a href="http://localhost:3000/confirm-email?token=${activeToken}&userId=${newFarmer.id}}">Kích hoạt email.</a> `
-      await sendEmail(email, html)
+      req.session.userId = newFarmer.id
+      req.session.roleId = newFarmer.roleId
 
       return { code: 200, success: true, message: "Đăng ký thành công!", user: newFarmer }
     } catch (error) {
@@ -169,8 +155,29 @@ export class UserResolver {
     }
   }
 
+  @Mutation(_return => Boolean, { description: "Confirm email" })
+  async confirmEmail(@Arg("email") email: string) {
+    try {
+
+      const existingUser = await User.findOne({ email })
+      if (!existingUser) return false
+      await TokenModel.findOneAndDelete({ userId: `${existingUser.id}` })
+
+      const activeToken = uuidv4();
+      const hashedToken = await argon2.hash(activeToken)
+
+      await new TokenModel({ userId: `${existingUser.id}`, token: hashedToken }).save();
+
+      let html = `<p>Ấn vào đường dẫn bên dưới để kích hoạt email của bạn.</p><a href="http://localhost:3000/confirm-email?token=${activeToken}&userId=${existingUser.id}}">Nhấn vào đây để kích hoạt email.</a> `
+      await sendEmail(email, html)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
   @Mutation(_return => UserMutationResponse, { description: "Active email" })
-  async activeEmail(@Arg("token") token: string, @Arg("userId") userId: string, @Ctx() { req }: Context): Promise<UserMutationResponse> {
+  async activeEmail(@Arg("token") token: string, @Arg("userId") userId: string): Promise<UserMutationResponse> {
     try {
       const activeEmailTokenRecord = await TokenModel.findOne({ userId });
       if (!activeEmailTokenRecord) return failureResponse(404, false, "Token không hợp lệ hoặc đã hết hạn.")
@@ -184,9 +191,6 @@ export class UserResolver {
       if (!user) return failureResponse(404, false, "Thông tin người dùng không còn hiệu lực.")
       await activeEmailTokenRecord.deleteOne();
       await User.update({ id: userIdNum }, { isActiveEmail: true })
-
-      req.session.userId = user.id
-      req.session.roleId = user.roleId
 
       return successResponse(200, true, "Kích hoạt email thành công.")
     } catch (error) {
@@ -260,8 +264,8 @@ export class UserResolver {
 
       if (!existingUser) return failureResponse(400, false, "Người dùng không hợp lệ.")
 
-      existingUser.fullName = fullName;
-      existingUser.nickname = nickname;
+      existingUser.fullName = fullName
+      existingUser.nickname = nickname
       existingUser.gender = gender
       existingUser.dateOfBirth = dateOfBirth
       existingUser.address = address
@@ -285,7 +289,17 @@ export class UserResolver {
       //verify password
       const isMatchedPassword = await argon2.verify(existingUser.password, oldPassword)
 
-      if (!isMatchedPassword) return failureResponse(400, false, "Mật khẩu cũ không đúng.")
+      if (!isMatchedPassword) return {
+        code: 400,
+        success: false,
+        message: "Mật khẩu cũ không đúng.",
+        errors: [
+          {
+            field: "oldPassword",
+            message: "Mật khẩu cũ không đúng."
+          }
+        ]
+      }
 
       const validateChangePasswordInputError = validateChangePasswordInput(changePasswordInput)
 
@@ -298,14 +312,14 @@ export class UserResolver {
       existingUser.password = updatedPassword
       existingUser.save()
 
-      return successResponse(200, true, "Mật khẩu đã được cập nhật thành công.")
+      return successResponse(200, true, "Mật khẩu đã được cập nhật thành công.", existingUser)
     } catch (error) {
       return failureResponse(500, false, `Internal server error ${error.message}`)
     }
   }
 
   @Mutation(_return => Boolean, { description: "Forgot password" })
-  async forgotPassword(@Arg("email") email: string): Promise<boolean> {
+  async forgotPassword(@Arg("forgotPasswordInput") { email }: ForgotPasswordInput): Promise<boolean> {
 
     const user = await User.findOne({ email })
 
@@ -318,18 +332,18 @@ export class UserResolver {
 
     await new TokenModel({ userId: `${user.id}`, token: hashedToken }).save();
 
-    let html = `<p>Ấn vào đường dẫn bên dưới để thay đổi mật khẩu của bạn</p>
-    <a href="http://localhost:3000/change-password?token=${resetToken}&userId=${user.id}">Nhấn vào đây để thay đổi mật khẩu.</a> 
-    <p>Vui lòng hoàn thành việc cập nhật mật khẩu, đường dẫn sẽ hết hạn sau 15 phút.</p>`
+    let html = `<span>Xin hãy click vào đường dẫn để thay đổi mật khẩu của bạn: </span>
+    <a style="color:#059669;text-decoration: underline" href="http://localhost:3000/reset-password?token=${resetToken}&userId=${user.id}">Tại đây.</a> 
+    <p>Lưu ý: Vui lòng hoàn thành việc cập nhật mật khẩu, đường dẫn sẽ hết hạn sau 15 phút.</p>`
 
     await sendEmail(email, html)
     return true
   }
 
   @Mutation(_return => UserMutationResponse, { description: "Reset password" })
-  async resetPassword(@Arg("token") token: string, @Arg("userId") userId: string, @Arg("resetPassword") resetPassword: string, @Ctx() { req }: Context): Promise<UserMutationResponse> {
-
-    const validateResetPasswordInputError = validateResetPasswordInput(resetPassword)
+  async resetPassword(@Arg("token") token: string, @Arg("userId") userId: string, @Arg("resetPasswordInput") resetPasswordInput: ResetPasswordInput, @Ctx() { req }: Context): Promise<UserMutationResponse> {
+    const { newPassword, confirmPassword } = resetPasswordInput
+    const validateResetPasswordInputError = validateResetPasswordInput({ newPassword, confirmPassword })
     if (validateResetPasswordInputError !== null) return { code: 400, success: false, ...validateResetPasswordInputError }
     try {
       const resetPasswordTokenRecord = await TokenModel.findOne({ userId });
@@ -343,16 +357,16 @@ export class UserResolver {
 
       if (!user) return failureResponse(404, false, "Thông tin người dùng không còn hiệu lực.")
 
-      const newPassword = await argon2.hash(resetPassword)
+      const hashedPassword = await argon2.hash(newPassword)
 
-      await User.update({ id: userIdNum }, { password: newPassword })
+      await User.update({ id: userIdNum }, { password: hashedPassword })
       await resetPasswordTokenRecord.deleteOne();
 
 
       req.session.userId = user.id;
       req.session.roleId = user.roleId
+      return { code: 200, success: true, message: "Mật khẩu đã được thay đổi thành công.", user }
 
-      return successResponse(200, true, "Mật khẩu đã được thay đổi thành công.")
     } catch (error) {
       return failureResponse(500, false, `Internal server error ${error.message}`)
     }

@@ -29,35 +29,43 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ default: 0 })
+  priceRoot!: number;
+
+  @Field()
+  @Column({ default: 0 })
   totalInventory!: number;
 
   @Field({ nullable: true })
-  @Column({nullable: true})
+  @Column({ nullable: true })
   unit: string
 
   @Field({ nullable: true })
   @Column({ nullable: true })
   image1: string;
-  
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   image2: string;
-  
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   image3: string;
-  
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   image4: string;
-  
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   image5: string;
-  
+
   @Field()
   @Column()
   categoryId!: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  categoryQuery: string;
 
   @Field((_type) => Category)
   @ManyToOne(() => Category, (category) => category.products)

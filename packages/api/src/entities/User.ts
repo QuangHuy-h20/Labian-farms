@@ -32,27 +32,27 @@ export class User extends CoreEntity {
   @Column()
   password!: string;
 
-  @Field()
-  @Column({ nullable: true , default: ""})
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: "" })
   nickname?: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, default: "" })
   fullName?: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: "enum", enum: Gender, default: Gender.OTHER })
-  gender?: Gender;
+  gender: Gender;
 
-  @Field()
-  @Column({ nullable: true, type: "timestamp without time zone" })
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: new Date() })
   dateOfBirth?: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true, default: "" })
   address?: string;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   @Column({ nullable: true, default: "" })
   avatar?: string;
 

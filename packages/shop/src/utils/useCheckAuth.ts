@@ -8,7 +8,13 @@ export const useCheckAuth = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && data.me && (router.route === '/login' || router.route === '/register')) {
+    if (
+      !loading &&
+      data.me &&
+      (router.route === '/login' ||
+        router.route === '/register' ||
+        router.route === '/reset-password'
+      )) {
       router.replace("/")
     }
   }, [data, loading, router])

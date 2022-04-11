@@ -51,6 +51,7 @@ export type Category = {
   __typename?: 'Category';
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  image: Scalars['String'];
   name: Scalars['String'];
   slug: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -89,7 +90,7 @@ export type CreateFarmInput = {
 };
 
 export type CreateProductInput = {
-  categoryId: Scalars['Float'];
+  categoryQuery: Scalars['String'];
   description: Scalars['String'];
   farmId: Scalars['String'];
   name: Scalars['String'];
@@ -105,15 +106,16 @@ export type CreateRoleInput = {
 export type Farm = {
   __typename?: 'Farm';
   address: Scalars['String'];
-  coverImage: Scalars['String'];
+  coverImage?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
-  logoImage: Scalars['String'];
+  logoImage?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   owner: User;
   ownerId: Scalars['Float'];
+  products?: Maybe<Array<Product>>;
   slug: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -131,6 +133,10 @@ export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type ForgotPasswordInput = {
+  email: Scalars['String'];
 };
 
 export enum Gender {
@@ -156,6 +162,8 @@ export type Mutation = {
   activeEmail: UserMutationResponse;
   /** Change user password */
   changePassword: UserMutationResponse;
+  /** Confirm email */
+  confirmEmail: Scalars['Boolean'];
   /** Create new category. */
   createCategory: CategoryMutationResponse;
   /** Create new farm. */
@@ -166,6 +174,8 @@ export type Mutation = {
   createRole: RoleMutationResponse;
   /** Delete address */
   deleteAddress: AddressMutationResponse;
+  /** Delete product */
+  deleteFarm: Scalars['Boolean'];
   /** Delete product */
   deleteProduct: ProductMutationResponse;
   /** Register for farmer */
@@ -210,6 +220,11 @@ export type MutationChangePasswordArgs = {
 };
 
 
+export type MutationConfirmEmailArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationCreateCategoryArgs = {
   createCategoryInput: CreateCategoryInput;
 };
@@ -237,6 +252,11 @@ export type MutationDeleteAddressArgs = {
 };
 
 
+export type MutationDeleteFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationDeleteProductArgs = {
   id: Scalars['ID'];
 };
@@ -248,7 +268,7 @@ export type MutationFarmerRegisterArgs = {
 
 
 export type MutationForgotPasswordArgs = {
-  email: Scalars['String'];
+  forgotPasswordInput: ForgotPasswordInput;
 };
 
 
@@ -268,7 +288,7 @@ export type MutationRegisterArgs = {
 
 
 export type MutationResetPasswordArgs = {
-  resetPassword: Scalars['String'];
+  resetPasswordInput: ResetPasswordInput;
   token: Scalars['String'];
   userId: Scalars['String'];
 };
@@ -303,7 +323,7 @@ export type MutationUpdateLogoImageArgs = {
 
 
 export type MutationUpdateProductArgs = {
-  createProductInput: UpdateProductInput;
+  updateProductInput: UpdateProductInput;
 };
 
 
@@ -311,10 +331,19 @@ export type MutationUpdateProfileArgs = {
   profileInput: ProfileInput;
 };
 
+export type PaginatedProducts = {
+  __typename?: 'PaginatedProducts';
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  paginatedProducts: Array<Product>;
+  totalCount: Scalars['Float'];
+};
+
 export type Product = {
   __typename?: 'Product';
   category: Category;
   categoryId: Scalars['Float'];
+  categoryQuery?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   farm: Farm;
@@ -327,6 +356,7 @@ export type Product = {
   image5?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   price: Scalars['Float'];
+  priceRoot: Scalars['Float'];
   slug: Scalars['String'];
   totalInventory: Scalars['Float'];
   unit?: Maybe<Scalars['String']>;
@@ -343,11 +373,11 @@ export type ProductMutationResponse = IMutationResponse & {
 };
 
 export type ProfileInput = {
-  address: Scalars['String'];
-  dateOfBirth: Scalars['DateTime'];
-  fullName: Scalars['String'];
-  gender: Gender;
-  nickname: Scalars['String'];
+  address?: InputMaybe<Scalars['String']>;
+  dateOfBirth?: InputMaybe<Scalars['DateTime']>;
+  fullName?: InputMaybe<Scalars['String']>;
+  gender?: InputMaybe<Gender>;
+  nickname?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -367,7 +397,7 @@ export type Query = {
   /** Get specific product by id */
   product?: Maybe<Product>;
   /** Get all products */
-  products?: Maybe<Array<Product>>;
+  products?: Maybe<PaginatedProducts>;
   /** Get all products by category */
   productsByCategory?: Maybe<Array<Product>>;
   /** Get all roles */
@@ -397,14 +427,26 @@ export type QueryProductArgs = {
 };
 
 
+export type QueryProductsArgs = {
+  categoryQuery?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryProductsByCategoryArgs = {
-  categoryId: Scalars['Float'];
+  categoryId: Scalars['ID'];
 };
 
 export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   phone: Scalars['String'];
+};
+
+export type ResetPasswordInput = {
+  confirmPassword: Scalars['String'];
+  newPassword: Scalars['String'];
 };
 
 export type RoleMutationResponse = IMutationResponse & {
@@ -432,7 +474,7 @@ export type UpdateFarmInput = {
 };
 
 export type UpdateProductInput = {
-  categoryId: Scalars['Float'];
+  categoryQuery: Scalars['String'];
   description: Scalars['String'];
   farmId: Scalars['String'];
   id: Scalars['String'];
@@ -444,18 +486,18 @@ export type UpdateProductInput = {
 
 export type User = {
   __typename?: 'User';
-  address: Scalars['String'];
+  address?: Maybe<Scalars['String']>;
   addresses?: Maybe<Array<Address>>;
   avatar?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
-  dateOfBirth: Scalars['DateTime'];
+  dateOfBirth?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
   farms?: Maybe<Array<Farm>>;
-  fullName: Scalars['String'];
-  gender: Scalars['String'];
+  fullName?: Maybe<Scalars['String']>;
+  gender?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActiveEmail: Scalars['Boolean'];
-  nickname: Scalars['String'];
+  nickname?: Maybe<Scalars['String']>;
   phone: Scalars['String'];
   role: UserRole;
   roleId: Scalars['String'];
@@ -485,16 +527,32 @@ export type UserMutationStatusFragment = { __typename?: 'UserMutationResponse', 
 
 export type FarmMutationStatusFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
-export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname: string, fullName: string, gender: string, address: string, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean };
+export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } };
 
-export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname: string, fullName: string, gender: string, address: string, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
+export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean };
+
+export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
+
+export type ChangePasswordMutationVariables = Exact<{
+  changePasswordInput: ChangePasswordInput;
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  forgotPasswordInput: ForgotPasswordInput;
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname: string, fullName: string, gender: string, address: string, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -506,18 +564,81 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname: string, fullName: string, gender: string, address: string, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type ResetPasswordMutationVariables = Exact<{
+  userId: Scalars['String'];
+  token: Scalars['String'];
+  resetPasswordInput: ResetPasswordInput;
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type UpdateAvatarMutationVariables = Exact<{
+  id: Scalars['ID'];
+  file: Scalars['Upload'];
+}>;
+
+
+export type UpdateAvatarMutation = { __typename?: 'Mutation', updateAvatar: boolean };
+
+export type UpdateProfileMutationVariables = Exact<{
+  profileInput: ProfileInput;
+}>;
+
+
+export type UpdateProfileMutation = { __typename?: 'Mutation', updateProfile: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+
+export type CategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CategoriesQuery = { __typename?: 'Query', categories?: Array<{ __typename?: 'Category', id: string, name: string, slug: string }> | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, phone: string, nickname: string, fullName: string, gender: string, address: string, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean } | null | undefined };
+
+export type GetProductsByCategoryQueryVariables = Exact<{
+  categoryId: Scalars['ID'];
+}>;
+
+
+export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
+
+export type ProductsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+  categoryQuery?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'PaginatedProducts', totalCount: number, hasMore: boolean, cursor: any, paginatedProducts: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> } | null | undefined };
 
 export const FarmMutationStatusFragmentDoc = gql`
     fragment farmMutationStatus on FarmMutationResponse {
   code
   success
   message
+}
+    `;
+export const ProductInfoFragmentDoc = gql`
+    fragment productInfo on Product {
+  id
+  name
+  slug
+  price
+  unit
+  description
+  image1
+  image2
+  image3
+  image4
+  image5
+  farm {
+    name
+  }
 }
     `;
 export const UserMutationStatusFragmentDoc = gql`
@@ -534,6 +655,7 @@ export const UserInfoFragmentDoc = gql`
   phone
   nickname
   fullName
+  dateOfBirth
   gender
   address
   avatar
@@ -560,6 +682,76 @@ export const UserMutationResponseFragmentDoc = gql`
     ${UserMutationStatusFragmentDoc}
 ${UserInfoFragmentDoc}
 ${FieldErrorFragmentDoc}`;
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($changePasswordInput: ChangePasswordInput!) {
+  changePassword(changePasswordInput: $changePasswordInput) {
+    code
+    success
+    message
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
+export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      changePasswordInput: // value for 'changePasswordInput'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument, options);
+      }
+export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
+export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($forgotPasswordInput: ForgotPasswordInput!) {
+  forgotPassword(forgotPasswordInput: $forgotPasswordInput)
+}
+    `;
+export type ForgotPasswordMutationFn = Apollo.MutationFunction<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+
+/**
+ * __useForgotPasswordMutation__
+ *
+ * To run a mutation, you first call `useForgotPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForgotPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forgotPasswordMutation, { data, loading, error }] = useForgotPasswordMutation({
+ *   variables: {
+ *      forgotPasswordInput: // value for 'forgotPasswordInput'
+ *   },
+ * });
+ */
+export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument, options);
+      }
+export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
+export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
+export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput!) {
   login(loginInput: $loginInput) {
@@ -656,6 +848,142 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const ResetPasswordDocument = gql`
+    mutation ResetPassword($userId: String!, $token: String!, $resetPasswordInput: ResetPasswordInput!) {
+  resetPassword(userId: $userId, token: $token, resetPasswordInput: $resetPasswordInput) {
+    ...userMutationResponse
+  }
+}
+    ${UserMutationResponseFragmentDoc}`;
+export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
+
+/**
+ * __useResetPasswordMutation__
+ *
+ * To run a mutation, you first call `useResetPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResetPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resetPasswordMutation, { data, loading, error }] = useResetPasswordMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      token: // value for 'token'
+ *      resetPasswordInput: // value for 'resetPasswordInput'
+ *   },
+ * });
+ */
+export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ResetPasswordMutation, ResetPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument, options);
+      }
+export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
+export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
+export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const UpdateAvatarDocument = gql`
+    mutation UpdateAvatar($id: ID!, $file: Upload!) {
+  updateAvatar(file: $file, id: $id)
+}
+    `;
+export type UpdateAvatarMutationFn = Apollo.MutationFunction<UpdateAvatarMutation, UpdateAvatarMutationVariables>;
+
+/**
+ * __useUpdateAvatarMutation__
+ *
+ * To run a mutation, you first call `useUpdateAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAvatarMutation, { data, loading, error }] = useUpdateAvatarMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUpdateAvatarMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAvatarMutation, UpdateAvatarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAvatarMutation, UpdateAvatarMutationVariables>(UpdateAvatarDocument, options);
+      }
+export type UpdateAvatarMutationHookResult = ReturnType<typeof useUpdateAvatarMutation>;
+export type UpdateAvatarMutationResult = Apollo.MutationResult<UpdateAvatarMutation>;
+export type UpdateAvatarMutationOptions = Apollo.BaseMutationOptions<UpdateAvatarMutation, UpdateAvatarMutationVariables>;
+export const UpdateProfileDocument = gql`
+    mutation UpdateProfile($profileInput: ProfileInput!) {
+  updateProfile(profileInput: $profileInput) {
+    ...userMutationResponse
+  }
+}
+    ${UserMutationResponseFragmentDoc}`;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<UpdateProfileMutation, UpdateProfileMutationVariables>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      profileInput: // value for 'profileInput'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProfileMutation, UpdateProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProfileMutation, UpdateProfileMutationVariables>(UpdateProfileDocument, options);
+      }
+export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
+export type UpdateProfileMutationResult = Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
+export const CategoriesDocument = gql`
+    query Categories {
+  categories {
+    id
+    name
+    slug
+  }
+}
+    `;
+
+/**
+ * __useCategoriesQuery__
+ *
+ * To run a query within a React component, call `useCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<CategoriesQuery, CategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CategoriesQuery, CategoriesQueryVariables>(CategoriesDocument, options);
+      }
+export function useCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CategoriesQuery, CategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CategoriesQuery, CategoriesQueryVariables>(CategoriesDocument, options);
+        }
+export type CategoriesQueryHookResult = ReturnType<typeof useCategoriesQuery>;
+export type CategoriesLazyQueryHookResult = ReturnType<typeof useCategoriesLazyQuery>;
+export type CategoriesQueryResult = Apollo.QueryResult<CategoriesQuery, CategoriesQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -690,3 +1018,80 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const GetProductsByCategoryDocument = gql`
+    query GetProductsByCategory($categoryId: ID!) {
+  productsByCategory(categoryId: $categoryId) {
+    ...productInfo
+  }
+}
+    ${ProductInfoFragmentDoc}`;
+
+/**
+ * __useGetProductsByCategoryQuery__
+ *
+ * To run a query within a React component, call `useGetProductsByCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProductsByCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProductsByCategoryQuery({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useGetProductsByCategoryQuery(baseOptions: Apollo.QueryHookOptions<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>(GetProductsByCategoryDocument, options);
+      }
+export function useGetProductsByCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>(GetProductsByCategoryDocument, options);
+        }
+export type GetProductsByCategoryQueryHookResult = ReturnType<typeof useGetProductsByCategoryQuery>;
+export type GetProductsByCategoryLazyQueryHookResult = ReturnType<typeof useGetProductsByCategoryLazyQuery>;
+export type GetProductsByCategoryQueryResult = Apollo.QueryResult<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>;
+export const ProductsDocument = gql`
+    query products($limit: Int!, $cursor: String, $categoryQuery: String) {
+  products(limit: $limit, cursor: $cursor, categoryQuery: $categoryQuery) {
+    totalCount
+    hasMore
+    cursor
+    paginatedProducts {
+      ...productInfo
+    }
+  }
+}
+    ${ProductInfoFragmentDoc}`;
+
+/**
+ * __useProductsQuery__
+ *
+ * To run a query within a React component, call `useProductsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *      categoryQuery: // value for 'categoryQuery'
+ *   },
+ * });
+ */
+export function useProductsQuery(baseOptions: Apollo.QueryHookOptions<ProductsQuery, ProductsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductsQuery, ProductsQueryVariables>(ProductsDocument, options);
+      }
+export function useProductsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductsQuery, ProductsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductsQuery, ProductsQueryVariables>(ProductsDocument, options);
+        }
+export type ProductsQueryHookResult = ReturnType<typeof useProductsQuery>;
+export type ProductsLazyQueryHookResult = ReturnType<typeof useProductsLazyQuery>;
+export type ProductsQueryResult = Apollo.QueryResult<ProductsQuery, ProductsQueryVariables>;

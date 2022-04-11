@@ -1,13 +1,24 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Your own custom component styles */
 
-@import 'tailwindcss/utilities';
+@layer base{
+	:root{
+		--color-accent: 0, 159, 127;
+
+		--color-accent-hover: 1, 147, 118;
+
+		--color-border-base: 209, 213, 219;
+
+	}
+}
 
 html {
 	scrollbar-width: thin;
 	scrollbar-color: rgba(33, 43, 40, 0.2);
+	box-sizing: border-box;
 	}
 	body::-webkit-scrollbar {
 	  width: 8px;
@@ -27,7 +38,8 @@ html {
 	}
 
 body {
-	font-family: 'Roboto Slab', serif;
+	font-family: 'Roboto', sans-serif;
+	font-size:14px;
 	-moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
 }
@@ -58,20 +70,5 @@ body {
 	}
 }
 
-@keyframes heart-beat {
-	55% {
-	  background-color: #fff;
-	}
-	60% {
-	  background-color: #00d2a8;
-	}
-	65% {
-	  background-color: #fff;
-	}
-	70% {
-	  background-color: #00d2a8;
-	}
-	100% {
-	  background-color: #fff;
-	}
-  }
+
+@import "./custom-plugins.css";

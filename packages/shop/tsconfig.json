@@ -10,7 +10,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -21,11 +21,13 @@
     "incremental": true,
     "paths": {
       "@assets/*": ["src/assets/*"],
+      "@constants/*":["src/constants/*"],
       "@components/*": ["src/components/*"],
       "@lib/*": ["src/lib/*"],
       "@graphql/*":["src/graphql/*"],
       "@utils/*":["src/utils/*"],
       "@generated/*":["src/generated/*"],
+      "@pages/*":["src/pages/*"],
 
     }
   },

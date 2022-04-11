@@ -1,0 +1,78 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+
+/* Your own custom component styles */
+
+@import 'tailwindcss/utilities';
+
+html {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(33, 43, 40, 0.2);
+	}
+	body::-webkit-scrollbar {
+	  width: 8px;
+	}
+	body::-webkit-scrollbar-track {
+	  background: rgba(33, 43, 40, 0.2);
+	}
+	
+	body::-webkit-scrollbar-thumb {
+	  background-color: rgba(19, 163, 120, 0.7);
+	  backdrop-filter: blur(13px);
+	  border-radius: 10px;
+	}
+	html,
+	body {
+	  scroll-behavior: smooth;
+	}
+
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size:14px;
+	-moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+.loader {
+	border-top-color: #00d2a8;
+	-webkit-animation: spinner .4s linear infinite;
+	animation: spinner .4s linear infinite;
+}
+
+@-webkit-keyframes spinner {
+	0% {
+		-webkit-transform: rotate(0deg);
+	}
+
+	100% {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes heart-beat {
+	55% {
+	  background-color: #fff;
+	}
+	60% {
+	  background-color: #00d2a8;
+	}
+	65% {
+	  background-color: #fff;
+	}
+	70% {
+	  background-color: #00d2a8;
+	}
+	100% {
+	  background-color: #fff;
+	}
+  }

@@ -3,6 +3,6 @@ export const failureResponse = (code: number, success: boolean, message?: string
 	code, success, message
 })
 
-export const successResponse = (code: number, success: boolean, message: string) => {
-	return { code, success, message }
+export const successResponse = (code: number, success: boolean, message: string, ...rest: any) => {
+	return { code, success, message, ...rest }
 }

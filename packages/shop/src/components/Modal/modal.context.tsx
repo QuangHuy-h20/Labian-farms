@@ -1,6 +1,6 @@
 import { useContext, createContext, FC, useReducer } from 'react';
 
-type ModalName = 'LOGIN' | 'REGISTER'
+type ModalName = 'LOGIN' | 'REGISTER' | 'FORGOT_PASSWORD' | 'RESET_PASSWORD' | 'UPLOAD_AVATAR'
 interface State {
 	name?: ModalName
 	data?: any

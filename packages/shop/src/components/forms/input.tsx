@@ -1,10 +1,10 @@
-import { FieldError } from '@generated/graphql';
 import { forwardRef, InputHTMLAttributes } from 'react';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	className?: string
 	label?: string
 	name: string
+	value?: string
 	type?: string
 	error?: string
 	placeholder?: string
@@ -16,6 +16,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			className,
 			label,
 			name,
+			value,
 			error,
 			children,
 			disabled = false,
@@ -29,7 +30,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				{label && (
 					<label
 						htmlFor={name}
-						className="text-left mb-5"
+						className="text-left mb-1"
 					>
 						{label}
 					</label>
@@ -39,6 +40,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 						className='focus:outline-none w-full'
 						id={name}
 						name={name}
+						value={value}
 						type={type}
 						ref={ref}
 						disabled={disabled}

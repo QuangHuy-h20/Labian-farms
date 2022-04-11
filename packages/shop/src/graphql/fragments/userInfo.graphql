@@ -4,6 +4,7 @@ fragment userInfo on User{
 	phone
 	nickname
 	fullName
+	dateOfBirth
 	gender
 	address
 	avatar
