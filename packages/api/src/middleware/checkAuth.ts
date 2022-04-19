@@ -12,7 +12,7 @@ export const checkAuth: MiddlewareFn<Context> = async (
     );
   }
 
-  if(req.session.roleId !== "admin"){
+  if(req.session.roleId !== "executive-admin"){
     throw new Error("You do not have permission to access");
   }
 

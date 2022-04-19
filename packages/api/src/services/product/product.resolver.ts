@@ -12,7 +12,11 @@ import {
 } from "type-graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { checkRole } from "../../middleware/checkRole";
-import { CreateProductInput, UpdateProductInput } from "./product.input";
+import {
+  CreateProductInput,
+  SearchInput,
+  UpdateProductInput,
+} from "./product.input";
 import { ProductMutationResponse } from "./product.mutation";
 import { Farm } from "../../entities/Farm";
 import { Context } from "../../types/Context";
@@ -20,9 +24,9 @@ import { Product } from "../../entities/Product";
 import { Category } from "../../entities/Category";
 import { deleteFile, multipleUploads } from "../../utils/s3";
 import { failureResponse, successResponse } from "../../utils/statusResponse";
-import { toSlug } from "../../utils/toSlug";
+import { toNonAccent, toSlug } from "../../utils/common";
 import { PaginatedProducts } from "../../types/Paginated";
-import { LessThan } from "typeorm";
+import { getConnection, LessThan } from "typeorm";
 
 @Resolver((_of) => Product)
 export class ProductResolver {
@@ -53,12 +57,15 @@ export class ProductResolver {
   async products(
     @Arg("limit", (_type) => Int) limit: number,
     @Arg("cursor", { nullable: true }) cursor?: string,
-    @Arg("categoryQuery", (_type) => String, { nullable: true }) categoryQuery?: string | null
+    @Arg("categoryQuery", (_type) => String, { nullable: true })
+    categoryQuery?: string | null
   ): Promise<PaginatedProducts | null> {
     try {
-      const totalCount = categoryQuery ? await Product.count({
-        where: { categoryQuery }
-      }) : await Product.count()
+      const totalCount = categoryQuery
+        ? await Product.count({
+            where: { categoryQuery },
+          })
+        : await Product.count();
       const realLimit = Math.min(10, limit);
 
       const findOptions: { [key: string]: any } = {
@@ -71,7 +78,10 @@ export class ProductResolver {
       let lastProduct: Product[] = [];
 
       if (cursor) {
-        findOptions.where = { categoryQuery: categoryQuery ? categoryQuery : undefined, createdAt: LessThan(cursor) };
+        findOptions.where = {
+          categoryQuery: categoryQuery ? categoryQuery : undefined,
+          createdAt: LessThan(cursor),
+        };
         lastProduct = await Product.find({
           order: {
             createdAt: "ASC",
@@ -79,14 +89,18 @@ export class ProductResolver {
           take: 1,
         });
       }
-      const products = await Product.find(categoryQuery === undefined ? findOptions : { ...findOptions, where: { categoryQuery } });
-      
+      const products = await Product.find(
+        categoryQuery === undefined
+          ? findOptions
+          : { ...findOptions, where: { categoryQuery } }
+      );
+
       return {
         totalCount,
         cursor: products[products.length - 1].createdAt,
         hasMore: cursor
           ? products[products.length - 1].createdAt.toString() !==
-          lastProduct[0].createdAt.toString()
+            lastProduct[0].createdAt.toString()
           : products.length !== totalCount,
         paginatedProducts: products,
       };
@@ -123,22 +137,44 @@ export class ProductResolver {
     }
   }
 
-  //----------------------- Mutation -----------------------
+  @Query((_return) => [Product!], {
+    nullable: true,
+    description: "Find products by keyword",
+  })
+  async search(
+    @Arg("searchInput") { name, unAccentName }: SearchInput
+  ): Promise<Product[]> {
+    let listingQB = getConnection()
+      .getRepository(Product)
+      .createQueryBuilder("prod");
+    if (name) {
+      listingQB.andWhere("prod.name ilike :name", {
+        name: `%${name}%`,
+      });
+    }
+    if (unAccentName) {
+      listingQB.andWhere("prod.unAccentName ilike :unAccentName", {
+        unAccentName: `%${unAccentName}%`,
+      });
+    }
+    return listingQB.getMany();
+  }
 
+  //----------------------- Mutation -----------------------
   @Mutation((_return) => ProductMutationResponse, {
     description: "Create new product",
   })
   @UseMiddleware(checkRole)
   async createProduct(
     @Arg("createProductInput") createProductInput: CreateProductInput,
-    // @Ctx() { req }: Context,
+    @Ctx() { req }: Context,
     @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
   ): Promise<ProductMutationResponse> {
     let list: string[] = [];
 
     try {
       const { name } = createProductInput;
-      const existingFarm = await Farm.findOne({ ownerId: 5 }); //req.session.userId
+      const existingFarm = await Farm.findOne({ ownerId: req.session.userId }); //req.session.userId
       const existingProduct = await Product.findOne({ where: [{ name }] });
 
       if (!existingFarm)
@@ -148,12 +184,14 @@ export class ProductResolver {
 
       const getFarmSlug = existingFarm.slug;
       const slug = toSlug(name);
+      const unAccentName = toNonAccent(name);
       const folder = `products/${getFarmSlug}`;
       await multipleUploads(files, folder).then(async (value) => {
         list = value as string[];
 
         const newProduct = Product.create({
           ...createProductInput,
+          unAccentName,
           slug,
           image1: list[0] !== null ? list[0] : undefined,
           image2: list[1] !== null ? list[1] : undefined,
@@ -180,14 +218,22 @@ export class ProductResolver {
   // @UseMiddleware(checkRole)
   async updateProduct(
     @Arg("updateProductInput") updateProductInput: UpdateProductInput,
-    @Ctx() { req }: Context,
-    // @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
-  ): Promise<ProductMutationResponse> {
+    @Ctx() { req }: Context
+  ): // @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
+  Promise<ProductMutationResponse> {
     // let list: string[] = []
 
     try {
-      const { id, name, description, price, totalInventory, unit, categoryQuery } =
-        updateProductInput;
+      const {
+        id,
+        name,
+        description,
+        originalPrice,
+        price,
+        totalInventory,
+        unit,
+        categoryQuery,
+      } = updateProductInput;
       const existingProduct = await Product.findOne(id);
       const existingFarm = await Farm.findOne({ ownerId: req.session.userId });
 
@@ -199,6 +245,7 @@ export class ProductResolver {
       // const getFarmSlug = existingFarm.slug
       // const folder = `products/${getFarmSlug}`
       const slug = toSlug(name);
+      const unAccentName = toNonAccent(name);
 
       // let existingImage1 = existingProduct.image1
       // let existingImage2 = existingProduct.image2
@@ -207,8 +254,10 @@ export class ProductResolver {
       // let existingImage5 = existingProduct.image5
 
       existingProduct.slug = slug;
+      existingProduct.unAccentName = unAccentName;
       existingProduct.description = description;
       existingProduct.price = price;
+      existingProduct.originalPrice = originalPrice;
       existingProduct.totalInventory = totalInventory;
       existingProduct.unit = unit;
       existingProduct.categoryQuery = categoryQuery;
@@ -246,7 +295,7 @@ export class ProductResolver {
       const folder = `products/${existingFarm.slug}/${existingProduct.slug}`;
       await Product.delete({ id });
 
-      new Promise(_ => deleteFile(folder));
+      new Promise((_) => deleteFile(folder));
 
       return successResponse(200, true, "Xoá sản phẩm thành công.");
     } catch (error) {

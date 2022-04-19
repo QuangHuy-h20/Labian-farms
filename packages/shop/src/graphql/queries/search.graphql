@@ -1,0 +1,5 @@
+query Search($searchInput: SearchInput!) {
+  search(searchInput: $searchInput) {
+    ...productInfo
+  }
+}

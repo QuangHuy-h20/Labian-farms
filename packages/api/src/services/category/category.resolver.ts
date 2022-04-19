@@ -4,7 +4,7 @@ import { CreateCategoryInput } from "./category.input";
 import { CategoryMutationResponse } from "./category.mutation";
 import { checkAuth } from "../../middleware/checkAuth";
 import { failureResponse } from "../../utils/statusResponse";
-import { toSlug } from "../../utils/toSlug";
+import { toSlug } from "../../utils/common";
 
 @Resolver()
 export class CategoryResolver {

@@ -1,10 +1,15 @@
 import { Search } from "@assets/icons";
 import Button from "@components/ui/button";
 import Image from "next/image";
+import cn from "classnames";
 
-const Banner = () => {
+interface BannerProps {
+	className?: string
+}
+
+const Banner = ({ className }: BannerProps) => {
 	return (
-		<div className="relative hidden lg:flex">
+		<div className={cn("relative hidden lg:flex", className)}>
 
 			<div className="relative w-full lg:h-screen-85 contrast-75 brightness-75 -z-1">
 				<Image src="/banner.jpg" layout="fill" objectFit="cover" priority alt="banner image" />

@@ -26,6 +26,7 @@
       "@lib/*": ["src/lib/*"],
       "@graphql/*":["src/graphql/*"],
       "@utils/*":["src/utils/*"],
+      "@types/*":["src/types/*"],
       "@generated/*":["src/generated/*"],
       "@pages/*":["src/pages/*"],
 

@@ -90,10 +90,12 @@ export type CreateFarmInput = {
 };
 
 export type CreateProductInput = {
+  categoryId: Scalars['Float'];
   categoryQuery: Scalars['String'];
   description: Scalars['String'];
   farmId: Scalars['String'];
   name: Scalars['String'];
+  originalPrice: Scalars['Float'];
   price: Scalars['Float'];
   totalInventory: Scalars['Float'];
   unit: Scalars['String'];
@@ -355,10 +357,11 @@ export type Product = {
   image4?: Maybe<Scalars['String']>;
   image5?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  priceRoot: Scalars['Float'];
   slug: Scalars['String'];
   totalInventory: Scalars['Float'];
+  unAccentName: Scalars['String'];
   unit?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -402,6 +405,8 @@ export type Query = {
   productsByCategory?: Maybe<Array<Product>>;
   /** Get all roles */
   roles?: Maybe<Array<UserRole>>;
+  /** Find products by keyword */
+  search?: Maybe<Array<Product>>;
   /** Get all users */
   users?: Maybe<Array<User>>;
 };
@@ -438,6 +443,11 @@ export type QueryProductsByCategoryArgs = {
   categoryId: Scalars['ID'];
 };
 
+
+export type QuerySearchArgs = {
+  searchInput: SearchInput;
+};
+
 export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -458,6 +468,11 @@ export type RoleMutationResponse = IMutationResponse & {
   success: Scalars['Boolean'];
 };
 
+export type SearchInput = {
+  name?: InputMaybe<Scalars['String']>;
+  unAccentName?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateAddressInput = {
   address: Scalars['String'];
   email: Scalars['String'];
@@ -474,11 +489,13 @@ export type UpdateFarmInput = {
 };
 
 export type UpdateProductInput = {
+  categoryId: Scalars['Float'];
   categoryQuery: Scalars['String'];
   description: Scalars['String'];
   farmId: Scalars['String'];
   id: Scalars['String'];
   name: Scalars['String'];
+  originalPrice: Scalars['Float'];
   price: Scalars['Float'];
   totalInventory: Scalars['Float'];
   unit: Scalars['String'];
@@ -615,6 +632,13 @@ export type ProductsQueryVariables = Exact<{
 
 
 export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'PaginatedProducts', totalCount: number, hasMore: boolean, cursor: any, paginatedProducts: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> } | null | undefined };
+
+export type SearchQueryVariables = Exact<{
+  searchInput: SearchInput;
+}>;
+
+
+export type SearchQuery = { __typename?: 'Query', search?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
 
 export const FarmMutationStatusFragmentDoc = gql`
     fragment farmMutationStatus on FarmMutationResponse {
@@ -1095,3 +1119,38 @@ export function useProductsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<P
 export type ProductsQueryHookResult = ReturnType<typeof useProductsQuery>;
 export type ProductsLazyQueryHookResult = ReturnType<typeof useProductsLazyQuery>;
 export type ProductsQueryResult = Apollo.QueryResult<ProductsQuery, ProductsQueryVariables>;
+export const SearchDocument = gql`
+    query Search($searchInput: SearchInput!) {
+  search(searchInput: $searchInput) {
+    ...productInfo
+  }
+}
+    ${ProductInfoFragmentDoc}`;
+
+/**
+ * __useSearchQuery__
+ *
+ * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchQuery({
+ *   variables: {
+ *      searchInput: // value for 'searchInput'
+ *   },
+ * });
+ */
+export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+      }
+export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
+        }
+export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
+export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
+export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;

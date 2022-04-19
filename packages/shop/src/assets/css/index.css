@@ -12,6 +12,12 @@
 
 		--color-border-base: 209, 213, 219;
 
+		--nav-height: 90px;
+        --nav-scroll-height: 70px;
+
+        --easing: cubic-bezier(.6,.25,.55,1);
+        --transition: all .25s cubic-bezier(.6,.25,.55,1);
+
 	}
 }
 

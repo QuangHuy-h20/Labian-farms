@@ -6,7 +6,7 @@ import { CreateFarmInput, UpdateFarmInput } from "./farm.input";
 import { Context } from "../../types/Context";
 import { checkRole } from "../../middleware/checkRole";
 import { failureResponse, successResponse } from "../../utils/statusResponse";
-import { toSlug } from "../../utils/toSlug";
+import { toSlug } from "../../utils/common";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { deleteFile, singleUpload, multipleUploads } from "../../utils/s3";
 import { Product } from "../../entities/Product";

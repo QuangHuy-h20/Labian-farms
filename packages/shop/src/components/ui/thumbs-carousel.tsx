@@ -43,8 +43,8 @@ export const ThumbsCarousel: React.FC<Props> = ({ gallery }) => {
 							<Image
 								src={item?.thumbnail}
 								alt={`Banner gallery ${item.id}`}
-								width={420}
-								height={200}
+								width={300}
+								height={140}
 							/>
 						</SwiperSlide>
 					))}

@@ -3,7 +3,7 @@ import {
   Arg, Mutation, Query, Resolver,
   UseMiddleware
 } from "type-graphql";
-import { toSlug } from "../../utils/toSlug";
+import { toSlug } from "../../utils/common";
 import { UserRole } from "../../entities/UserRole";
 import { RoleMutationResponse } from "./role.mutation";
 import { CreateRoleInput } from "./role.input";

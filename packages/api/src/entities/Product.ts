@@ -1,9 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
-import {
-  Column,
-  Entity,
-  ManyToOne,
-} from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { Category } from "./Category";
 import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";
@@ -14,6 +10,10 @@ export class Product extends CoreEntity {
   @Field()
   @Column()
   name!: string;
+
+  @Field()
+  @Column({ nullable: true })
+  unAccentName: string;
 
   @Field()
   @Column()
@@ -29,7 +29,7 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ default: 0 })
-  priceRoot!: number;
+  originalPrice!: number;
 
   @Field()
   @Column({ default: 0 })
@@ -37,7 +37,7 @@ export class Product extends CoreEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  unit: string
+  unit: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -75,8 +75,7 @@ export class Product extends CoreEntity {
   @Column()
   farmId!: number;
 
-  @Field(_type => Farm)
+  @Field((_type) => Farm)
   @ManyToOne(() => Farm, (farm) => farm.products)
   farm: Farm;
-
 }
