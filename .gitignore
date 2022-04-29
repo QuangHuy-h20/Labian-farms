@@ -1,0 +1,12 @@
+node_modules
+
+yarn.lock
+
+packages/api/dist
+
+packages/api/node_modules
+
+packages/api/.env
+
+packages/api/yarn-error.log
+

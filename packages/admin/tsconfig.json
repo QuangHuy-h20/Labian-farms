@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "baseUrl": ".",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@assets/*": ["src/assets/*"],
+      "@lotties/*": ["src/lotties/*"],
+      "@constants/*":["src/constants/*"],
+      "@contexts/*":["src/contexts/*"],
+      "@components/*": ["src/components/*"],
+      "@lib/*": ["src/lib/*"],
+      "@graphql/*":["src/graphql/*"],
+      "@utils/*":["src/utils/*"],
+      "@types/*":["src/types/*"],
+      "@generated/*":["src/generated/*"],
+      "@settings/*":["src/settings/*"],
+      "@pages/*":["src/pages/*"],
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+, "src/utils/useCheckAuth.ts"  ]
+}

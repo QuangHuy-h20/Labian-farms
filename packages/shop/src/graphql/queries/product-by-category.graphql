@@ -1,0 +1,5 @@
+query GetProductsByCategory($categoryId: ID!) {
+  productsByCategory(categoryId: $categoryId) {
+    ...productInfo
+  }
+}

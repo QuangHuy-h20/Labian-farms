@@ -1,0 +1,12 @@
+fragment userInfo on User{
+	id
+	email
+	phone
+	nickname
+	fullName
+	gender
+	address
+	avatar
+	roleId
+	isActiveEmail
+}

@@ -1,0 +1,16 @@
+fragment productInfo on Product {
+  id
+  name
+  slug
+  price
+  unit
+  description
+  image1
+  image2
+  image3
+  image4
+  image5
+  farm {
+    name
+  }
+}

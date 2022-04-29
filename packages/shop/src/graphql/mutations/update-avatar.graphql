@@ -1,0 +1,3 @@
+mutation UpdateAvatar($id: ID!, $file: Upload!){
+  updateAvatar(file: $file, id:$id)
+}
