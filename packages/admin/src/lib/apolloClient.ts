@@ -14,6 +14,7 @@ import { onError } from "@apollo/client/link/error";
 import { IncomingHttpHeaders } from "http";
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 import Router from "next/router";
+import { Farm } from "@generated/graphql";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -65,32 +66,32 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
     link: links,
     cache: new InMemoryCache({
       typePolicies: {
-        // Query: {
-        //   fields: {
-        //     courses: {
-        //       keyArgs: false,
-        //       merge(existing, incoming) {
-        //         // console.log("existing", existing);
-        //         // console.log("incoming", incoming);
-        //         let paginatedCourses: Course[] = [];
+        Query: {
+          fields: {
+            farms: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                // console.log("existing", existing);
+                // console.log("incoming", incoming);
+                let paginatedFarms: Farm[] = [];
 
-        //         if (existing && existing.paginatedCourses) {
-        //           paginatedCourses = paginatedCourses.concat(
-        //             existing.paginatedCourses
-        //           );
-        //         }
+                if (existing && existing.paginatedFarms) {
+                  paginatedFarms = paginatedFarms.concat(
+                    existing.paginatedFarms
+                  );
+                }
 
-        //         if (incoming && incoming.paginatedCourses) {
-        //           paginatedCourses = paginatedCourses.concat(
-        //             incoming.paginatedCourses
-        //           );
-        //         }
+                if (incoming && incoming.paginatedFarms) {
+                  paginatedFarms = paginatedFarms.concat(
+                    incoming.paginatedCourses
+                  );
+                }
 
-        //         return { ...incoming, paginatedCourses };
-        //       },
-        //     },
-        //   },
-        // },
+                return { ...incoming, paginatedFarms };
+              },
+            },
+          },
+        },
       },
     }),
   });

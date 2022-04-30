@@ -1,0 +1,10 @@
+query Farms($limit: Int!, $cursor: String){
+  farms(limit:$limit, cursor: $cursor) {
+   totalCount
+    cursor
+    hasMore
+    paginatedFarms{
+      ...farmInfo
+    }
+  }
+}

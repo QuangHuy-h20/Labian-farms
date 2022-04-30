@@ -1,6 +1,7 @@
 export const LIMIT = 10;
 export const EXECUTIVE_ADMIN = "executive-admin";
-export const FARMER = "farmer";
+export const FARMER = "farmer"; 
+export const CUSTOMER = "customer"; 
 export const TOKEN = "token";
 export const PERMISSIONS = "permissions";
 export const AUTH_CRED = "auth_cred";

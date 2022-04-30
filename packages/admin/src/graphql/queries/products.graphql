@@ -1,0 +1,10 @@
+query Products($limit: Int!, $cursor: String, $categoryQuery: String) {
+  products(limit: $limit, cursor: $cursor, categoryQuery: $categoryQuery) {
+    totalCount
+    hasMore
+    cursor
+    paginatedProducts {
+      ...productInfo
+    }
+  }
+}

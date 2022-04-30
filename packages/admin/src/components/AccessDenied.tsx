@@ -12,14 +12,14 @@ const AccessDeniedPage = () => {
   };
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
-      <div className="w-full h-80 sm:h-96 3xl:h-[420px] relative">
-        <Lottie options={defaultOptions} height={400} width={400} />
+      <div className="w-full relative">
+        <Lottie options={defaultOptions} height={350} width={350} />
       </div>
 
-      <h3 className="mt-5 sm:mt-10 text-sub-heading text-xl md:text-4xl 3xl:text-3xl font-bold text-center">
+      <h3 className="mt-5 sm:mt-10 text-xl md:text-5xl text-gray-600 font-bold text-center">
         Truy cập bị từ chối
       </h3>
-      <p className="text-sm 3xl:text-xl text-body mt-6 text-center">
+      <p className="text-sm 3xl:text-xl text-gray-500 mt-14 text-center">
         Bạn không có quyền để truy cập trang ứng dụng này
         <Link
           href="http://localhost:3000/"

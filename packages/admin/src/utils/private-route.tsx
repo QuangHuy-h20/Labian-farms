@@ -1,40 +1,32 @@
 import AccessDenied from "@components/AccessDenied";
 import Spinner from "@components/loader/spinner";
+import PageLoader from "@components/ui/page-loader";
+import { useMeQuery } from "@generated/graphql";
 import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
-import React from "react";
 import { useEffect } from "react";
-import { getAuthCredentials, hasAccess } from "./auth-utils";
+import { CUSTOMER } from "./constants";
 
-const PrivateRoute: React.FC<{ authProps: any; children: React.ReactNode }> = ({
+const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
-  authProps,
 }) => {
   const router = useRouter();
-  const { token, permissions } = getAuthCredentials();
-  console.log(token, permissions);
-  
-  const isUser = !!token;
-  const hasPermission =
-    Array.isArray(permissions) &&
-    !!permissions.length &&
-    hasAccess(authProps.permissions, permissions);
-  useEffect(() => {
-    if (!isUser) router.replace(ROUTES.LOGIN);
-  }, [isUser]);
+  const { data, loading } = useMeQuery();
 
-  if (isUser && hasPermission) {
-    return <>{children}</>;
-  }
-  if (isUser && !hasPermission) {
+  useEffect(() => {
+    if (!data) router.replace(ROUTES.LOGIN);
+  }, [data]);
+
+  if (loading) return <PageLoader />;
+
+  if (data?.me?.roleId === CUSTOMER) {
     return <AccessDenied />;
   }
 
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <Spinner size="large" />
-    </div>
-  );
+  if (!loading && data) return <>{children}</>;
+  
+  return <PageLoader />;
+  // return <>{!loading && data && <>{children}</>}</>;
 };
 
 export default PrivateRoute;

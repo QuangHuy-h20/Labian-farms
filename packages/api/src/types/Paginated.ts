@@ -1,9 +1,10 @@
 
 import { Product } from "../entities/Product";
 import { Field, ObjectType } from "type-graphql";
+import { Farm } from "../entities/Farm";
 
 @ObjectType()
-export class PaginatedProducts {
+export class Paginated {
   @Field()
   totalCount!: number;
 
@@ -13,6 +14,16 @@ export class PaginatedProducts {
   @Field()
   hasMore!: boolean;
 
+}
+@ObjectType()
+export class PaginatedProducts extends Paginated {
   @Field((_type) => [Product])
   paginatedProducts!: Product[];
+}
+
+@ObjectType()
+export class PaginatedFarms extends Paginated {
+  
+  @Field((_type) => [Farm])
+  paginatedFarms!: Farm[];
 }

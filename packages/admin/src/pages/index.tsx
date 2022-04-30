@@ -6,7 +6,7 @@ import { useMeQuery } from "@generated/graphql";
 const AdminDashboard = dynamic(() => import("@components/dashboard/admin"));
 const FarmerDashboard = dynamic(() => import("@components/dashboard/farmer"));
 
-export default function Dashboard({ userPermissions }: any) {
+export default function Dashboard() {
   const { data } = useMeQuery();
   if (data?.me?.roleId === EXECUTIVE_ADMIN) {
     return <AdminDashboard />;

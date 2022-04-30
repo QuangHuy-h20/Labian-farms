@@ -3,7 +3,7 @@ export const ROUTES = {
   FARMS: "/farms",
   MY_FARMS: "/my-farms",
   TOURS: "farms/tours",
-  CREATE_FARM: "/farm/create",
+  CREATE_FARM: "/farms/create",
   LOGIN: "/login",
   REGISTER: "/register",
   FORGET_PASSWORD: "/forgot-password",

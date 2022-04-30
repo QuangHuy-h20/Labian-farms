@@ -6,11 +6,13 @@ import {
 	EXECUTIVE_ADMIN,
 	FARMER,
 	TOKEN,
+	CUSTOMER,
 } from "./constants";
 
 export const allowedRoles = [EXECUTIVE_ADMIN, FARMER];
 export const adminOnly = [EXECUTIVE_ADMIN];
 export const farmerOnly = [FARMER];
+export const customerOnly = [CUSTOMER];
 
 export function setAuthCredentials(token: string, permissions: any) {
 	Cookie.set(AUTH_CRED, JSON.stringify({ token, permissions }));

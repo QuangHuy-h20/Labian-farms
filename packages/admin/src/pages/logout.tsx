@@ -1,7 +1,8 @@
 import { MeDocument, MeQuery, useLogoutMutation } from "@generated/graphql";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import Spinner from "@components/loader/spinner";
+import PageLoader from "@components/ui/page-loader";
+
 export default function Logout() {
   const [logout] = useLogoutMutation();
   const router = useRouter();
@@ -18,9 +19,5 @@ export default function Logout() {
     });
     router.push("/login");
   }, []);
-  return (
-    <div className="min-h-screen justify-center items-center">
-      <Spinner size="large" />
-    </div>
-  );
+  return <PageLoader />;
 }

@@ -1,0 +1,14 @@
+query Farm($slug: String!){
+  farm(slug: $slug) {
+    id
+    name
+    slug
+    description
+    address
+    logoImage
+    owner {
+      phone
+      email
+    }
+  }
+}

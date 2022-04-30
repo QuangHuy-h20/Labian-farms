@@ -59,6 +59,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
           name="loginField"
+          defaultValue="0903633113"
           label="Tài khoản"
           type="text"
           {...register("loginField")}
@@ -68,6 +69,7 @@ export default function LoginPage() {
 
         <PasswordInput
           name="password"
+          defaultValue="1234567"
           label="Mật khẩu"
           {...register("password")}
           placeholder="Nhập mật khẩu"

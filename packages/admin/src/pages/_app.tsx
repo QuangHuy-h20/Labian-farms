@@ -7,6 +7,8 @@ import PrivateRoute from "@utils/private-route";
 import { ToastContainer } from "react-toastify";
 import { UIProvider } from "../contexts/ui.context";
 import { ModalProvider } from "@components/ui/modal/modal.context";
+import 'react-toastify/dist/ReactToastify.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 const Noop: React.FC = ({ children }: any) => <>{children}</>;
 
@@ -24,7 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <UIProvider>
           <ModalProvider>
             {authProps ? (
-                  <PrivateRoute authProps={authProps}>
+                  <PrivateRoute>
                     <Layout {...pageProps}>
                       <Component {...pageProps} />
                     </Layout>

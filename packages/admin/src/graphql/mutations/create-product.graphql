@@ -1,0 +1,18 @@
+mutation CreateProduct(
+  $createProductInput: CreateProductInput!
+  $files: [Upload!]!
+) {
+  createProduct(files: $files, createProductInput: $createProductInput) {
+    code
+    success
+    message
+    product {
+      id
+      name
+      farm {
+        id
+        name
+      }
+    }
+  }
+}

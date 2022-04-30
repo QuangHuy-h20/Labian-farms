@@ -18,7 +18,7 @@ const FarmerInformation: React.FC = () => {
     <div className="h-full p-5 flex flex-col items-center">
       <div className="w-32 h-32 relative rounded-full flex items-center justify-center overflow-hidden border border-gray-200">
         <Image
-          src={avatar ?? siteSettings?.avatar?.placeholder}
+          src={avatar ? avatar : siteSettings?.avatar?.placeholder}
           layout="fill"
         />
       </div>

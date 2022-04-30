@@ -22,7 +22,7 @@ const AppLayout = ({ children }) => {
             <SidebarItemMap />
           </div>
         </aside>
-        <main className="w-full lg:ps-72 xl:ps-76">
+        <main className="w-full pl-72">
           <div className="p-5 md:p-8 h-full">{children}</div>
         </main>
       </div>

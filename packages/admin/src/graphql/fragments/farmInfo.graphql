@@ -1,0 +1,13 @@
+fragment farmInfo on Farm{
+	id
+    name
+    logoImage
+    products {
+      id
+      name
+    }
+    owner {
+      phone
+      email
+    }
+}

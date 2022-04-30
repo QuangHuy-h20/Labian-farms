@@ -1,4 +1,4 @@
-import { Arg, Ctx, FieldResolver, ID, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, FieldResolver, ID, Int, Mutation, Query, Resolver, Root, UseMiddleware } from "type-graphql";
 import { Farm } from "../../entities/Farm";
 import { User } from "../../entities/User";
 import { FarmMutationResponse } from "./farm.mutation";
@@ -10,6 +10,8 @@ import { toSlug } from "../../utils/common";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { deleteFile, singleUpload, multipleUploads } from "../../utils/s3";
 import { Product } from "../../entities/Product";
+import { PaginatedFarms } from "../../types/Paginated";
+import { LessThan } from "typeorm";
 
 @Resolver(_of => Farm)
 export class FarmResolver {
@@ -40,22 +42,60 @@ export class FarmResolver {
     }
   }
 
-  // @Query(_return => [Farm], {description: "Pagination for farms", nullable:true})
-  // async farmPagination(){}
 
-  @Query(_return => [Farm], { description: "Get all farms", nullable: true })
-  async farms(): Promise<Farm[] | null> {
+  @Query((_return) => PaginatedFarms, {
+    nullable: true,
+    description: "Get all farms",
+  })
+  async farms(
+    @Arg("limit", (_type) => Int) limit: number,
+    @Arg("cursor", { nullable: true }) cursor?: string,
+  ): Promise<PaginatedFarms | null> {
     try {
-      return await Farm.find()
-    } catch (error) {
-      return null
+      const totalCount = await Farm.count();
+      const realLimit = Math.min(10, limit);
+
+      const findOptions: { [key: string]: any } = {
+        order: {
+          createdAt: "DESC",
+        },
+        take: realLimit,
+      };
+
+      let lastFarm: Farm[] = [];
+
+      if (cursor) {
+        findOptions.where = {
+          createdAt: LessThan(cursor),
+        };
+
+        lastFarm = await Farm.find({
+          order: {
+            createdAt: "ASC",
+          },
+          take: 1,
+        });
+      }
+      const farms = await Farm.find(findOptions);
+
+      return {
+        totalCount,
+        cursor: farms[farms.length - 1].createdAt,
+        hasMore: cursor
+          ? farms[farms.length - 1].createdAt.toString() !==
+          lastFarm[0].createdAt.toString()
+          : farms.length !== totalCount,
+        paginatedFarms: farms,
+      };
+    } catch {
+      return null;
     }
   }
 
   @Query(_return => Farm, { nullable: true, description: "Get specific farm by id" })
-  async farm(@Arg("id", _type => ID) id: number): Promise<Farm | undefined> {
+  async farm(@Arg("slug", _type => String) slug: string): Promise<Farm | undefined> {
     try {
-      return await Farm.findOne(id)
+      return await Farm.findOne({ slug })
     } catch (error) {
       return undefined
     }
