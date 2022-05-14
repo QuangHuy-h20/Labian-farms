@@ -1,4 +1,4 @@
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 import { getIcon } from "@utils/get-icon";
 import * as sidebarIcons from "@components/icons/sidebar";
 import { useUI } from "@contexts/ui.context";
@@ -12,7 +12,7 @@ const SidebarItem = ({ href, icon, label }: any) => {
 		{getIcon({
 		  iconList: sidebarIcons,
 		  iconName: icon,
-		  className: "w-5 h-5 me-4",
+		  className: "w-5 h-5",
 		})}
 		<span className="ml-2" onClick={() => closeSidebar()}>{label}</span>
 	  </Link>

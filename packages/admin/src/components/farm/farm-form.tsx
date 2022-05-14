@@ -18,7 +18,6 @@ const schema: yup.SchemaOf<CreateFarmInput> = yup.object().shape({
 });
 
 const FarmForm = () => {
-  const router = useRouter();
   const [createFarm] = useCreateFarmMutation();
   const {
     handleSubmit,

@@ -14,8 +14,8 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   const { data, loading } = useMeQuery();
 
   useEffect(() => {
-    if (!data) router.replace(ROUTES.LOGIN);
-  }, [data]);
+    if (!loading && !data?.me) router.replace(ROUTES.LOGIN);
+  }, [data, loading, router]);
 
   if (loading) return <PageLoader />;
 
@@ -24,9 +24,8 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   }
 
   if (!loading && data) return <>{children}</>;
-  
+
   return <PageLoader />;
-  // return <>{!loading && data && <>{children}</>}</>;
 };
 
 export default PrivateRoute;

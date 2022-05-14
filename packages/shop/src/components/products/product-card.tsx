@@ -38,14 +38,14 @@ const ProductCard: React.FC<CardProps> = ({ product, className }) => {
       <header className="p-3">
         <div className="flex items-center mb-2">
           <span>{priceRoot}</span>
-          <span className="text-sm md:text-base text-heading text-emerald-500 font-semibold">
+          <span className="text-sm md:text-base text-gray-600 text-emerald-500 font-semibold">
             {moneyFormatter(price)} / <span>{unit}</span>
           </span>
         </div>
         {/* End of product price */}
 
         <h3
-          className="text-xs md:text-sm text-body truncate mb-4 cursor-pointer"
+          className="text-xs md:text-sm text-gray-400 truncate mb-4 cursor-pointer"
           onClick={handleProductQuickView}
         >
           {name}
@@ -58,7 +58,7 @@ const ProductCard: React.FC<CardProps> = ({ product, className }) => {
             {Number(quantity) > 0 && (
               <button
                 onClick={handleProductQuickView}
-                className="group w-full h-7 md:h-9 flex items-center justify-between text-xs md:text-sm text-body-dark rounded bg-gray-100 transition-colors hover:bg-accent hover:border-accent hover:text-light focus:outline-none focus:bg-accent focus:border-accent focus:text-light"
+                className="group w-full h-7 md:h-9 flex items-center justify-between text-xs md:text-sm text-gray-500 rounded bg-gray-100 transition-colors hover:bg-accent hover:border-accent hover:text-light focus:outline-none focus:bg-accent focus:border-accent focus:text-light"
               >
                 <span className="flex-1">{t("text-add")}</span>
                 <span className="w-7 h-7 md:w-9 md:h-9 bg-gray-200 grid place-items-center ltr:rounded-tr rtl:rounded-tl ltr:rounded-br rtl:rounded-bl transition-colors duration-200 group-hover:bg-accent-600 group-focus:bg-accent-600">

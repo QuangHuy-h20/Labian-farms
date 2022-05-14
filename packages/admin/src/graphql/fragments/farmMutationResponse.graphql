@@ -1,0 +1,9 @@
+fragment farmMutationResponse on FarmMutationResponse {
+  ...farmMutationStatus
+  farm {
+    ...farmInfo
+  }
+  errors {
+    ...fieldError
+  }
+}

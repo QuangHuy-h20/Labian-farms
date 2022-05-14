@@ -1,9 +1,52 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+
 
 /* Your own custom component styles */
 
 @import 'tailwindcss/utilities';
+
+:root {
+    /*
+    *
+    * This all are the rgb values which are used inside the
+    * tailwind config file and custom plugins css file
+    *
+    */
+
+    /*
+    * primary color
+    */
+    --color-accent: 0, 159, 127;
+
+    /*
+    * Hover state color of primary color
+    */
+    --color-accent-hover: 1, 147, 118;
+
+    /*
+    * shade of primary color
+    */
+    --color-accent-300: 153, 217, 204;
+
+    /*
+    * shade of primary color
+    */
+    --color-accent-400: 77, 188, 165;
+
+    /*
+    * shade of primary color
+    */
+    --color-accent-500: 0, 159, 127;
+
+    /*
+    * shade of primary color
+    */
+    --color-accent-600: 0, 143, 114;
+
+    /*
+    * shade of primary color
+    */
+    --color-accent-700: 0, 119, 95;
+}
 
 html {
 	scrollbar-width: thin;
@@ -33,11 +76,47 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+tbody > tr:hover {
+  background-color: rgb(241 245 249);
+  }
+
 .loader {
 	border-top-color: #00d2a8;
 	-webkit-animation: spinner .4s linear infinite;
 	animation: spinner .4s linear infinite;
 }
+th,
+td {
+  padding: 15px 8px;
+}
+
+.table__pagination-item ~ .table__pagination-item {
+    margin-left: 10px;
+  }
+
+  .table__pagination-item {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .table__pagination-item.active,
+  .table__pagination-item.active:hover {
+    background-color: rgb(241 245 249);
+    color: #fff;
+    font-weight: 600;
+    
+
+  }
+
+  .table__pagination-item:hover {
+    color: #fff;
+    background-color: rgb(229 231 235);
+  }
 
 @-webkit-keyframes spinner {
 	0% {
@@ -76,3 +155,7 @@ body {
 	  background-color: #fff;
 	}
   }
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import "./custom-plugins.css";

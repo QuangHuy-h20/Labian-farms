@@ -28,6 +28,7 @@ import { toNonAccent, toSlug } from "../../utils/common";
 import { PaginatedProducts } from "../../types/Paginated";
 import { getConnection, LessThan } from "typeorm";
 
+
 @Resolver((_of) => Product)
 export class ProductResolver {
   //-------------------- Field resolver ----------------------
@@ -45,26 +46,36 @@ export class ProductResolver {
     @Root() root: Product,
     @Ctx() { dataLoaders: { categoryLoader } }: Context
   ) {
-    return await categoryLoader.load(root.categoryId);
+    return await categoryLoader.load(root.categoryId)
   }
 
   //------------------------- Query --------------------------
 
+  @Query(_return => [Product], { nullable: true, description: "query all products" })
+  async allProducts(): Promise<Product[] | null> {
+    try {
+      return await Product.find();
+    } catch (error) {
+      return null;
+    }
+  }
+
   @Query((_return) => PaginatedProducts, {
     nullable: true,
-    description: "Get all products",
+    description: "Get all products with paginate",
   })
+
   async products(
     @Arg("limit", (_type) => Int) limit: number,
     @Arg("cursor", { nullable: true }) cursor?: string,
-    @Arg("categoryQuery", (_type) => String, { nullable: true })
-    categoryQuery?: string | null
+    @Arg("categoryId", (_type) => String, { nullable: true })
+    categoryId?: string | null
   ): Promise<PaginatedProducts | null> {
     try {
-      const totalCount = categoryQuery
+      const totalCount = categoryId
         ? await Product.count({
-            where: { categoryQuery },
-          })
+          where: { categoryId },
+        })
         : await Product.count();
       const realLimit = Math.min(10, limit);
 
@@ -79,7 +90,7 @@ export class ProductResolver {
 
       if (cursor) {
         findOptions.where = {
-          categoryQuery: categoryQuery ? categoryQuery : undefined,
+          categoryId: categoryId ? categoryId : undefined,
           createdAt: LessThan(cursor),
         };
         lastProduct = await Product.find({
@@ -90,9 +101,9 @@ export class ProductResolver {
         });
       }
       const products = await Product.find(
-        categoryQuery === undefined
+        categoryId === undefined
           ? findOptions
-          : { ...findOptions, where: { categoryQuery } }
+          : { ...findOptions, where: { categoryId } }
       );
 
       return {
@@ -100,7 +111,7 @@ export class ProductResolver {
         cursor: products[products.length - 1].createdAt,
         hasMore: cursor
           ? products[products.length - 1].createdAt.toString() !==
-            lastProduct[0].createdAt.toString()
+          lastProduct[0].createdAt.toString()
           : products.length !== totalCount,
         paginatedProducts: products,
       };
@@ -113,8 +124,22 @@ export class ProductResolver {
     nullable: true,
     description: "Get all products by category",
   })
+  async productsByFarm(
+    @Arg("farmId", (_type) => ID) farmId: number
+  ): Promise<Product[] | null> {
+    try {
+      return await Product.find({ farmId });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  @Query((_return) => [Product], {
+    nullable: true,
+    description: "Get all products by category",
+  })
   async productsByCategory(
-    @Arg("categoryId", (_type) => ID) categoryId: number
+    @Arg("categoryId", (_type) => ID) categoryId: string
   ): Promise<Product[] | null> {
     try {
       return await Product.find({ categoryId });
@@ -167,14 +192,14 @@ export class ProductResolver {
   @UseMiddleware(checkRole)
   async createProduct(
     @Arg("createProductInput") createProductInput: CreateProductInput,
-    @Ctx() { req }: Context,
+    @Arg("farmId", (_type) => ID) farmId: number,
     @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
   ): Promise<ProductMutationResponse> {
     let list: string[] = [];
 
     try {
       const { name } = createProductInput;
-      const existingFarm = await Farm.findOne({ ownerId: req.session.userId }); //req.session.userId
+      const existingFarm = await Farm.findOne({ id: farmId });
       const existingProduct = await Product.findOne({ where: [{ name }] });
 
       if (!existingFarm)
@@ -183,16 +208,16 @@ export class ProductResolver {
         return failureResponse(400, false, "Tên sản phẩm đã được sử dụng.");
 
       const getFarmSlug = existingFarm.slug;
-      const slug = toSlug(name);
+      const productSlug = toSlug(name);
       const unAccentName = toNonAccent(name);
       const folder = `products/${getFarmSlug}`;
-      await multipleUploads(files, folder).then(async (value) => {
+      await multipleUploads(files, folder, productSlug).then(async (value) => {
         list = value as string[];
 
         const newProduct = Product.create({
           ...createProductInput,
           unAccentName,
-          slug,
+          slug: productSlug,
           image1: list[0] !== null ? list[0] : undefined,
           image2: list[1] !== null ? list[1] : undefined,
           image3: list[2] !== null ? list[2] : undefined,
@@ -215,13 +240,14 @@ export class ProductResolver {
   @Mutation((_return) => ProductMutationResponse, {
     description: "Update product",
   })
-  // @UseMiddleware(checkRole)
+  @UseMiddleware(checkRole)
   async updateProduct(
     @Arg("updateProductInput") updateProductInput: UpdateProductInput,
-    @Ctx() { req }: Context
-  ): // @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
-  Promise<ProductMutationResponse> {
-    // let list: string[] = []
+    @Arg("farmId", (_type) => ID) farmId: number,
+    @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
+  ):
+    Promise<ProductMutationResponse> {
+    let list: string[] = []
 
     try {
       const {
@@ -230,37 +256,51 @@ export class ProductResolver {
         description,
         originalPrice,
         price,
-        totalInventory,
+        qty,
         unit,
-        categoryQuery,
+        categoryId
       } = updateProductInput;
       const existingProduct = await Product.findOne(id);
-      const existingFarm = await Farm.findOne({ ownerId: req.session.userId });
+      const existingFarm = await Farm.findOne({ id: farmId });
 
       if (!existingFarm)
         return failureResponse(404, false, "Không có quyền truy cập.");
       if (!existingProduct)
         return failureResponse(404, false, "Sản phẩm không tồn tại.");
 
-      // const getFarmSlug = existingFarm.slug
-      // const folder = `products/${getFarmSlug}`
+      const getFarmSlug = existingFarm.slug
+      const folder = `products/${getFarmSlug}`
+
       const slug = toSlug(name);
       const unAccentName = toNonAccent(name);
 
-      // let existingImage1 = existingProduct.image1
-      // let existingImage2 = existingProduct.image2
-      // let existingImage3 = existingProduct.image3
-      // let existingImage4 = existingProduct.image4
-      // let existingImage5 = existingProduct.image5
+      await multipleUploads(files, folder, slug).then(async (value) => {
+        list = value as string[];
 
-      existingProduct.slug = slug;
-      existingProduct.unAccentName = unAccentName;
-      existingProduct.description = description;
-      existingProduct.price = price;
-      existingProduct.originalPrice = originalPrice;
-      existingProduct.totalInventory = totalInventory;
-      existingProduct.unit = unit;
-      existingProduct.categoryQuery = categoryQuery;
+        const newImage = list[0] !== null ? list[0] : undefined
+
+        const existingImage1 = existingProduct.image1
+
+        if (newImage && newImage !== existingImage1) {
+          new Promise((_) => deleteFile(folder, existingImage1.split("/").pop() as string));
+          existingProduct.image1 = newImage
+        }
+
+        existingProduct.name = name
+        existingProduct.slug = slug;
+        existingProduct.unAccentName = unAccentName;
+        existingProduct.description = description;
+        existingProduct.categoryId = categoryId;
+        existingProduct.price = price;
+        existingProduct.originalPrice = originalPrice;
+        existingProduct.qty = qty;
+        existingProduct.unit = unit;
+
+
+        await existingProduct.save();
+      });
+
+
       return successResponse(
         200,
         true,
@@ -275,6 +315,7 @@ export class ProductResolver {
     }
   }
 
+
   @Mutation((_return) => ProductMutationResponse, {
     description: "Delete product",
   })
@@ -285,17 +326,18 @@ export class ProductResolver {
   ): Promise<ProductMutationResponse> {
     try {
       const existingProduct = await Product.findOne(id);
-      const existingFarm = await Farm.findOne({ ownerId: req.session.userId });
+      if (!existingProduct) return failureResponse(404, false, "Không tìm thấy sản phẩm.");
 
-      if (!existingFarm)
-        return failureResponse(401, false, "Không có quyền truy cập.");
-      if (!existingProduct)
-        return failureResponse(404, false, "Không tìm thấy sản phẩm.");
+      const existingFarm = await Farm.findOne({ id: existingProduct.farmId });
+      if (!existingFarm) return failureResponse(404, false, "Không tìm thấy trang trại.");
 
-      const folder = `products/${existingFarm.slug}/${existingProduct.slug}`;
+      if (req.session.userId !== existingFarm?.ownerId) return failureResponse(401, false, "Không có quyền truy cập.");
+
+      const folder = `products/${existingFarm.slug}`;
+
       await Product.delete({ id });
 
-      new Promise((_) => deleteFile(folder));
+      new Promise((_) => deleteFile(folder, existingProduct.image1.split("/").pop() as string));
 
       return successResponse(200, true, "Xoá sản phẩm thành công.");
     } catch (error) {

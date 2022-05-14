@@ -30,7 +30,7 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
 								<Link
 									href={item.route}
 									className={classNames(
-										'block py-2 px-10 font-semibold text-heading transition-colors border-l-4 border-transparent hover:text-emerald-600 focus:text-emerald-600',
+										'block py-2 px-10 font-semibold text-gray-600 transition-colors border-l-4 border-transparent hover:text-emerald-600 focus:text-emerald-600',
 										{
 											'border-emerald-600 text-emerald-600': pathname === item.route,
 										}

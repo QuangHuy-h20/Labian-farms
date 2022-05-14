@@ -42,8 +42,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			className
 		);
 		return (
+			<>
 			<button aria-pressed={active} data-variant ref={ref} className={classesName} disabled={disabled} {...rest}>{children}
 				{loading && <Spinner size='small' className='ml-2'/>}</button>
+			</>
 		)
 	}
 )

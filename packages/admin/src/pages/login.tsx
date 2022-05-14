@@ -18,7 +18,7 @@ const Login = () => {
               <h1 className="font-medium text-3xl text-emerald-600 mb-6">
                 Labian Farms
               </h1>
-              <span className="text-xl text-gray-400 italic font-light">
+              <span className="text-xl text-gray-500 italic font-light">
                 Đăng nhập
               </span>
             </div>

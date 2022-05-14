@@ -1,6 +1,6 @@
-import React, { ReactElement } from 'react'
-import Sidebar from '@components/layouts/sidebar'
-import { ILayoutProps } from './layout';
+import React, { ReactElement } from "react";
+import Sidebar from "@components/layouts/sidebar";
+import { ILayoutProps } from "./layout";
 
 const SiteLayout = ({ children }: ILayoutProps) => {
   return (
@@ -8,11 +8,13 @@ const SiteLayout = ({ children }: ILayoutProps) => {
       <Sidebar className="flex-shrink-0 hidden lg:block lg:w-80" />
       {children}
     </div>
-  )
-}
+  );
+};
 
 export const getLayout = (page: ReactElement) => (
-  <SiteLayout>{page}</SiteLayout>
+  <SiteLayout>
+    <>{page}</>
+  </SiteLayout>
 );
 
-export default SiteLayout
+export default SiteLayout;

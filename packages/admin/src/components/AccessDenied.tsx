@@ -1,7 +1,8 @@
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 import Lottie from "react-lottie";
 import accessDeniedLottie from "@lotties/access-denied.json";
 const AccessDeniedPage = () => {
+  
   const defaultOptions = {
     loop: true,
     autoplay: true,

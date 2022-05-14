@@ -11,7 +11,7 @@ const PageLoader: React.FC<PageLoaderProps> = ({ text = 'Loading' }) => {
     >
       <div className="flex relative">
         <div className="page_loader" />
-        <h3 className="text-sm font-semibold text-body italic absolute top-1/2 -mt-2 w-full text-center">
+        <h3 className="text-sm font-semibold text-gray-400 italic absolute top-1/2 -mt-2 w-full text-center">
           Loading
         </h3>
       </div>

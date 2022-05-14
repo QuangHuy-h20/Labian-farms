@@ -1,6 +1,7 @@
 import { MapPin } from "@components/icons/map-pin";
 import { PhoneIcon } from "@components/icons/phone";
 import AppLayout from "@components/layouts/app";
+import ErrorMessage from "@components/ui/error-message";
 import PageLoader from "@components/ui/page-loader";
 import ReadMore from "@components/ui/read-more";
 import { useFarmQuery } from "@generated/graphql";
@@ -11,14 +12,15 @@ const Farm = () => {
   const {
     query: { farm },
   } = useRouter();
-  const { data, loading } = useFarmQuery({
+  const { data, loading, error } = useFarmQuery({
     variables: {
       slug: farm?.toString(),
     },
   });
   if (loading) return <PageLoader />;
+  if (error) return <ErrorMessage message={error.message} />;
 
-  const { logoImage, name, slug, address, description, owner } = data!.farm!;
+  const { logoImage, name, slug, address, description, owner } = data?.farm!;
 
   return (
     <div className="grid grid-cols-12 gap-6">
@@ -34,8 +36,8 @@ const Farm = () => {
             </div>
           </div>
 
-          <h1 className="text-xl font-semibold text-heading mb-2">{name}</h1>
-          <p className="text-sm text-body text-center">
+          <h1 className="text-xl font-semibold text-gray-600 mb-2">{name}</h1>
+          <p className="text-sm text-gray-400 text-center">
             <ReadMore character={70}>{description!}</ReadMore>
           </p>
 
@@ -44,7 +46,7 @@ const Farm = () => {
               <MapPin width={16} />
             </span>
 
-            <address className="text-body text-sm not-italic">
+            <address className="text-gray-400 text-sm not-italic">
               {address}
             </address>
           </div>
@@ -53,14 +55,14 @@ const Farm = () => {
             <span className="text-gray-300 mt-0.5 mr-2">
               <PhoneIcon width={16} />
             </span>
-            <span className="text-body text-sm">{owner.phone}</span>
+            <span className="text-gray-400 text-sm">{owner.phone}</span>
           </div>
 
           <div className="grid grid-cols-1 w-full mt-7">
             <a
               href={`http://localhost:3000/${slug}`}
               target="_blank"
-              className="inline-flex items-center justify-center flex-shrink-0 leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow focus:ring-1 focus:ring-accent-700 !bg-gray-100 hover:!bg-accent !text-heading hover:!text-light !font-normal px-5 py-0 h-12"
+              className="inline-flex items-center justify-center flex-shrink-0 leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow focus:ring-1 focus:ring-accent-700 !bg-gray-100 hover:!bg-accent !text-gray-600 hover:!text-light !font-normal px-5 py-0 h-12"
             >
               Xem trang trại
             </a>

@@ -2,6 +2,7 @@ import { MeDocument, MeQuery, useLogoutMutation } from "@generated/graphql";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import PageLoader from "@components/ui/page-loader";
+import { ROUTES } from "@utils/routes";
 
 export default function Logout() {
   const [logout] = useLogoutMutation();
@@ -17,7 +18,7 @@ export default function Logout() {
         }
       },
     });
-    router.push("/login");
+    router.push(ROUTES.LOGIN);
   }, []);
   return <PageLoader />;
 }

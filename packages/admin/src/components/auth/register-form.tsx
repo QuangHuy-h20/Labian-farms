@@ -14,7 +14,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { constants as c } from "@constants/index";
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
 

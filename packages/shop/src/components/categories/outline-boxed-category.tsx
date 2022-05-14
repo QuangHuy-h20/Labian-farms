@@ -11,8 +11,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ item }) => {
   const { pathname, query } = router;
   const selectedQueries = query.category;
 
-  const onCategoryClick = (slug: string) => {
-    if (selectedQueries === slug) {
+  const onCategoryClick = (id: string) => {
+    if (selectedQueries === id) {
       const { category, ...rest } = query;
       router.push(
         {
@@ -29,7 +29,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ item }) => {
     router.push(
       {
         pathname,
-        query: { ...query, category: slug },
+        query: { ...query, category: id },
       },
       undefined,
       {
@@ -47,9 +47,9 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ item }) => {
           : "text-gray-500"
       )}
       role="button"
-      onClick={() => onCategoryClick(item?.slug!)}
+      onClick={() => onCategoryClick(item?.id!)}
     >
-      <span className="text-sm font-semibold  text-heading text-center px-2.5 block">
+      <span className="text-sm font-semibold  text-gray-600 text-center px-2.5 block">
         {item?.name}
       </span>
 	  <ArrowRight height={20} width={20} fill={ selectedQueries === item?.slug ? 'rgba(5, 150, 105, 1)' : 'rgba(107, 114, 128, 1)' }/>
@@ -61,7 +61,7 @@ function OutlinedBoxedCategoryMenu({ items }: any) {
   return (
     <>
       {items?.map((item: any) => (
-        <CategoryItem key={`${item.name}${item.slug}`} item={item} />
+        <CategoryItem key={`${item.name}${item.id}`} item={item} />
       ))}
     </>
   );

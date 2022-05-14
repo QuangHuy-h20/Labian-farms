@@ -22,6 +22,15 @@ export class FarmResolver {
     return await userLoader.load(root.ownerId)
   }
 
+  @FieldResolver((_return) => Number, { nullable: true })
+  async count(@Root() root: Farm, @Ctx() { dataLoaders: { productLoader } }: Context) {
+    try {
+      return (await productLoader.loadMany(root.productFarmIds)).length
+    } catch (error) {
+      return 0;
+    }
+  }
+
   @FieldResolver(_return => [Product], { nullable: true })
   async products(@Root() root: Farm, @Ctx() { dataLoaders: { productLoader } }: Context) {
     try {
@@ -39,6 +48,15 @@ export class FarmResolver {
       return await Farm.find({ ownerId })
     } catch (error) {
       return null
+    }
+  }
+
+  @Query(_return => [Farm], { nullable: true, description: "query all farms" })
+  async allFarms(): Promise<Farm[] | null> {
+    try {
+      return await Farm.find();
+    } catch (error) {
+      return null;
     }
   }
 

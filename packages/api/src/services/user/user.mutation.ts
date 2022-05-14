@@ -9,6 +9,9 @@ export class UserMutationResponse implements IMutationResponse {
   success: boolean;
   message?: string | undefined;
 
+  @Field(_type => [String], { nullable: true })
+  permissions?: string[] | undefined
+
   @Field({ nullable: true })
   user?: User;
 

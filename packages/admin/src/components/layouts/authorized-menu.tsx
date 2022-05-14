@@ -2,7 +2,7 @@ import cn from "classnames";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Avatar from "@components/user/avatar";
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 import { siteSettings } from "@settings/site.settings";
 import { useMeQuery } from "@generated/graphql";
 
@@ -52,7 +52,7 @@ export default function AuthorizedMenu() {
                     href={href}
                     className={cn(
                       "block px-4 py-3 text-sm capitalize font-medium transition duration-200 hover:text-emerald-500",
-                      active ? "text-emerald-500" : "text-gray-400"
+                      active ? "text-emerald-500" : "text-gray-500"
                     )}
                   >
                     {labelTransKey}

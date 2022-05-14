@@ -53,7 +53,7 @@ const Header = () => {
   else body = (
     <Dropdown subItems={ROUTES.account}>
       <div className="flex flex-row ml-4 border-0! items-center">
-        <div className="flex flex-col text-right text-sm text-gray-400">
+        <div className="flex flex-col text-right text-sm text-gray-500">
           <p className="font-light">Xin chào,</p>
           <div className="flex flex-row items-center">
             <span className="font-medium mr-1">{meData.me.fullName !== "" ? meData.me.fullName : meData.me.email}</span>
@@ -83,7 +83,7 @@ const Header = () => {
           {ROUTES.menu.map(item => (
             <li className="px-5" key={item.name}>
               <Link href={item.route}>
-                <a className="text-gray-400 text-sm font-semibold hover:text-emerald-400 duration-300">{item.name}</a>
+                <a className="text-gray-500 text-sm font-semibold hover:text-emerald-400 duration-300">{item.name}</a>
               </Link>
             </li>
           ))}

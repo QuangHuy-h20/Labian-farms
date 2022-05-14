@@ -18,7 +18,7 @@ const NotFound: React.FC<Props> = ({ className, text }) => {
         />
       </div>
       {text && (
-        <h3 className="w-full text-center text-xl font-semibold text-body my-7">
+        <h3 className="w-full text-center text-xl font-semibold text-gray-400 my-7">
           {text}
         </h3>
       )}

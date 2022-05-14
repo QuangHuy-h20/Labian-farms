@@ -51,13 +51,13 @@ export const ThumbsCarousel: React.FC<Props> = ({ gallery }) => {
 				</Swiper>
 				<div
 					ref={prevRef}
-					className="product-gallery-prev cursor-pointer absolute top-2/4 left-4 md:left-1 z-10 -mt-4 md:-mt-5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-xl borderborder-opacity-70 flex items-center justify-center text-heading transition-all duration-200 hover:bg-emerald-500"
+					className="product-gallery-prev cursor-pointer absolute top-2/4 left-4 md:left-1 z-10 -mt-4 md:-mt-5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-xl borderborder-opacity-70 flex items-center justify-center text-gray-600 transition-all duration-200 hover:bg-emerald-500"
 				>
 					<ArrowLeft className="w-4 h-4" />
 				</div>
 				<div
 					ref={nextRef}
-					className="product-gallery-next cursor-pointer absolute top-2/4 right-4 md:right-1 z-10 -mt-4 md:-mt-5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-xl border border-opacity-70 flex items-center justify-center text-heading transition-all duration-200 hover:bg-emerald-500"
+					className="product-gallery-next cursor-pointer absolute top-2/4 right-4 md:right-1 z-10 -mt-4 md:-mt-5 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-xl border border-opacity-70 flex items-center justify-center text-gray-600 transition-all duration-200 hover:bg-emerald-500"
 				>
 					<ArrowRight className="w-4 h-4" />
 

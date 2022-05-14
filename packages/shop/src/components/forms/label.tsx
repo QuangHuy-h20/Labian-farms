@@ -8,7 +8,7 @@ const Label: FC<LabelHTMLAttributes<HTMLLabelElement>> = ({
   return (
     <label
       className={cn(
-        'block text-body-dark text-sm leading-none mb-3',
+        'block text-gray-500 text-sm leading-none mb-3',
         className
       )}
       {...rest}

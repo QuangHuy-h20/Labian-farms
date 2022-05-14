@@ -15,19 +15,13 @@ export class CreateProductInput {
   price: number;
 
   @Field()
-  totalInventory: number;
+  qty: number;
 
   @Field()
   unit: string;
 
   @Field()
-  categoryQuery: string;
-
-  @Field()
-  categoryId: number;
-
-  @Field()
-  farmId: string;
+  categoryId: string
 }
 
 @InputType()

@@ -9,3 +9,9 @@ fragment farmMutationStatus on FarmMutationResponse{
 	success
 	message
 }
+
+fragment farmMutationStatus on FarmMutationResponse{
+	code
+	success
+	message
+}

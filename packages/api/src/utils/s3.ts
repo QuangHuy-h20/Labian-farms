@@ -34,9 +34,9 @@ export const singleUpload = async (file: FileUpload, folder: string | null) => {
 export const deleteFile = async (folder: string, filename?: string | undefined) => {
 	let key = filename !== undefined ? `${folder}/${filename}` : `${folder}/`
 	return new Promise(async _ => {
-		await s3.deleteObject({ ...s3DefaultParams, Key: key }, (error, data) => {
-			if (error) console.log(error);
-			console.log(data);
+		await s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME!, Key: key }, (error, data) => {
+			if (error) console.log("error: ", error);
+			console.log("data: ", data);
 
 
 		}).promise().then(value => console.log(value)
@@ -50,7 +50,8 @@ export const multipleUploads = async (files: FileUpload[], folder: string | null
 	return new Promise(async (resolve) => {
 		for await (let file of files) {
 			new Promise(async (resolve) => {
-				const { createReadStream, filename } = file
+				let { createReadStream, filename } = file
+				filename = `${shortid.generate()}-${filename}`
 				const key = `${folder}/${name}-${filename}`
 				const data = await s3.upload({ ...s3DefaultParams, Body: createReadStream(), Key: key }).promise()
 

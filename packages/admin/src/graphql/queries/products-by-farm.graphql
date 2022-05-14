@@ -1,0 +1,5 @@
+query ProductsByFarm($farmId: ID!) {
+  productsByFarm(farmId: $farmId) {
+    ...productInfo
+  }
+}

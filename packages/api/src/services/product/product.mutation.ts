@@ -9,7 +9,7 @@ export class ProductMutationResponse implements IMutationResponse {
   success: boolean;
   message?: string | undefined;
 
-  @Field()
+  @Field({ nullable: true })
   product?: Product;
 
   @Field((_type) => [FieldError], { nullable: true })

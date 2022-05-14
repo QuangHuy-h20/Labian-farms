@@ -20,7 +20,7 @@ export default function Products({ className, column, gridClassName }: Props) {
   } = useProductsQuery({
     variables: {
       limit: PRODUCTS_PER_PAGE,
-      categoryQuery: query.category as string,
+      categoryId: query.category as string,
     },
     notifyOnNetworkStatusChange: true,
   });

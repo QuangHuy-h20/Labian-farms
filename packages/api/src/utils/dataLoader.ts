@@ -20,7 +20,7 @@ const batchGetFarms = async (farmIds: number[]) => {
 	return farmIds.map(farmId => farms.find(farm => farm.id === farmId))
 }
 
-const batchGetCategories = async (categoryIds: number[]) => {
+const batchGetCategories = async (categoryIds: string[]) => {
 	const categories = await Category.findByIds(categoryIds)
 	return categoryIds.map(categoryId => categories.find(category => category.id === categoryId))
 }
@@ -34,6 +34,6 @@ export const buildDataLoaders = () => ({
 	userLoader: new DataLoader<number, User | undefined>(userIds => batchGetUsers(userIds as number[])),
 	addressLoader: new DataLoader<number, Address | undefined>(addressIds => batchGetAddresses(addressIds as number[])),
 	farmLoader: new DataLoader<number, Farm | undefined>(farmIds => batchGetFarms(farmIds as number[])),
-	categoryLoader: new DataLoader<number, Category | undefined>(categoryIds => batchGetCategories(categoryIds as number[])),
+	categoryLoader: new DataLoader<string, Category | undefined>(categoryIds => batchGetCategories(categoryIds as string[])),
 	productLoader: new DataLoader<number, Product | undefined>(productIds => batchGetProducts(productIds as number[]))
 })

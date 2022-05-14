@@ -71,8 +71,6 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
             farms: {
               keyArgs: false,
               merge(existing, incoming) {
-                // console.log("existing", existing);
-                // console.log("incoming", incoming);
                 let paginatedFarms: Farm[] = [];
 
                 if (existing && existing.paginatedFarms) {

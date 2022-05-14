@@ -14,7 +14,7 @@ export default function FarmerDashboard() {
     <>
       Farmer Dashboard
       {/* <div className="border-b border-dashed border-border-base mb-5 sm:mb-8 pb-8">
-        <h1 className="text-lg font-semibold text-heading">
+        <h1 className="text-lg font-semibold text-gray-600">
           {t("common:sidebar-nav-item-my-shops")}
         </h1>
       </div>
@@ -35,7 +35,7 @@ export default function FarmerDashboard() {
               objectFit="cover"
             />
           </div>
-          <span className="text-lg font-semibold text-center text-body-dark mt-6 sm:mt-10">
+          <span className="text-lg font-semibold text-center text-gray-500 mt-6 sm:mt-10">
             {t("common:text-no-shop")}
           </span>
         </div>

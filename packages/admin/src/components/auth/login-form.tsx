@@ -12,7 +12,7 @@ import Button from "@components/ui/button";
 import { Input, PasswordInput } from "@components/form";
 import { useRouter } from "next/router";
 import { ROUTES } from "@utils/routes";
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 
 type FieldErrorType = "loginField" | "password";
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
           size="large"
           variant="normal"
         >
-          <span className="cursor-pointer text-xl">Đăng ký</span>
+          <span className="cursor-pointer text-xl">Đăng nhập</span>
         </Button>
         <div className="mt-10 mb-6">
           <hr />

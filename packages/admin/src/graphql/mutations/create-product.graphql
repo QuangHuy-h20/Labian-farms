@@ -1,18 +1,9 @@
 mutation CreateProduct(
+  $farmId: ID!
   $createProductInput: CreateProductInput!
   $files: [Upload!]!
 ) {
-  createProduct(files: $files, createProductInput: $createProductInput) {
-    code
-    success
-    message
-    product {
-      id
-      name
-      farm {
-        id
-        name
-      }
-    }
+  createProduct(files: $files, createProductInput: $createProductInput, farmId: $farmId) {
+  ...productMutationResponse
   }
 }

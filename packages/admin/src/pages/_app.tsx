@@ -7,7 +7,8 @@ import PrivateRoute from "@utils/private-route";
 import { ToastContainer } from "react-toastify";
 import { UIProvider } from "../contexts/ui.context";
 import { ModalProvider } from "@components/ui/modal/modal.context";
-import 'react-toastify/dist/ReactToastify.css';
+import ManagedModal from "@components/ui/modal/managed-modal";
+import "react-toastify/dist/ReactToastify.css";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Noop: React.FC = ({ children }: any) => <>{children}</>;
@@ -25,19 +26,14 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ApolloProvider client={apolloClient}>
         <UIProvider>
           <ModalProvider>
-            {authProps ? (
-                  <PrivateRoute>
-                    <Layout {...pageProps}>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </PrivateRoute>
-                ) : (
-                  <Layout {...pageProps}>
-                    <Component {...pageProps} />
-                  </Layout>
-                )}
+            <PrivateRoute>
+              <Layout {...pageProps}>
+                <Component {...pageProps} />
+              </Layout>
+            </PrivateRoute>
 
             <ToastContainer autoClose={2000} theme="colored" />
+            <ManagedModal />
           </ModalProvider>
         </UIProvider>
       </ApolloProvider>

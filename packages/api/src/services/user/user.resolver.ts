@@ -105,7 +105,7 @@ export class UserResolver {
       req.session.userId = newUser.id
       req.session.roleId = newUser.roleId
 
-      return { code: 200, success: true, message: "Đăng ký thành công!", user: newUser }
+      return { code: 200, success: true, message: "Đăng ký thành công!", user: newUser, permissions: [req.session.roleId] }
 
     } catch (error) {
       return failureResponse(500, false, `Internal Server Error ${error.message}`)
@@ -149,7 +149,7 @@ export class UserResolver {
       req.session.userId = newFarmer.id
       req.session.roleId = newFarmer.roleId
 
-      return { code: 200, success: true, message: "Đăng ký thành công!", user: newFarmer }
+      return { code: 200, success: true, message: "Đăng ký thành công!", user: newFarmer, permissions: [req.session.roleId] }
     } catch (error) {
       return failureResponse(500, false, `Internal Server Error ${error.message}`)
     }
@@ -236,7 +236,7 @@ export class UserResolver {
       req.session.userId = existingUser.id;
       req.session.roleId = existingUser.roleId;
 
-      return { code: 200, success: true, message: "Đăng nhập thành công.", user: existingUser }
+      return { code: 200, success: true, message: "Đăng nhập thành công.", user: existingUser, permissions: [req.session.roleId] }
     } catch (error) {
       return failureResponse(500, false, `Internal Server Error ${error.message}`)
     }

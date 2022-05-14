@@ -1,0 +1,13 @@
+mutation UpdateProduct(
+  $updateProductInput: UpdateProductInput!
+  $farmId: ID!
+  $files: [Upload!]!
+) {
+  updateProduct(
+    updateProductInput: $updateProductInput
+    farmId: $farmId
+    files: $files
+  ) {
+    ...productMutationResponse
+  }
+}

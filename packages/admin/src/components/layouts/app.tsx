@@ -7,7 +7,7 @@ const AppLayout = ({ children }) => {
   const SidebarItemMap = () => (
     <Fragment>
       {siteSettings.sidebarLinks.admin.map(({ href, label, icon }) => (
-        <SidebarItem key={label} href={href} label={label} icon={icon} />
+        <SidebarItem key={label} href={href as string} label={label} icon={icon} />
       ))}
     </Fragment>
   );

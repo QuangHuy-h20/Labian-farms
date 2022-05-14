@@ -1,16 +1,22 @@
 fragment productInfo on Product {
   id
   name
-  slug
-  price
-  unit
+  unAccentName
   description
+  price
+  originalPrice
+  categoryId
+  farmId
   image1
-  image2
-  image3
-  image4
-  image5
+  unit
+  slug
+  qty
+  category {
+    id
+    name
+  }
   farm {
+    id
     name
   }
 }

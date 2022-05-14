@@ -20,7 +20,7 @@ const DrawerWrapper: React.FunctionComponent<DrawerWrapperProps> = ({
           <h3>Labian Farms</h3>
           <button
             onClick={onClose}
-            className="w-7 h-7 flex items-center justify-center rounded-full text-body bg-gray-200 transition-all duration-200 focus:outline-none hover:bg-accent focus:bg-accent hover:text-light focus:text-light"
+            className="w-7 h-7 flex items-center justify-center rounded-full text-gray-400 bg-gray-200 transition-all duration-200 focus:outline-none hover:bg-accent focus:bg-accent hover:text-light focus:text-light"
           >
             <CloseIcon className="w-2.5 h-2.5" />
           </button>

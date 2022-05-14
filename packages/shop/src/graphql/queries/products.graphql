@@ -1,5 +1,5 @@
-query products($limit: Int!, $cursor: String, $categoryQuery: String) {
-  products(limit: $limit, cursor: $cursor, categoryQuery: $categoryQuery) {
+query products($limit: Int!, $cursor: String, $categoryId: String) {
+  products(limit: $limit, cursor: $cursor, categoryId: $categoryId) {
     totalCount
     hasMore
     cursor

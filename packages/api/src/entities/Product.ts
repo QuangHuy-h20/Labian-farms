@@ -33,11 +33,11 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ default: 0 })
-  totalInventory!: number;
+  qty!: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  unit: string;
+  @Field()
+  @Column({ default: "" })
+  unit!: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -61,11 +61,7 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column()
-  categoryId!: number;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  categoryQuery: string;
+  categoryId!: string;
 
   @Field((_type) => Category)
   @ManyToOne(() => Category, (category) => category.products)

@@ -1,16 +1,24 @@
 import { ROUTES } from "@utils/routes";
 import { adminOnly, farmerOnly, allowedRoles } from "@utils/auth-utils";
 export const siteSettings = {
+	logo: {
+		url: "/logo.svg",
+		alt: "Labian Farms",
+		href: "/",
+		width: 128,
+		height: 40,
+	  },
 	authorizedLinks: [
 		{
-		  href: ROUTES.PROFILE_UPDATE,
-		  labelTransKey: "Cập nhật thông tin",
+			href: ROUTES.PROFILE_UPDATE,
+			labelTransKey: "Cập nhật thông tin",
 		},
 		{
-		  href: ROUTES.LOGOUT,
-		  labelTransKey: "Đăng xuất",
+			href: ROUTES.LOGOUT,
+			labelTransKey: "Đăng xuất",
 		},
-	  ],
+	],
+	defaultLanguage: "vn",
 	sidebarLinks: {
 		admin: [
 			{
@@ -23,17 +31,21 @@ export const siteSettings = {
 				label: "Nông trại",
 				icon: "ShopIcon",
 			},
-
 			{
-				href: ROUTES.MY_FARMS,
+				href: ROUTES.TOURS,
 				label: "Tour tham quan",
-				icon: "MyShopIcon",
+				icon: "DiaryIcon",
 			},
 			{
 				href: ROUTES.PRODUCTS,
 				label: "Sản phẩm",
 				icon: "ProductsIcon",
 			},
+			{
+				href: ROUTES.USERS,
+				label: "Người dùng",
+				icon: "UsersIcon",
+			  },
 			{
 				href: ROUTES.CATEGORIES,
 				label: "Loại hàng",
@@ -45,33 +57,31 @@ export const siteSettings = {
 				href: (farm: string) => `${ROUTES.DASHBOARD}${farm}`,
 				label: "Dashboard",
 				icon: "DashboardIcon",
-				permissions: allowedRoles,
 			},
 			{
-				href: (farm: string) => `${ROUTES.MY_FARMS}${farm}`,
+				href: (farm: string) => `${ROUTES.MY_FARMS}`,
 				label: "Nông trại của tôi",
 				icon: "MyShopIcon",
-				permissions: farmerOnly,
 			},
 			{
 				href: (farm: string) => `/${farm}${ROUTES.PRODUCTS}`,
 				label: "Sản phẩm",
 				icon: "ProductsIcon",
-				permissions: allowedRoles,
 			},
 			{
 				href: (farm: string) => `/${farm}${ROUTES.ORDERS}`,
 				label: "Danh sách đơn hàng",
 				icon: "OrdersIcon",
-				permissions: farmerOnly,
 			},
 			{
 				href: (farm: string) => `/${farm}${ROUTES.TOURS}`,
 				label: "Tour tham quan",
-				icon: "OrdersIcon",
-				permissions: farmerOnly,
+				icon: "DiaryIcon",
 			},
 		],
+	},
+	product: {
+		placeholder: "/product-placeholder.svg",
 	},
 	avatar: {
 		placeholder: "/avatar-placeholder.svg",

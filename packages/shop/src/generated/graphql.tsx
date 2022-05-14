@@ -49,12 +49,8 @@ export type AddressMutationResponse = IMutationResponse & {
 
 export type Category = {
   __typename?: 'Category';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  image: Scalars['String'];
+  id: Scalars['String'];
   name: Scalars['String'];
-  slug: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
 };
 
 export type CategoryMutationResponse = IMutationResponse & {
@@ -90,14 +86,12 @@ export type CreateFarmInput = {
 };
 
 export type CreateProductInput = {
-  categoryId: Scalars['Float'];
-  categoryQuery: Scalars['String'];
+  categoryId: Scalars['String'];
   description: Scalars['String'];
-  farmId: Scalars['String'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  totalInventory: Scalars['Float'];
+  qty: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -108,6 +102,7 @@ export type CreateRoleInput = {
 export type Farm = {
   __typename?: 'Farm';
   address: Scalars['String'];
+  count?: Maybe<Scalars['Float']>;
   coverImage?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
@@ -240,6 +235,7 @@ export type MutationCreateFarmArgs = {
 
 export type MutationCreateProductArgs = {
   createProductInput: CreateProductInput;
+  farmId: Scalars['ID'];
   files: Array<Scalars['Upload']>;
 };
 
@@ -325,12 +321,29 @@ export type MutationUpdateLogoImageArgs = {
 
 
 export type MutationUpdateProductArgs = {
+  farmId: Scalars['ID'];
+  files: Array<Scalars['Upload']>;
   updateProductInput: UpdateProductInput;
 };
 
 
 export type MutationUpdateProfileArgs = {
   profileInput: ProfileInput;
+};
+
+export type Paginated = {
+  __typename?: 'Paginated';
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  totalCount: Scalars['Float'];
+};
+
+export type PaginatedFarms = {
+  __typename?: 'PaginatedFarms';
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  paginatedFarms: Array<Farm>;
+  totalCount: Scalars['Float'];
 };
 
 export type PaginatedProducts = {
@@ -341,11 +354,27 @@ export type PaginatedProducts = {
   totalCount: Scalars['Float'];
 };
 
+export type Pagination = {
+  __typename?: 'Pagination';
+  first: Scalars['Int'];
+  page: Scalars['Int'];
+};
+
+export type PaginatorInfo = {
+  __typename?: 'PaginatorInfo';
+  count: Scalars['Int'];
+  currentPage: Scalars['Int'];
+  firstItem: Scalars['Int'];
+  lastItem: Scalars['Int'];
+  lastPage: Scalars['Int'];
+  perPage: Scalars['Int'];
+  total: Scalars['Int'];
+};
+
 export type Product = {
   __typename?: 'Product';
   category: Category;
-  categoryId: Scalars['Float'];
-  categoryQuery?: Maybe<Scalars['String']>;
+  categoryId: Scalars['String'];
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   farm: Farm;
@@ -359,10 +388,10 @@ export type Product = {
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
+  qty: Scalars['Float'];
   slug: Scalars['String'];
-  totalInventory: Scalars['Float'];
   unAccentName: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
+  unit: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -371,8 +400,14 @@ export type ProductMutationResponse = IMutationResponse & {
   code: Scalars['Float'];
   errors?: Maybe<Array<FieldError>>;
   message?: Maybe<Scalars['String']>;
-  product: Product;
+  product?: Maybe<Product>;
   success: Scalars['Boolean'];
+};
+
+export type ProductPaginator = {
+  __typename?: 'ProductPaginator';
+  data: Array<Product>;
+  paginatorInfo: PaginatorInfo;
 };
 
 export type ProfileInput = {
@@ -387,22 +422,28 @@ export type Query = {
   __typename?: 'Query';
   /** Get all customer's addresses */
   addressesByCustomer: Array<Address>;
+  /** query all farms */
+  allFarms?: Maybe<Array<Farm>>;
+  /** query all products */
+  allProducts?: Maybe<Array<Product>>;
   /** Get all the categories. */
   categories?: Maybe<Array<Category>>;
   /** Get specific farm by id */
   farm?: Maybe<Farm>;
   /** Get all farms */
-  farms?: Maybe<Array<Farm>>;
+  farms?: Maybe<PaginatedFarms>;
   /** Get all farms by farmer */
   farmsByFarmer?: Maybe<Array<Farm>>;
   /** User information */
   me?: Maybe<User>;
   /** Get specific product by id */
   product?: Maybe<Product>;
-  /** Get all products */
+  /** Get all products with paginate */
   products?: Maybe<PaginatedProducts>;
   /** Get all products by category */
   productsByCategory?: Maybe<Array<Product>>;
+  /** Get all products by category */
+  productsByFarm?: Maybe<Array<Product>>;
   /** Get all roles */
   roles?: Maybe<Array<UserRole>>;
   /** Find products by keyword */
@@ -418,7 +459,13 @@ export type QueryAddressesByCustomerArgs = {
 
 
 export type QueryFarmArgs = {
-  id: Scalars['ID'];
+  slug: Scalars['String'];
+};
+
+
+export type QueryFarmsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -433,7 +480,7 @@ export type QueryProductArgs = {
 
 
 export type QueryProductsArgs = {
-  categoryQuery?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']>;
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -441,6 +488,11 @@ export type QueryProductsArgs = {
 
 export type QueryProductsByCategoryArgs = {
   categoryId: Scalars['ID'];
+};
+
+
+export type QueryProductsByFarmArgs = {
+  farmId: Scalars['ID'];
 };
 
 
@@ -489,15 +541,13 @@ export type UpdateFarmInput = {
 };
 
 export type UpdateProductInput = {
-  categoryId: Scalars['Float'];
-  categoryQuery: Scalars['String'];
+  categoryId: Scalars['String'];
   description: Scalars['String'];
-  farmId: Scalars['String'];
   id: Scalars['String'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  totalInventory: Scalars['Float'];
+  qty: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -527,6 +577,7 @@ export type UserMutationResponse = IMutationResponse & {
   code: Scalars['Float'];
   errors?: Maybe<Array<FieldError>>;
   message?: Maybe<Scalars['String']>;
+  permissions?: Maybe<Array<Scalars['String']>>;
   success: Scalars['Boolean'];
   user?: Maybe<User>;
 };
@@ -538,13 +589,15 @@ export type UserRole = {
   roleName: Scalars['String'];
 };
 
+export type FarmInfoFragment = { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null | undefined, createdAt: any, count?: number | null | undefined, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null | undefined, owner: { __typename?: 'User', phone: string, email: string } };
+
 export type FieldErrorFragment = { __typename?: 'FieldError', field: string, message: string };
 
 export type UserMutationStatusFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
 export type FarmMutationStatusFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
-export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } };
+export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, slug: string, price: number, unit: string, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean };
 
@@ -610,7 +663,12 @@ export type UpdateProfileMutation = { __typename?: 'Mutation', updateProfile: { 
 export type CategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CategoriesQuery = { __typename?: 'Query', categories?: Array<{ __typename?: 'Category', id: string, name: string, slug: string }> | null | undefined };
+export type CategoriesQuery = { __typename?: 'Query', categories?: Array<{ __typename?: 'Category', id: string, name: string }> | null | undefined };
+
+export type FarmsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FarmsQuery = { __typename?: 'Query', allFarms?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null | undefined, createdAt: any, count?: number | null | undefined, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null | undefined, owner: { __typename?: 'User', phone: string, email: string } }> | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -622,24 +680,45 @@ export type GetProductsByCategoryQueryVariables = Exact<{
 }>;
 
 
-export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
+export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit: string, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
 
 export type ProductsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
-  categoryQuery?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'PaginatedProducts', totalCount: number, hasMore: boolean, cursor: any, paginatedProducts: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> } | null | undefined };
+export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'PaginatedProducts', totalCount: number, hasMore: boolean, cursor: any, paginatedProducts: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit: string, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> } | null | undefined };
 
 export type SearchQueryVariables = Exact<{
   searchInput: SearchInput;
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null | undefined, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
+export type SearchQuery = { __typename?: 'Query', search?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit: string, description: string, image1?: string | null | undefined, image2?: string | null | undefined, image3?: string | null | undefined, image4?: string | null | undefined, image5?: string | null | undefined, farm: { __typename?: 'Farm', name: string } }> | null | undefined };
 
+export const FarmInfoFragmentDoc = gql`
+    fragment farmInfo on Farm {
+  id
+  name
+  address
+  description
+  slug
+  logoImage
+  createdAt
+  count
+  isActive
+  products {
+    id
+    name
+  }
+  owner {
+    phone
+    email
+  }
+}
+    `;
 export const FarmMutationStatusFragmentDoc = gql`
     fragment farmMutationStatus on FarmMutationResponse {
   code
@@ -977,7 +1056,6 @@ export const CategoriesDocument = gql`
   categories {
     id
     name
-    slug
   }
 }
     `;
@@ -1008,6 +1086,40 @@ export function useCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type CategoriesQueryHookResult = ReturnType<typeof useCategoriesQuery>;
 export type CategoriesLazyQueryHookResult = ReturnType<typeof useCategoriesLazyQuery>;
 export type CategoriesQueryResult = Apollo.QueryResult<CategoriesQuery, CategoriesQueryVariables>;
+export const FarmsDocument = gql`
+    query Farms {
+  allFarms {
+    ...farmInfo
+  }
+}
+    ${FarmInfoFragmentDoc}`;
+
+/**
+ * __useFarmsQuery__
+ *
+ * To run a query within a React component, call `useFarmsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFarmsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFarmsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFarmsQuery(baseOptions?: Apollo.QueryHookOptions<FarmsQuery, FarmsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FarmsQuery, FarmsQueryVariables>(FarmsDocument, options);
+      }
+export function useFarmsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FarmsQuery, FarmsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FarmsQuery, FarmsQueryVariables>(FarmsDocument, options);
+        }
+export type FarmsQueryHookResult = ReturnType<typeof useFarmsQuery>;
+export type FarmsLazyQueryHookResult = ReturnType<typeof useFarmsLazyQuery>;
+export type FarmsQueryResult = Apollo.QueryResult<FarmsQuery, FarmsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -1078,8 +1190,8 @@ export type GetProductsByCategoryQueryHookResult = ReturnType<typeof useGetProdu
 export type GetProductsByCategoryLazyQueryHookResult = ReturnType<typeof useGetProductsByCategoryLazyQuery>;
 export type GetProductsByCategoryQueryResult = Apollo.QueryResult<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>;
 export const ProductsDocument = gql`
-    query products($limit: Int!, $cursor: String, $categoryQuery: String) {
-  products(limit: $limit, cursor: $cursor, categoryQuery: $categoryQuery) {
+    query products($limit: Int!, $cursor: String, $categoryId: String) {
+  products(limit: $limit, cursor: $cursor, categoryId: $categoryId) {
     totalCount
     hasMore
     cursor
@@ -1104,7 +1216,7 @@ export const ProductsDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      cursor: // value for 'cursor'
- *      categoryQuery: // value for 'categoryQuery'
+ *      categoryId: // value for 'categoryId'
  *   },
  * });
  */

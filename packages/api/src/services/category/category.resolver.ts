@@ -29,9 +29,9 @@ export class CategoryResolver {
 
       if (existingCategory) return failureResponse(400, false, "Category has already existed.")
 
-      const slug = toSlug(name)
+      const id = toSlug(name)
 
-      const newCategory = Category.create({ ...createCategoryInput, slug });
+      const newCategory = Category.create({ ...createCategoryInput, id });
       await newCategory.save();
       return { code: 200, success: true, message: "Category has been created successfully", category: newCategory }
 

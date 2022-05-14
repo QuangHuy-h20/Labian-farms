@@ -14,12 +14,11 @@ export const adminOnly = [EXECUTIVE_ADMIN];
 export const farmerOnly = [FARMER];
 export const customerOnly = [CUSTOMER];
 
-export function setAuthCredentials(token: string, permissions: any) {
-	Cookie.set(AUTH_CRED, JSON.stringify({ token, permissions }));
+export function setAuthCredentials(permissions: any) {
+	Cookie.set(AUTH_CRED, JSON.stringify({ permissions }));
 }
 
 export function getAuthCredentials(context?: any): {
-	token: string | null;
 	permissions: string[] | null;
 } {
 	let authCred: any;
@@ -31,7 +30,7 @@ export function getAuthCredentials(context?: any): {
 	if (authCred) {
 		return JSON.parse(authCred);
 	}
-	return { token: null, permissions: null };
+	return { permissions: null };
 }
 
 export function parseSSRCookie(context: any) {

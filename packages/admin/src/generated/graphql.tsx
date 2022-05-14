@@ -49,12 +49,8 @@ export type AddressMutationResponse = IMutationResponse & {
 
 export type Category = {
   __typename?: 'Category';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  image: Scalars['String'];
+  id: Scalars['String'];
   name: Scalars['String'];
-  slug: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
 };
 
 export type CategoryMutationResponse = IMutationResponse & {
@@ -90,14 +86,12 @@ export type CreateFarmInput = {
 };
 
 export type CreateProductInput = {
-  categoryId: Scalars['Float'];
-  categoryQuery: Scalars['String'];
+  categoryId: Scalars['String'];
   description: Scalars['String'];
-  farmId: Scalars['String'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  totalInventory: Scalars['Float'];
+  qty: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -108,6 +102,7 @@ export type CreateRoleInput = {
 export type Farm = {
   __typename?: 'Farm';
   address: Scalars['String'];
+  count?: Maybe<Scalars['Float']>;
   coverImage?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
@@ -240,6 +235,7 @@ export type MutationCreateFarmArgs = {
 
 export type MutationCreateProductArgs = {
   createProductInput: CreateProductInput;
+  farmId: Scalars['ID'];
   files: Array<Scalars['Upload']>;
 };
 
@@ -325,6 +321,8 @@ export type MutationUpdateLogoImageArgs = {
 
 
 export type MutationUpdateProductArgs = {
+  farmId: Scalars['ID'];
+  files: Array<Scalars['Upload']>;
   updateProductInput: UpdateProductInput;
 };
 
@@ -356,11 +354,27 @@ export type PaginatedProducts = {
   totalCount: Scalars['Float'];
 };
 
+export type Pagination = {
+  __typename?: 'Pagination';
+  first: Scalars['Int'];
+  page: Scalars['Int'];
+};
+
+export type PaginatorInfo = {
+  __typename?: 'PaginatorInfo';
+  count: Scalars['Int'];
+  currentPage: Scalars['Int'];
+  firstItem: Scalars['Int'];
+  lastItem: Scalars['Int'];
+  lastPage: Scalars['Int'];
+  perPage: Scalars['Int'];
+  total: Scalars['Int'];
+};
+
 export type Product = {
   __typename?: 'Product';
   category: Category;
-  categoryId: Scalars['Float'];
-  categoryQuery?: Maybe<Scalars['String']>;
+  categoryId: Scalars['String'];
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   farm: Farm;
@@ -374,10 +388,10 @@ export type Product = {
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
+  qty: Scalars['Float'];
   slug: Scalars['String'];
-  totalInventory: Scalars['Float'];
   unAccentName: Scalars['String'];
-  unit?: Maybe<Scalars['String']>;
+  unit: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -386,8 +400,14 @@ export type ProductMutationResponse = IMutationResponse & {
   code: Scalars['Float'];
   errors?: Maybe<Array<FieldError>>;
   message?: Maybe<Scalars['String']>;
-  product: Product;
+  product?: Maybe<Product>;
   success: Scalars['Boolean'];
+};
+
+export type ProductPaginator = {
+  __typename?: 'ProductPaginator';
+  data: Array<Product>;
+  paginatorInfo: PaginatorInfo;
 };
 
 export type ProfileInput = {
@@ -402,6 +422,10 @@ export type Query = {
   __typename?: 'Query';
   /** Get all customer's addresses */
   addressesByCustomer: Array<Address>;
+  /** query all farms */
+  allFarms?: Maybe<Array<Farm>>;
+  /** query all products */
+  allProducts?: Maybe<Array<Product>>;
   /** Get all the categories. */
   categories?: Maybe<Array<Category>>;
   /** Get specific farm by id */
@@ -414,10 +438,12 @@ export type Query = {
   me?: Maybe<User>;
   /** Get specific product by id */
   product?: Maybe<Product>;
-  /** Get all products */
+  /** Get all products with paginate */
   products?: Maybe<PaginatedProducts>;
   /** Get all products by category */
   productsByCategory?: Maybe<Array<Product>>;
+  /** Get all products by category */
+  productsByFarm?: Maybe<Array<Product>>;
   /** Get all roles */
   roles?: Maybe<Array<UserRole>>;
   /** Find products by keyword */
@@ -454,7 +480,7 @@ export type QueryProductArgs = {
 
 
 export type QueryProductsArgs = {
-  categoryQuery?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']>;
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
 };
@@ -462,6 +488,11 @@ export type QueryProductsArgs = {
 
 export type QueryProductsByCategoryArgs = {
   categoryId: Scalars['ID'];
+};
+
+
+export type QueryProductsByFarmArgs = {
+  farmId: Scalars['ID'];
 };
 
 
@@ -510,15 +541,13 @@ export type UpdateFarmInput = {
 };
 
 export type UpdateProductInput = {
-  categoryId: Scalars['Float'];
-  categoryQuery: Scalars['String'];
+  categoryId: Scalars['String'];
   description: Scalars['String'];
-  farmId: Scalars['String'];
   id: Scalars['String'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  totalInventory: Scalars['Float'];
+  qty: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -548,6 +577,7 @@ export type UserMutationResponse = IMutationResponse & {
   code: Scalars['Float'];
   errors?: Maybe<Array<FieldError>>;
   message?: Maybe<Scalars['String']>;
+  permissions?: Maybe<Array<Scalars['String']>>;
   success: Scalars['Boolean'];
   user?: Maybe<User>;
 };
@@ -559,7 +589,9 @@ export type UserRole = {
   roleName: Scalars['String'];
 };
 
-export type FarmInfoFragment = { __typename?: 'Farm', id: string, name: string, logoImage?: string | null, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } };
+export type FarmInfoFragment = { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } };
+
+export type FarmMutationResponseFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type FieldErrorFragment = { __typename?: 'FieldError', field: string, message: string };
 
@@ -567,7 +599,11 @@ export type UserMutationStatusFragment = { __typename?: 'UserMutationResponse', 
 
 export type FarmMutationStatusFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null };
 
-export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null, description: string, image1?: string | null, image2?: string | null, image3?: string | null, image4?: string | null, image5?: string | null, farm: { __typename?: 'Farm', name: string } };
+export type ProductMutationStatusFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null };
+
+export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } };
+
+export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, avatar?: string | null, roleId: string, isActiveEmail: boolean };
 
@@ -579,15 +615,23 @@ export type CreateFarmMutationVariables = Exact<{
 }>;
 
 
-export type CreateFarmMutation = { __typename?: 'Mutation', createFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string } | null } };
+export type CreateFarmMutation = { __typename?: 'Mutation', createFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type CreateProductMutationVariables = Exact<{
+  farmId: Scalars['ID'];
   createProductInput: CreateProductInput;
   files: Array<Scalars['Upload']> | Scalars['Upload'];
 }>;
 
 
-export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product: { __typename?: 'Product', id: string, name: string, farm: { __typename?: 'Farm', id: string, name: string } } } };
+export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
+export type DeleteProductMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null } };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
@@ -608,52 +652,88 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
+export type UpdateProductMutationVariables = Exact<{
+  updateProductInput: UpdateProductInput;
+  farmId: Scalars['ID'];
+  files: Array<Scalars['Upload']> | Scalars['Upload'];
+}>;
+
+
+export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
 export type CategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CategoriesQuery = { __typename?: 'Query', categories?: Array<{ __typename?: 'Category', id: string, name: string, slug: string }> | null };
+export type CategoriesQuery = { __typename?: 'Query', categories?: Array<{ __typename?: 'Category', id: string, name: string }> | null };
+
+export type FarmByFarmerQueryVariables = Exact<{
+  ownerId: Scalars['ID'];
+}>;
+
+
+export type FarmByFarmerQuery = { __typename?: 'Query', farmsByFarmer?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> | null };
 
 export type FarmQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
 
 
-export type FarmQuery = { __typename?: 'Query', farm?: { __typename?: 'Farm', id: string, name: string, slug: string, description: string, address: string, logoImage?: string | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
+export type FarmQuery = { __typename?: 'Query', farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
 
-export type FarmsQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  cursor?: InputMaybe<Scalars['String']>;
-}>;
+export type FarmsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FarmsQuery = { __typename?: 'Query', farms?: { __typename?: 'PaginatedFarms', totalCount: number, cursor: any, hasMore: boolean, paginatedFarms: Array<{ __typename?: 'Farm', id: string, name: string, logoImage?: string | null, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> } | null };
+export type FarmsQuery = { __typename?: 'Query', allFarms?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, avatar?: string | null, roleId: string, isActiveEmail: boolean } | null };
 
+export type ProductQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null };
+
 export type GetProductsByCategoryQueryVariables = Exact<{
   categoryId: Scalars['ID'];
 }>;
 
 
-export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null, description: string, image1?: string | null, image2?: string | null, image3?: string | null, image4?: string | null, image5?: string | null, farm: { __typename?: 'Farm', name: string } }> | null };
+export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
-export type ProductsQueryVariables = Exact<{
-  limit: Scalars['Int'];
-  cursor?: InputMaybe<Scalars['String']>;
-  categoryQuery?: InputMaybe<Scalars['String']>;
+export type ProductsByFarmQueryVariables = Exact<{
+  farmId: Scalars['ID'];
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'PaginatedProducts', totalCount: number, hasMore: boolean, cursor: any, paginatedProducts: Array<{ __typename?: 'Product', id: string, name: string, slug: string, price: number, unit?: string | null, description: string, image1?: string | null, image2?: string | null, image3?: string | null, image4?: string | null, image5?: string | null, farm: { __typename?: 'Farm', name: string } }> } | null };
+export type ProductsByFarmQuery = { __typename?: 'Query', productsByFarm?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
+export type ProductsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ProductsQuery = { __typename?: 'Query', allProducts?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+
+export const FarmMutationStatusFragmentDoc = gql`
+    fragment farmMutationStatus on FarmMutationResponse {
+  code
+  success
+  message
+}
+    `;
 export const FarmInfoFragmentDoc = gql`
     fragment farmInfo on Farm {
   id
   name
+  address
+  description
+  slug
   logoImage
+  createdAt
+  count
+  isActive
   products {
     id
     name
@@ -664,8 +744,27 @@ export const FarmInfoFragmentDoc = gql`
   }
 }
     `;
-export const FarmMutationStatusFragmentDoc = gql`
-    fragment farmMutationStatus on FarmMutationResponse {
+export const FieldErrorFragmentDoc = gql`
+    fragment fieldError on FieldError {
+  field
+  message
+}
+    `;
+export const FarmMutationResponseFragmentDoc = gql`
+    fragment farmMutationResponse on FarmMutationResponse {
+  ...farmMutationStatus
+  farm {
+    ...farmInfo
+  }
+  errors {
+    ...fieldError
+  }
+}
+    ${FarmMutationStatusFragmentDoc}
+${FarmInfoFragmentDoc}
+${FieldErrorFragmentDoc}`;
+export const ProductMutationStatusFragmentDoc = gql`
+    fragment productMutationStatus on ProductMutationResponse {
   code
   success
   message
@@ -675,20 +774,39 @@ export const ProductInfoFragmentDoc = gql`
     fragment productInfo on Product {
   id
   name
-  slug
-  price
-  unit
+  unAccentName
   description
+  price
+  originalPrice
+  categoryId
+  farmId
   image1
-  image2
-  image3
-  image4
-  image5
+  unit
+  slug
+  qty
+  category {
+    id
+    name
+  }
   farm {
+    id
     name
   }
 }
     `;
+export const ProductMutationResponseFragmentDoc = gql`
+    fragment productMutationResponse on ProductMutationResponse {
+  ...productMutationStatus
+  product {
+    ...productInfo
+  }
+  errors {
+    ...fieldError
+  }
+}
+    ${ProductMutationStatusFragmentDoc}
+${ProductInfoFragmentDoc}
+${FieldErrorFragmentDoc}`;
 export const UserMutationStatusFragmentDoc = gql`
     fragment userMutationStatus on UserMutationResponse {
   code
@@ -710,12 +828,6 @@ export const UserInfoFragmentDoc = gql`
   isActiveEmail
 }
     `;
-export const FieldErrorFragmentDoc = gql`
-    fragment fieldError on FieldError {
-  field
-  message
-}
-    `;
 export const UserMutationResponseFragmentDoc = gql`
     fragment userMutationResponse on UserMutationResponse {
   ...userMutationStatus
@@ -732,16 +844,10 @@ ${FieldErrorFragmentDoc}`;
 export const CreateFarmDocument = gql`
     mutation CreateFarm($createFarmInput: CreateFarmInput!, $files: [Upload!]!) {
   createFarm(createFarmInput: $createFarmInput, files: $files) {
-    code
-    success
-    message
-    farm {
-      id
-      name
-    }
+    ...farmMutationResponse
   }
 }
-    `;
+    ${FarmMutationResponseFragmentDoc}`;
 export type CreateFarmMutationFn = Apollo.MutationFunction<CreateFarmMutation, CreateFarmMutationVariables>;
 
 /**
@@ -770,22 +876,12 @@ export type CreateFarmMutationHookResult = ReturnType<typeof useCreateFarmMutati
 export type CreateFarmMutationResult = Apollo.MutationResult<CreateFarmMutation>;
 export type CreateFarmMutationOptions = Apollo.BaseMutationOptions<CreateFarmMutation, CreateFarmMutationVariables>;
 export const CreateProductDocument = gql`
-    mutation CreateProduct($createProductInput: CreateProductInput!, $files: [Upload!]!) {
-  createProduct(files: $files, createProductInput: $createProductInput) {
-    code
-    success
-    message
-    product {
-      id
-      name
-      farm {
-        id
-        name
-      }
-    }
+    mutation CreateProduct($farmId: ID!, $createProductInput: CreateProductInput!, $files: [Upload!]!) {
+  createProduct(files: $files, createProductInput: $createProductInput, farmId: $farmId) {
+    ...productMutationResponse
   }
 }
-    `;
+    ${ProductMutationResponseFragmentDoc}`;
 export type CreateProductMutationFn = Apollo.MutationFunction<CreateProductMutation, CreateProductMutationVariables>;
 
 /**
@@ -801,6 +897,7 @@ export type CreateProductMutationFn = Apollo.MutationFunction<CreateProductMutat
  * @example
  * const [createProductMutation, { data, loading, error }] = useCreateProductMutation({
  *   variables: {
+ *      farmId: // value for 'farmId'
  *      createProductInput: // value for 'createProductInput'
  *      files: // value for 'files'
  *   },
@@ -813,6 +910,39 @@ export function useCreateProductMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateProductMutationHookResult = ReturnType<typeof useCreateProductMutation>;
 export type CreateProductMutationResult = Apollo.MutationResult<CreateProductMutation>;
 export type CreateProductMutationOptions = Apollo.BaseMutationOptions<CreateProductMutation, CreateProductMutationVariables>;
+export const DeleteProductDocument = gql`
+    mutation DeleteProduct($id: ID!) {
+  deleteProduct(id: $id) {
+    ...productMutationStatus
+  }
+}
+    ${ProductMutationStatusFragmentDoc}`;
+export type DeleteProductMutationFn = Apollo.MutationFunction<DeleteProductMutation, DeleteProductMutationVariables>;
+
+/**
+ * __useDeleteProductMutation__
+ *
+ * To run a mutation, you first call `useDeleteProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProductMutation, { data, loading, error }] = useDeleteProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteProductMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProductMutation, DeleteProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteProductMutation, DeleteProductMutationVariables>(DeleteProductDocument, options);
+      }
+export type DeleteProductMutationHookResult = ReturnType<typeof useDeleteProductMutation>;
+export type DeleteProductMutationResult = Apollo.MutationResult<DeleteProductMutation>;
+export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<DeleteProductMutation, DeleteProductMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($registerInput: RegisterInput!) {
   farmerRegister(registerInput: $registerInput) {
@@ -909,12 +1039,46 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const UpdateProductDocument = gql`
+    mutation UpdateProduct($updateProductInput: UpdateProductInput!, $farmId: ID!, $files: [Upload!]!) {
+  updateProduct(updateProductInput: $updateProductInput, farmId: $farmId, files: $files) {
+    ...productMutationResponse
+  }
+}
+    ${ProductMutationResponseFragmentDoc}`;
+export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutation, UpdateProductMutationVariables>;
+
+/**
+ * __useUpdateProductMutation__
+ *
+ * To run a mutation, you first call `useUpdateProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProductMutation, { data, loading, error }] = useUpdateProductMutation({
+ *   variables: {
+ *      updateProductInput: // value for 'updateProductInput'
+ *      farmId: // value for 'farmId'
+ *      files: // value for 'files'
+ *   },
+ * });
+ */
+export function useUpdateProductMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProductMutation, UpdateProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProductMutation, UpdateProductMutationVariables>(UpdateProductDocument, options);
+      }
+export type UpdateProductMutationHookResult = ReturnType<typeof useUpdateProductMutation>;
+export type UpdateProductMutationResult = Apollo.MutationResult<UpdateProductMutation>;
+export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<UpdateProductMutation, UpdateProductMutationVariables>;
 export const CategoriesDocument = gql`
     query Categories {
   categories {
     id
     name
-    slug
   }
 }
     `;
@@ -945,22 +1109,48 @@ export function useCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type CategoriesQueryHookResult = ReturnType<typeof useCategoriesQuery>;
 export type CategoriesLazyQueryHookResult = ReturnType<typeof useCategoriesLazyQuery>;
 export type CategoriesQueryResult = Apollo.QueryResult<CategoriesQuery, CategoriesQueryVariables>;
+export const FarmByFarmerDocument = gql`
+    query FarmByFarmer($ownerId: ID!) {
+  farmsByFarmer(ownerId: $ownerId) {
+    ...farmInfo
+  }
+}
+    ${FarmInfoFragmentDoc}`;
+
+/**
+ * __useFarmByFarmerQuery__
+ *
+ * To run a query within a React component, call `useFarmByFarmerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFarmByFarmerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFarmByFarmerQuery({
+ *   variables: {
+ *      ownerId: // value for 'ownerId'
+ *   },
+ * });
+ */
+export function useFarmByFarmerQuery(baseOptions: Apollo.QueryHookOptions<FarmByFarmerQuery, FarmByFarmerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FarmByFarmerQuery, FarmByFarmerQueryVariables>(FarmByFarmerDocument, options);
+      }
+export function useFarmByFarmerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FarmByFarmerQuery, FarmByFarmerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FarmByFarmerQuery, FarmByFarmerQueryVariables>(FarmByFarmerDocument, options);
+        }
+export type FarmByFarmerQueryHookResult = ReturnType<typeof useFarmByFarmerQuery>;
+export type FarmByFarmerLazyQueryHookResult = ReturnType<typeof useFarmByFarmerLazyQuery>;
+export type FarmByFarmerQueryResult = Apollo.QueryResult<FarmByFarmerQuery, FarmByFarmerQueryVariables>;
 export const FarmDocument = gql`
     query Farm($slug: String!) {
   farm(slug: $slug) {
-    id
-    name
-    slug
-    description
-    address
-    logoImage
-    owner {
-      phone
-      email
-    }
+    ...farmInfo
   }
 }
-    `;
+    ${FarmInfoFragmentDoc}`;
 
 /**
  * __useFarmQuery__
@@ -990,14 +1180,9 @@ export type FarmQueryHookResult = ReturnType<typeof useFarmQuery>;
 export type FarmLazyQueryHookResult = ReturnType<typeof useFarmLazyQuery>;
 export type FarmQueryResult = Apollo.QueryResult<FarmQuery, FarmQueryVariables>;
 export const FarmsDocument = gql`
-    query Farms($limit: Int!, $cursor: String) {
-  farms(limit: $limit, cursor: $cursor) {
-    totalCount
-    cursor
-    hasMore
-    paginatedFarms {
-      ...farmInfo
-    }
+    query Farms {
+  allFarms {
+    ...farmInfo
   }
 }
     ${FarmInfoFragmentDoc}`;
@@ -1014,12 +1199,10 @@ export const FarmsDocument = gql`
  * @example
  * const { data, loading, error } = useFarmsQuery({
  *   variables: {
- *      limit: // value for 'limit'
- *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function useFarmsQuery(baseOptions: Apollo.QueryHookOptions<FarmsQuery, FarmsQueryVariables>) {
+export function useFarmsQuery(baseOptions?: Apollo.QueryHookOptions<FarmsQuery, FarmsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<FarmsQuery, FarmsQueryVariables>(FarmsDocument, options);
       }
@@ -1064,6 +1247,41 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const ProductDocument = gql`
+    query Product($id: ID!) {
+  product(id: $id) {
+    ...productInfo
+  }
+}
+    ${ProductInfoFragmentDoc}`;
+
+/**
+ * __useProductQuery__
+ *
+ * To run a query within a React component, call `useProductQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProductQuery(baseOptions: Apollo.QueryHookOptions<ProductQuery, ProductQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductQuery, ProductQueryVariables>(ProductDocument, options);
+      }
+export function useProductLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductQuery, ProductQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductQuery, ProductQueryVariables>(ProductDocument, options);
+        }
+export type ProductQueryHookResult = ReturnType<typeof useProductQuery>;
+export type ProductLazyQueryHookResult = ReturnType<typeof useProductLazyQuery>;
+export type ProductQueryResult = Apollo.QueryResult<ProductQuery, ProductQueryVariables>;
 export const GetProductsByCategoryDocument = gql`
     query GetProductsByCategory($categoryId: ID!) {
   productsByCategory(categoryId: $categoryId) {
@@ -1099,15 +1317,45 @@ export function useGetProductsByCategoryLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetProductsByCategoryQueryHookResult = ReturnType<typeof useGetProductsByCategoryQuery>;
 export type GetProductsByCategoryLazyQueryHookResult = ReturnType<typeof useGetProductsByCategoryLazyQuery>;
 export type GetProductsByCategoryQueryResult = Apollo.QueryResult<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>;
+export const ProductsByFarmDocument = gql`
+    query ProductsByFarm($farmId: ID!) {
+  productsByFarm(farmId: $farmId) {
+    ...productInfo
+  }
+}
+    ${ProductInfoFragmentDoc}`;
+
+/**
+ * __useProductsByFarmQuery__
+ *
+ * To run a query within a React component, call `useProductsByFarmQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProductsByFarmQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProductsByFarmQuery({
+ *   variables: {
+ *      farmId: // value for 'farmId'
+ *   },
+ * });
+ */
+export function useProductsByFarmQuery(baseOptions: Apollo.QueryHookOptions<ProductsByFarmQuery, ProductsByFarmQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProductsByFarmQuery, ProductsByFarmQueryVariables>(ProductsByFarmDocument, options);
+      }
+export function useProductsByFarmLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProductsByFarmQuery, ProductsByFarmQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProductsByFarmQuery, ProductsByFarmQueryVariables>(ProductsByFarmDocument, options);
+        }
+export type ProductsByFarmQueryHookResult = ReturnType<typeof useProductsByFarmQuery>;
+export type ProductsByFarmLazyQueryHookResult = ReturnType<typeof useProductsByFarmLazyQuery>;
+export type ProductsByFarmQueryResult = Apollo.QueryResult<ProductsByFarmQuery, ProductsByFarmQueryVariables>;
 export const ProductsDocument = gql`
-    query Products($limit: Int!, $cursor: String, $categoryQuery: String) {
-  products(limit: $limit, cursor: $cursor, categoryQuery: $categoryQuery) {
-    totalCount
-    hasMore
-    cursor
-    paginatedProducts {
-      ...productInfo
-    }
+    query Products {
+  allProducts {
+    ...productInfo
   }
 }
     ${ProductInfoFragmentDoc}`;
@@ -1124,13 +1372,10 @@ export const ProductsDocument = gql`
  * @example
  * const { data, loading, error } = useProductsQuery({
  *   variables: {
- *      limit: // value for 'limit'
- *      cursor: // value for 'cursor'
- *      categoryQuery: // value for 'categoryQuery'
  *   },
  * });
  */
-export function useProductsQuery(baseOptions: Apollo.QueryHookOptions<ProductsQuery, ProductsQueryVariables>) {
+export function useProductsQuery(baseOptions?: Apollo.QueryHookOptions<ProductsQuery, ProductsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProductsQuery, ProductsQueryVariables>(ProductsDocument, options);
       }

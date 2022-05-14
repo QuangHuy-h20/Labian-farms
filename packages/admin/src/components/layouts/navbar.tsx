@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "@components/ui/Link";
+import Link from "@components/ui/link";
 import AuthorizedMenu from "./authorized-menu";
 import { ROUTES } from "@utils/routes";
 import LinkButton from "@components/ui/link-button";

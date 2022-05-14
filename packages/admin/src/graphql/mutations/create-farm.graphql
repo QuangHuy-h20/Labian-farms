@@ -1,11 +1,5 @@
 mutation CreateFarm($createFarmInput: CreateFarmInput!, $files: [Upload!]!){
   createFarm(createFarmInput: $createFarmInput, files: $files){
-    code
-    success
-    message
-    farm{
-      id
-      name
-    }
+  ...farmMutationResponse
   }
 }

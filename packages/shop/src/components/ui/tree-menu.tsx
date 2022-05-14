@@ -64,8 +64,8 @@ const TreeMenuItem: React.FC<TreeMenuItemProps> = ({
       >
         <button
           className={cn(
-            'flex items-center w-full py-2 text-start outline-none text-body-dark font-semibold  focus:outline-none focus:ring-0 focus:text-emerald-500 transition-all ease-in-expo',
-            isOpen ? 'text-emerald-500' : 'text-body-dark',
+            'flex items-center w-full py-2 text-start outline-none text-gray-500 font-semibold  focus:outline-none focus:ring-0 focus:text-emerald-500 transition-all ease-in-expo',
+            isOpen ? 'text-emerald-500' : 'text-gray-500',
             className ? className : 'text-sm'
           )}
         >
@@ -94,7 +94,7 @@ const TreeMenuItem: React.FC<TreeMenuItemProps> = ({
                     key={`${currentItem.name}${currentItem.slug}`}
                     item={currentItem}
                     depth={childDepth}
-                    className={cn('text-sm text-body ms-5')}
+                    className={cn('text-sm text-gray-400 ms-5')}
                   />
                 );
               })}
