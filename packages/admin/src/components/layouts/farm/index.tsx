@@ -1,20 +1,19 @@
 import { useRouter } from "next/router";
 import Navbar from "@components/layouts/navbar";
-import { getAuthCredentials, hasAccess } from "@utils/auth-utils";
 import { siteSettings } from "@settings/site.settings";
 import SidebarItem from "@components/layouts/sidebar-item";
 import MobileNavigation from "@components/layouts/mobile-navigation";
 
 const FarmLayout: React.FC = ({ children }: any) => {
   const router = useRouter();
-  const {
-    query: { farm },
-  } = router;
+  // const {
+  //   query: { farm },
+  // } = router;
 
   const SidebarItemMap = () => (
 	<>
 	{siteSettings.sidebarLinks.farm.map(({ href, label, icon }) => (
-	  <SidebarItem key={label} href={href(farm?.toString())} label={label} icon={icon} />
+	  <SidebarItem key={label} href={href} label={label} icon={icon} />
 	))}
   </>
   );

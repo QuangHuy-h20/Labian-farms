@@ -28,7 +28,7 @@ import {
 import ProductCategoryInput from "./product-category-input";
 
 type ProductFormProps = {
-  initialValues?: UpdateProductInput | null;
+  initialValues?: Product | null;
 };
 
 const schema: yup.SchemaOf<Omit<ProductFormValues, "categoryId">> = yup
@@ -62,7 +62,7 @@ export default function CreateOrUpdateProductForm({
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File>([] as any);
-  const [imageSrc, setImageSrc] = useState("");
+  const [imageSrc, setImageSrc] = useState(initialValues ? initialValues.image1 : "");
   const { data: farmData } = useFarmQuery({
     variables: {
       slug: router.query.farm as string,
@@ -85,10 +85,11 @@ export default function CreateOrUpdateProductForm({
     formState: { errors },
   } = methods;
 
+
   const [createProduct, { loading: creating }] = useCreateProductMutation({
     onCompleted: () => {
       toast.success("Thêm sản phẩm mới thành công");
-      router.push(`/${router.query.farm}${ROUTES.PRODUCTS}`);
+      router.push(ROUTES.PRODUCTS);
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -108,7 +109,7 @@ export default function CreateOrUpdateProductForm({
   const [updateProduct, { loading: updating }] = useUpdateProductMutation({
     onCompleted: () => {
       toast.success("Cập nhật sản phẩm thành công");
-      router.push(`/${router.query.farm}${ROUTES.PRODUCTS}`);
+      router.push(ROUTES.PRODUCTS);
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -224,7 +225,7 @@ export default function CreateOrUpdateProductForm({
             />
 
             <Card className="w-full sm:w-8/12 md:w-2/3">
-              <ProductCategoryInput control={control} />
+              <ProductCategoryInput  control={control} />
             </Card>
           </div>
 

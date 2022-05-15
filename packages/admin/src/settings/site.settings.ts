@@ -54,27 +54,22 @@ export const siteSettings = {
 		],
 		farm: [
 			{
-				href: (farm: string) => `${ROUTES.DASHBOARD}${farm}`,
+				href: ROUTES.DASHBOARD,
 				label: "Dashboard",
 				icon: "DashboardIcon",
 			},
 			{
-				href: (farm: string) => `${ROUTES.MY_FARMS}`,
-				label: "Nông trại của tôi",
-				icon: "MyShopIcon",
-			},
-			{
-				href: (farm: string) => `/${farm}${ROUTES.PRODUCTS}`,
+				href: ROUTES.PRODUCTS,
 				label: "Sản phẩm",
 				icon: "ProductsIcon",
 			},
 			{
-				href: (farm: string) => `/${farm}${ROUTES.ORDERS}`,
+				href: ROUTES.ORDERS,
 				label: "Danh sách đơn hàng",
 				icon: "OrdersIcon",
 			},
 			{
-				href: (farm: string) => `/${farm}${ROUTES.TOURS}`,
+				href: ROUTES.TOURS,
 				label: "Tour tham quan",
 				icon: "DiaryIcon",
 			},

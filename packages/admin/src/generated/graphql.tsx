@@ -331,6 +331,15 @@ export type MutationUpdateProfileArgs = {
   profileInput: ProfileInput;
 };
 
+export type Order = {
+  __typename?: 'Order';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  status: Scalars['String'];
+  total: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Paginated = {
   __typename?: 'Paginated';
   cursor: Scalars['DateTime'];
@@ -430,10 +439,10 @@ export type Query = {
   categories?: Maybe<Array<Category>>;
   /** Get specific farm by id */
   farm?: Maybe<Farm>;
+  /** Get all farms by farmer */
+  farmByFarmer?: Maybe<Farm>;
   /** Get all farms */
   farms?: Maybe<PaginatedFarms>;
-  /** Get all farms by farmer */
-  farmsByFarmer?: Maybe<Array<Farm>>;
   /** User information */
   me?: Maybe<User>;
   /** Get specific product by id */
@@ -463,14 +472,14 @@ export type QueryFarmArgs = {
 };
 
 
-export type QueryFarmsArgs = {
-  cursor?: InputMaybe<Scalars['String']>;
-  limit: Scalars['Int'];
+export type QueryFarmByFarmerArgs = {
+  ownerId: Scalars['ID'];
 };
 
 
-export type QueryFarmsByFarmerArgs = {
-  ownerId: Scalars['ID'];
+export type QueryFarmsArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -671,7 +680,7 @@ export type FarmByFarmerQueryVariables = Exact<{
 }>;
 
 
-export type FarmByFarmerQuery = { __typename?: 'Query', farmsByFarmer?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> | null };
+export type FarmByFarmerQuery = { __typename?: 'Query', farmByFarmer?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
 
 export type FarmQueryVariables = Exact<{
   slug: Scalars['String'];
@@ -1111,7 +1120,7 @@ export type CategoriesLazyQueryHookResult = ReturnType<typeof useCategoriesLazyQ
 export type CategoriesQueryResult = Apollo.QueryResult<CategoriesQuery, CategoriesQueryVariables>;
 export const FarmByFarmerDocument = gql`
     query FarmByFarmer($ownerId: ID!) {
-  farmsByFarmer(ownerId: $ownerId) {
+  farmByFarmer(ownerId: $ownerId) {
     ...farmInfo
   }
 }

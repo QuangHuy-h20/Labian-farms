@@ -1,14 +1,81 @@
-import AppLayout from "@components/layouts/app";
-import Link from "@components/ui/link";
+import Card from "@components/common/card";
+import FarmLayout from "@components/layouts/farm";
+import ProductList from "@components/product/product-list";
+import ErrorMessage from "@components/ui/error-message";
+import LinkButton from "@components/ui/link-button";
+import PageLoader from "@components/ui/page-loader";
+import {
+  ProductsDocument,
+  useFarmByFarmerQuery,
+  useFarmQuery,
+  useMeQuery,
+  useProductsByFarmQuery,
+} from "@generated/graphql";
+import { addApolloState, initializeApollo } from "@lib/apolloClient";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 
-const Products = () => {
+function ProductsPage() {
+  const { data: meData } = useMeQuery()
+  const { data: farmData, loading: farmLoading } = useFarmByFarmerQuery({
+    variables: {
+      ownerId: meData?.me?.id,
+    },
+  });
+
+  const id = farmData?.farmByFarmer?.id
+  const slug = farmData?.farmByFarmer?.slug
+
+  const { data, loading, error } = useProductsByFarmQuery({
+    variables: {
+      farmId: id
+    },
+  });
+
+  if (loading || farmLoading) return <PageLoader />;
+  if (error) return <ErrorMessage message={error.message} />;
+
   return (
-    <div className="p-5 md:p-8 bg-white shadow rounded flex flex-col mb-8">
-      <h1 className="text-lg font-semibold text-gray-500">Sản phẩm</h1>
-    </div>
+    <>
+      <Card className="flex flex-col mb-8 justify-between">
+        <div className="w-full flex flex-col md:flex-row items-center">
+          <div className="md:w-1/4 mb-4 md:mb-0">
+            <h1 className="text-lg font-semibold text-gray-600">Sản phẩm</h1>
+          </div>
+
+          <div className="w-full md:w-3/4 flex md:flex-row">
+            <div className="w-full flex justify-end">
+              <LinkButton
+                href={`/${slug}/products/create`}
+                className="h-12 ms-4 md:ms-6"
+              >
+                <span className="hidden md:block">+ Thêm sản phẩm</span>
+                <span className="md:hidden">+ Thêm</span>
+              </LinkButton>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <ProductList products={data?.productsByFarm} />
+    </>
   );
+}
+
+ProductsPage.Layout = FarmLayout;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const apolloClient = initializeApollo({ headers: context.req.headers });
+
+  await apolloClient.query({
+    query: ProductsDocument,
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
 };
 
-Products.Layout = AppLayout;
-
-export default Products;
+export default ProductsPage;

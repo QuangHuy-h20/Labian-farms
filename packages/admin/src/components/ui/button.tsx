@@ -43,8 +43,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 		);
 		return (
 			<>
-			<button aria-pressed={active} data-variant ref={ref} className={classesName} disabled={disabled} {...rest}>{children}
-				{loading && <Spinner size='small' className='ml-2'/>}</button>
+			<button aria-pressed={active} data-variant ref={ref} className={classesName} disabled={disabled} {...rest}>
+				<>{loading && <Spinner size='small' className='ml-2'/>} {children}
+				</>
+				</button>
 			</>
 		)
 	}

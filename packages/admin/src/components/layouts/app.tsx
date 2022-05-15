@@ -1,12 +1,23 @@
+import { useMeQuery } from "@generated/graphql";
+import { EXECUTIVE_ADMIN } from "@utils/constants";
 import { Fragment } from "react";
 import { siteSettings } from "../../settings/site.settings";
 import Navbar from "./navbar";
 import SidebarItem from "./sidebar-item";
 
 const AppLayout = ({ children }) => {
-  const SidebarItemMap = () => (
+  const { data } = useMeQuery()
+
+  const SidebarAdminItemMap = () => (
     <Fragment>
       {siteSettings.sidebarLinks.admin.map(({ href, label, icon }) => (
+        <SidebarItem key={label} href={href as string} label={label} icon={icon} />
+      ))}
+    </Fragment>
+  );
+  const SidebarFarmItemMap = () => (
+    <Fragment>
+      {siteSettings.sidebarLinks.farm.map(({ href, label, icon }) => (
         <SidebarItem key={label} href={href as string} label={label} icon={icon} />
       ))}
     </Fragment>
@@ -19,7 +30,7 @@ const AppLayout = ({ children }) => {
       <div className="flex flex-1 pt-20">
         <aside className="shadow w-72 xl:w-76 hidden lg:block overflow-y-auto bg-white px-4 fixed start-0 bottom-0 h-full pt-20">
           <div className="flex flex-col space-y-6 py-4">
-            <SidebarItemMap />
+            {data?.me.roleId === EXECUTIVE_ADMIN ? <SidebarAdminItemMap /> : <SidebarFarmItemMap />}
           </div>
         </aside>
         <main className="w-full pl-72">
