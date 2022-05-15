@@ -1,13 +1,9 @@
 import { Field, ObjectType } from "type-graphql";
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  RelationId,
-} from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { CoreEntity } from "./CoreEntity";
+import { Order } from "./Order";
 import { Product } from "./Product";
+import { Tour } from "./Tour";
 import { User } from "./User";
 
 @ObjectType()
@@ -26,7 +22,7 @@ export class Farm extends CoreEntity {
   address!: string;
 
   @Field()
-  @Column({nullable: true })
+  @Column({ nullable: true })
   description: string;
 
   @Field({ nullable: true })
@@ -48,11 +44,16 @@ export class Farm extends CoreEntity {
   @Field((_return) => User)
   @ManyToOne(() => User, (owner) => owner.farms)
   owner: User;
-  
-  @Field(_type => [Product], { nullable: true })
-  @OneToMany(()=> Product, product => product.farm)
-  products: Product[]
-  @RelationId((farm: Farm) => farm.products)
-  productFarmIds: number[]
 
+  @Field((_type) => [Product], { nullable: true })
+  @OneToMany(() => Product, (product) => product.farm)
+  products: Product[];
+  @RelationId((farm: Farm) => farm.products)
+  productFarmIds: number[];
+
+  @OneToMany(() => Order, (order) => order.farm)
+  orders: Promise<Order[]>;
+
+  @OneToMany(() => Tour, (tour) => tour.farm)
+  tours: Promise<Tour[]>;
 }

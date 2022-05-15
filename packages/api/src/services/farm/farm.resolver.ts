@@ -42,10 +42,10 @@ export class FarmResolver {
 
   //----------------------- Query -----------------------
 
-  @Query(_return => [Farm], { description: "Get all farms by farmer", nullable: true })
-  async farmsByFarmer(@Arg("ownerId", _type => ID) ownerId: number): Promise<Farm[] | null> {
+  @Query(_return => Farm, { description: "Get all farms by farmer", nullable: true })
+  async farmByFarmer(@Arg("ownerId", _type => ID) ownerId: number): Promise<Farm | null> {
     try {
-      return await Farm.find({ ownerId })
+      return await Farm.findOneOrFail({ ownerId })
     } catch (error) {
       return null
     }
@@ -132,9 +132,14 @@ export class FarmResolver {
     let list: string[] = []
     try {
       const { name } = createFarmInput;
-      const existingFarm = await Farm.findOne({ where: [{ name }] });
+      const existingFarmName = await Farm.findOne({ where: [{ name }] });
 
-      if (existingFarm) return failureResponse(400, false, "Tên nông trại đã được sử dụng.")
+      const existingFarm = await Farm.findOne({ownerId: req.session.userId})
+      
+
+      if (existingFarm) return failureResponse(400, false, "Mỗi tài khoản chỉ được phép tạo 1 nông trại.")
+
+      if(existingFarmName) return failureResponse(400, false, "Tên nông trại đã được sử dụng.")
 
       const slug = toSlug(name)
       const folder = `farms/${slug}`

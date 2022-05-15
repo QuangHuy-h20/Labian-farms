@@ -1,8 +1,9 @@
 import { Field, ObjectType } from "type-graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { Category } from "./Category";
 import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";
+import { OrderItem } from "./OrderItem";
 
 @ObjectType()
 @Entity()
@@ -74,4 +75,7 @@ export class Product extends CoreEntity {
   @Field((_type) => Farm)
   @ManyToOne(() => Farm, (farm) => farm.products)
   farm: Farm;
+
+  @OneToMany(() => OrderItem, (item) => item.productId)
+  orderItems: Promise<OrderItem[]>;
 }

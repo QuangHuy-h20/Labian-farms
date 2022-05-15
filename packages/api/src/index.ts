@@ -23,7 +23,10 @@ import {
 import MongoStore from "connect-mongo";
 import { buildDataLoaders } from "./utils/dataLoader";
 import { graphqlUploadExpress } from "graphql-upload";
-// import { UserResolver } from "./shop/services/user/user.resolver";
+import { Order } from "./entities/Order";
+import { OrderItem } from "./entities/OrderItem";
+import { Tour } from "./entities/Tour";
+import { ApplyTour } from "./entities/ApplyTour";
 
 const main = async () => {
   await createConnection({
@@ -33,7 +36,7 @@ const main = async () => {
     password: process.env.DB_PASSWORD_DEV,
     logging: true,
     synchronize: true,
-    entities: [User, UserRole, Product, Category, Farm, Address],
+    entities: [User, UserRole, Product, Category, Farm, Address, Order, OrderItem, Tour, ApplyTour],
   });
 
   const app = express();

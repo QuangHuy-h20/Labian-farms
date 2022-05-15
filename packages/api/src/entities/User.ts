@@ -1,26 +1,21 @@
 import { Field, ObjectType } from "type-graphql";
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  RelationId,
-} from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { Address } from "./Address";
+import { ApplyTour } from "./ApplyTour";
 import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";
+import { Order } from "./Order";
 import { UserRole } from "./UserRole";
 
 export enum Gender {
   MALE = "male",
   FEMALE = "female",
-  OTHER = "other"
+  OTHER = "other",
 }
 
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
-
   @Field()
   @Column({ unique: true })
   email!: string;
@@ -34,7 +29,7 @@ export class User extends CoreEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true, default: "" })
-  nickname?: string
+  nickname?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true, default: "" })
@@ -60,7 +55,7 @@ export class User extends CoreEntity {
   @Column({ default: "customer" })
   roleId!: string;
 
-  @Field(_return => UserRole)
+  @Field((_return) => UserRole)
   @ManyToOne(() => UserRole, (role) => role.users)
   role: UserRole;
 
@@ -68,13 +63,21 @@ export class User extends CoreEntity {
   @OneToMany(() => Address, (address) => address.customer, { cascade: true })
   addresses: Address[];
   @RelationId((user: User) => user.addresses)
-  userAddressIds: number[]
+  userAddressIds: number[];
 
-  @Field(_type => [Farm], { nullable: true })
+  @Field((_type) => [Farm], { nullable: true })
   @OneToMany(() => Farm, (farm) => farm.owner, { cascade: true })
   farms: Farm[];
   @RelationId((user: User) => user.farms)
-  userFarmIds: number[]
+  userFarmIds: number[];
+
+  @OneToMany(() => Order, (order) => order.customer, { cascade: true })
+  orders: Promise<Order[]>;
+  @RelationId((user: User) => user.orders)
+  userOrderIds: number[];
+
+  @OneToMany(() => ApplyTour, apply => apply.customer)
+  applyTour: Promise<ApplyTour[]>
 
   @Field()
   @Column({ default: 1 })
@@ -82,6 +85,5 @@ export class User extends CoreEntity {
 
   @Field()
   @Column({ default: false })
-  isActiveEmail: boolean
-
+  isActiveEmail: boolean;
 }
