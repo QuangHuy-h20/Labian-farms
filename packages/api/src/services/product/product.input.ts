@@ -15,7 +15,7 @@ export class CreateProductInput {
   price: number;
 
   @Field()
-  qty: number;
+  stock: number;
 
   @Field()
   unit: string;

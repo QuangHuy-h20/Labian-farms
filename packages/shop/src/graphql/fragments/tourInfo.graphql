@@ -14,6 +14,7 @@ fragment tourInfo on Tour {
   image1
   farmId
   farm {
+    id
     name
     address
     owner {

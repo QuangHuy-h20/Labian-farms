@@ -17,7 +17,7 @@ export function getProductDefaultValues(product: any) {
       description: '',
       originalPrice: 0,
       price: 0,
-      qty: 0,
+      stock: 0,
       unit: '',
     }
   }

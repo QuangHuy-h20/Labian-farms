@@ -1,6 +1,6 @@
-import { CartOutlinedIcon } from '@/components/icons/cart-outlined';
-import { drawerAtom } from '@/store/drawer-atom';
-import { useCart } from '@/store/quick-cart/cart.context';
+import { CartOutlinedIcon } from '@components/icons/cart-outlined';
+import { drawerAtom } from '@store/drawer-atom';
+import { useCart } from '@store/quick-cart/cart.context';
 import { useAtom } from 'jotai';
 
 const CartCounterIconButton = () => {
@@ -16,7 +16,7 @@ const CartCounterIconButton = () => {
     >
       <CartOutlinedIcon className="w-5 h-5" />
       {totalUniqueItems > 0 && (
-        <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-accent text-light text-[10px] absolute ltr:-right-1/2 rtl:-left-1/2 -top-1/2">
+        <span className="min-w-[20px] h-5 flex items-center justify-center rounded-full bg-accent text-light text-[10px] absolute right-1/2 rtl:-left-1/2 -top-1/2">
           {totalUniqueItems}
         </span>
       )}

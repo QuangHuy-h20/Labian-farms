@@ -46,18 +46,18 @@ const Drawer: React.FC<DrawerProps> = ({
     };
   }, [open]);
 
-  // useEffect(() => {
-  //   if (ref.current) {
-  //     if (open) {
-  //       disableBodyScroll(ref.current);
-  //     } else {
-  //       enableBodyScroll(ref.current);
-  //     }
-  //   }
-  //   return () => {
-  //     clearAllBodyScrollLocks();
-  //   };
-  // }, [open]);
+  useEffect(() => {
+    if (ref.current) {
+      if (open) {
+        disableBodyScroll(ref.current);
+      } else {
+        enableBodyScroll(ref.current);
+      }
+    }
+    return () => {
+      clearAllBodyScrollLocks();
+    };
+  }, [open]);
 
   return (
     <Portal>
@@ -93,7 +93,7 @@ const Drawer: React.FC<DrawerProps> = ({
                 )}
               >
                 <div className="h-full w-screen max-w-md">
-                  <div className="drawer flex h-full flex-col bg-light text-base shadow-xl">
+                  <div className="drawer flex h-full flex-col bg-white text-base shadow-xl">
                     <Scrollbar className="h-full w-full">{children}</Scrollbar>
                   </div>
                 </div>

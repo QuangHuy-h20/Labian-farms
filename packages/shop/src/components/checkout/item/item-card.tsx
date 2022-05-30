@@ -1,13 +1,11 @@
-import usePrice from '@/lib/use-price';
-import cn from 'classnames';
-import { useTranslation } from 'next-i18next';
+import usePrice from "@lib/use-price";
+import cn from "classnames";
 interface Props {
   item: any;
   notAvailable?: boolean;
 }
 
 const ItemCard = ({ item, notAvailable }: Props) => {
-  const { t } = useTranslation('common');
   const { price } = usePrice({
     amount: item.itemTotal,
   });
@@ -15,12 +13,12 @@ const ItemCard = ({ item, notAvailable }: Props) => {
     <div className="flex justify-between py-2">
       <div className="flex items-center justify-between text-base">
         <span
-          className={cn('text-sm', notAvailable ? 'text-red-500' : 'text-body')}
+          className={cn("text-sm", notAvailable ? "text-red-500" : "text-body")}
         >
           <span
             className={cn(
-              'text-sm font-bold',
-              notAvailable ? 'text-red-500' : 'text-heading'
+              "text-sm font-bold",
+              notAvailable ? "text-red-500" : "text-heading"
             )}
           >
             {item.quantity}
@@ -30,9 +28,9 @@ const ItemCard = ({ item, notAvailable }: Props) => {
         </span>
       </div>
       <span
-        className={cn('text-sm', notAvailable ? 'text-red-500' : 'text-body')}
+        className={cn("text-sm", notAvailable ? "text-red-500" : "text-body")}
       >
-        {!notAvailable ? price : t('text-unavailable')}
+        {!notAvailable ? price : ""}
       </span>
     </div>
   );

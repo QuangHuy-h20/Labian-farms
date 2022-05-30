@@ -18,7 +18,7 @@ const ProductList = ({ products, permission }: IProductList) => {
     { key: "farmName", name: "Nông trại" },
     { key: "price", name: "Giá khuyến mãi/ Giá gốc" },
     { key: "unit", name: "Đơn vị" },
-    { key: "qty", name: "Số lượng" },
+    { key: "stock", name: "Số lượng" },
     { key: "action", name: "Thao tác" },
   ];
 
@@ -37,7 +37,7 @@ const ProductList = ({ products, permission }: IProductList) => {
         " đ"
       )}`}</td>
       <td>{item.unit}</td>
-      <td>{item.qty}</td>
+      <td>{item.stock}</td>
       <td>
         {!permission ? (
           <ActionButtons

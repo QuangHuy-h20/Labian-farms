@@ -40,7 +40,7 @@ const schema: yup.SchemaOf<Omit<ProductFormValues, "categoryId">> = yup
       .typeError("Định dạng phải là số")
       .positive("Giá không được âm")
       .required("Trường dữ liệu bắt buộc."),
-    qty: yup
+    stock: yup
       .number()
       .typeError("Định dạng phải là số")
       .positive("Số lượng không được âm")
@@ -277,8 +277,8 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
             <Card className="w-full sm:w-8/12 md:w-2/3">
               <Input
                 label="Số lượng"
-                {...register("qty")}
-                error={errors.qty?.message!}
+                {...register("stock")}
+                error={errors.stock?.message!}
                 variant="outline"
                 className="mb-5"
               />

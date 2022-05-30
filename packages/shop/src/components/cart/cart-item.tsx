@@ -44,7 +44,6 @@ const CartItem = ({ item }: CartItemProps) => {
           value={item.quantity}
           onDecrement={handleRemoveClick}
           onIncrement={handleIncrement}
-          variant="pillVertical"
           disabled={outOfStock}
         />
       </div>
@@ -59,7 +58,7 @@ const CartItem = ({ item }: CartItemProps) => {
       </div>
       <div>
         <h3 className="font-bold text-heading">{item.name} </h3>
-        <p className="my-2.5 font-semibold text-accent">{price}</p>
+        <p className="my-2.5 font-semibold text-emerald-400">{price}</p>
         <span className="text-xs text-body">
           {item.quantity} X {item.unit}
         </span>

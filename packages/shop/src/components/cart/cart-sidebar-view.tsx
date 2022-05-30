@@ -32,16 +32,16 @@ const CartSidebarView = () => {
   });
   return (
     <section className="flex flex-col h-full relative">
-      <header className="fixed max-w-md w-full top-0 z-10 bg-light py-4 px-6 flex items-center justify-between border-b border-border-200 border-opacity-75">
-        <div className="flex text-accent font-semibold">
+      <header className="fixed max-w-md w-full top-0 z-10 bg-white py-4 px-6 flex items-center justify-between border-b border-border-200 border-opacity-75">
+        <div className="flex text-emerald-400 font-semibold">
           <CartCheckBagIcon className="shrink-0" width={24} height={22} />
-          <span className="flex ltr:ml-2 rtl:mr-2">
+          <span className="flex ml-2 rtl:mr-2">
             {formatString(totalUniqueItems, "Sản phẩm")}
           </span>
         </div>
         <button
           onClick={() => closeSidebar({ display: false, view: '' })}
-          className="w-7 h-7 ltr:ml-3 rtl:mr-3 ltr:-mr-2 rtl:-ml-2 flex items-center justify-center rounded-full text-muted bg-gray-100 transition-all duration-200 focus:outline-none hover:bg-accent focus:bg-accent hover:text-light focus:text-light"
+          className="w-7 h-7 ml-3 rtl:mr-3 -mr-2 rtl:-ml-2 flex items-center justify-center rounded-full text-muted bg-gray-100 transition-all duration-200 focus:outline-none hover:bg-emerald-500 focus:bg-emerald-500 hover:text-white focus:text-white"
         >
           <span className="sr-only">Đóng</span>
           <CloseIcon className="w-3 h-3" />
@@ -72,16 +72,16 @@ const CartSidebarView = () => {
       </AnimateSharedLayout>
       {/* End of cart items */}
 
-      {/* <footer className="sticky ltr:left-0 rtl:right-0 bottom-0 w-full py-5 px-6 z-10 bg-light"> */}
-      <footer className="fixed bottom-0 w-full max-w-md py-5 px-6 z-10 bg-light">
+      {/* <footer className="sticky left-0 rtl:right-0 bottom-0 w-full py-5 px-6 z-10 bg-white"> */}
+      <footer className="fixed bottom-0 w-full max-w-md py-5 px-6 z-10 bg-white">
         <button
-          className="flex justify-between w-full h-12 md:h-14 p-1 text-sm font-bold bg-accent rounded-full shadow-700 transition-colors focus:outline-none hover:bg-accent-hover focus:bg-accent-hover"
+          className="flex justify-between w-full h-12 md:h-14 p-1 text-sm font-bold bg-emerald-500 rounded-full shadow-700 transition-colors focus:outline-none hover:bg-emerald-500-hover focus:bg-emerald-500-hover"
           onClick={handleCheckout}
         >
-          <span className="flex flex-1 items-center h-full px-5 text-light">
+          <span className="flex flex-1 items-center h-full px-5 text-white">
             Thanh toán
           </span>
-          <span className="flex items-center shrink-0 h-full bg-light text-accent rounded-full px-5">
+          <span className="flex items-center shrink-0 h-full bg-white text-emerald-400 rounded-full px-5">
             {totalPrice}
           </span>
         </button>

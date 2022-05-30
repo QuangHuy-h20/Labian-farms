@@ -261,7 +261,7 @@ export class ProductResolver {
         description,
         originalPrice,
         price,
-        qty,
+        stock,
         unit,
         categoryId
       } = updateProductInput;
@@ -299,7 +299,7 @@ export class ProductResolver {
         existingProduct.categoryId = categoryId;
         existingProduct.price = price;
         existingProduct.originalPrice = originalPrice;
-        existingProduct.qty = qty;
+        existingProduct.stock = stock;
         existingProduct.unit = unit;
 
 

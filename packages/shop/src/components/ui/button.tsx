@@ -22,7 +22,7 @@ const classes = {
   transparent: "bg-none",
   normal: "bg-emerald-500 hover:bg-emerald-600 text-white",
   outline: "bg-none border border-emerald-400 text-emerald-300 font-normal",
-  disabled: "cursor-not-allowed",
+  disabled: "cursor-not-allowed  border border-gray-200 text-gray-400",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {

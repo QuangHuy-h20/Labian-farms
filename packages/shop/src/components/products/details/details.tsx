@@ -32,7 +32,7 @@ const Details: React.FC<Props> = ({
     price: salePrice,
     originalPrice,
     category,
-    qty,
+    stock,
     farm,
     slug,
   } = product ?? {};
@@ -40,8 +40,6 @@ const Details: React.FC<Props> = ({
 
   const router = useRouter();
   const { closeModal } = useModalAction();
-
-  const { attributes } = useAttributes();
 
   const discount = calDiscount(product);
 
@@ -66,7 +64,7 @@ const Details: React.FC<Props> = ({
   };
 
   return (
-    <article className="rounded-lg bg-white">
+    <article className="rounded-lg bg-white text-left">
       <div className="flex flex-col border-b md:flex-row border-border-200 border-opacity-70">
         <div className="p-6 pt-10 md:w-1/2 lg:p-14 xl:p-16">
           <div className="flex items-center justify-between mb-8 lg:mb-10">
@@ -105,20 +103,14 @@ const Details: React.FC<Props> = ({
                   }
                 )}
                 {...(isModal && {
-                  onClick: () => navigate(`${ROUTES.PRODUCT}/${slug}`),
+                  onClick: () => navigate(`${ROUTES.PRODUCT}/${slug!}`),
                 })}
               >
-                {name} ({unit})
+                {name}
               </h1>
 
-              {unit && (
-                <span className="block mt-2 text-sm font-normal text-gray-500 md:mt-3">
-                  {unit}
-                </span>
-              )}
-
               {description && (
-                <div className="mt-3 text-sm leading-7 md:mt-4 text-body">
+                <div className="mt-3 text-sm leading-7 md:mt-4 text-gray-400">
                   <Truncate
                     character={150}
                     {...(!isModal && {
@@ -133,11 +125,11 @@ const Details: React.FC<Props> = ({
 
               <span className="flex items-center my-5 md:my-10">
                 <ins className="text-2xl font-semibold no-underline mr-2 md:text-3xl text-emerald-600">
-                  {moneyFormatter(salePrice)}
+                  {moneyFormatter(salePrice)} / {unit}
                 </ins>
                 {originalPrice && (
                   <del className="text-sm font-normal md:text-base text-gray-500">
-                     {moneyFormatter(originalPrice)}
+                    {moneyFormatter(originalPrice)}
                   </del>
                 )}
               </span>
@@ -146,8 +138,8 @@ const Details: React.FC<Props> = ({
                 <div className="mb-3 lg:mb-0 w-full">
                   <AddToCart
                     data={product}
-                    variant="big"
-                    disabled={qty! < 0 ? true : false}
+                    variant="neon"
+                    disabled={stock! < 0 ? true : false}
                   />
                 </div>
               </div>
@@ -156,7 +148,7 @@ const Details: React.FC<Props> = ({
 
           <div className="flex items-center mt-3">
             <span className="py-1 text-sm font-semibold capitalize text-gray-600 mr-3">
-              Loại hàng: 
+              Loại hàng:
             </span>
             <div className="lowercase text-sm text-gray-600 tracking-wider whitespace-nowrap py-1 px-2.5 bg-transparent border border-border-200 rounded transition-colors hover:border-emerald-600 hover:text-emerald-600 focus:outline-none focus:bg-opacity-100">
               {category?.name}

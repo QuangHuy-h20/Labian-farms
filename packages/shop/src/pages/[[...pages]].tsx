@@ -6,19 +6,25 @@ import Products from "@components/products";
 import Categories from "@components/categories";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-
+import { useWindowSize } from "@lib/use-window-size";
+import dynamic from "next/dynamic";
+const CartCounterButton = dynamic(
+  () => import("@components/cart/cart-counter-button"),
+  { ssr: false }
+);
 
 const Home = () => {
-  const { query } = useRouter()
+  const { query } = useRouter();
+  const { width } = useWindowSize();
 
   useEffect(() => {
     if (query.text || query.category) {
-      scroller.scrollTo('grid', {
+      scroller.scrollTo("grid", {
         smooth: true,
-        offset: -110
-      })
+        offset: -110,
+      });
     }
-  }, [query.text, query.category])
+  }, [query.text, query.category]);
   return (
     <>
       <Banner />
@@ -30,9 +36,9 @@ const Home = () => {
         <Categories />
         <Products className="p-8" />
       </Element>
+      {width > 1023 && <CartCounterButton />}
     </>
   );
-}
+};
 
-
-export default Home
+export default Home;

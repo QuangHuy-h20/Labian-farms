@@ -10,7 +10,7 @@ fragment productInfo on Product {
   image1
   unit
   slug
-  qty
+  stock
   category {
     id
     name

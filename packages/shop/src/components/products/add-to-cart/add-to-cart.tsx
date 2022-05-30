@@ -1,19 +1,19 @@
-import Counter from '@components/ui/counter';
-import AddToCartBtn from '@components/products/add-to-cart/add-to-cart-btn';
-import { cartAnimation } from '@lib/cart-animation';
-import { useCart } from '@store/quick-cart/cart.context';
-import { generateCartItem } from '@store/quick-cart/generate-cart-item';
+import Counter from "@components/ui/counter";
+import AddToCartBtn from "@components/products/add-to-cart/add-to-cart-btn";
+import { cartAnimation } from "@lib/cart-animation";
+import { useCart } from "@store/quick-cart/cart.context";
+import { generateCartItem } from "@store/quick-cart/generate-cart-item";
 
 interface Props {
   data: any;
-  variant?: 'helium' | 'neon' | 'argon' | 'oganesson' | 'single' | 'big';
+  variant?: "helium" | "neon" | "argon" | "oganesson" | "single" | "big";
   counterVariant?:
-    | 'helium'
-    | 'neon'
-    | 'argon'
-    | 'oganesson'
-    | 'single'
-    | 'details';
+    | "helium"
+    | "neon"
+    | "argon"
+    | "oganesson"
+    | "single"
+    | "details";
   counterClass?: string;
   variation?: any;
   disabled?: boolean;
@@ -21,7 +21,7 @@ interface Props {
 
 export const AddToCart = ({
   data,
-  variant = 'helium',
+  variant = "neon",
   counterVariant,
   counterClass,
   variation,
@@ -61,7 +61,6 @@ export const AddToCart = ({
         value={getItemFromCart(item.id).quantity}
         onDecrement={handleRemoveClick}
         onIncrement={handleAddClick}
-        variant={counterVariant || variant}
         className={counterClass}
         disabled={outOfStock}
       />

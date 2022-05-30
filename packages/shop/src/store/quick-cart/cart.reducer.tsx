@@ -46,7 +46,7 @@ export function cartReducer(state: State, action: Action): State {
       const items = addItemWithQuantity(
         state.items,
         action.item,
-        action.quantity
+        action.quantity ?? 1
       );
       return generateFinalState(state, items);
     }

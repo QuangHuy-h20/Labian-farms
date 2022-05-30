@@ -20,7 +20,7 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
     price: salePrice,
     originalPrice,
     unit,
-    qty,
+    stock,
     image1,
   } = product ?? {};
 
@@ -81,9 +81,9 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
         </h3>
         {/* End of product title */}
 
-        <>{Number(qty) > 0 && <AddToCart variant="neon" data={product} />}</>
+        <>{Number(stock) > 0 && <AddToCart variant="neon" data={product} />}</>
 
-        {Number(qty) <= 0 && (
+        {Number(stock) <= 0 && (
           <div className="bg-red-500 rounded text-xs text-center text- px-2 py-1.5 sm:py-2.5">
             Số lượng kho không đủ
           </div>

@@ -41,22 +41,34 @@ const TourPage = () => {
     },
   });
 
+  const {
+    id,
+    applyTourStatus,
+    description,
+    endDate,
+    name,
+    numberOfVisitor,
+    slot,
+    status,
+    startDate,
+    image1,
+    farm,
+  } = tourData?.tour!;
+
   const { data: productData } = useProductsByFarmQuery({
     variables: {
-      farmId: tourData?.tour?.id,
+      farmId: farm!.id,
     },
   });
-
-  console.log(productData?.productsByFarm);
 
   const handleApply = async () => {
     await applyTour({
       variables: {
         applyTourStatusValue: ApplyTourStatus.Apply,
-        tourId: tourData?.tour?.id,
+        tourId: id,
       },
       onCompleted: () => {
-        toast.success("Chúc mừng bạn đã đăng ký thành cồng!");
+        toast.success("Chúc mừng bạn đã đăng ký thành công!");
       },
       onError: () => {
         toast.error("Đã có lỗi xảy ra, bạn vui lòng thử lại sau nhé.");
@@ -68,10 +80,10 @@ const TourPage = () => {
     await applyTour({
       variables: {
         applyTourStatusValue: ApplyTourStatus.UnApply,
-        tourId: tourData?.tour?.id,
+        tourId: id!,
       },
       onCompleted: () => {
-        toast.success("Huỷ đăng ký thành cồng!");
+        toast.success("Huỷ đăng ký tour thành cồng!");
       },
       onError: () => {
         toast.error("Đã có lỗi xảy ra, bạn vui lòng thử lại sau nhé.");
@@ -90,56 +102,60 @@ const TourPage = () => {
               <div className="flex flex-col items-center w-full border-b border-gray-200 p-7">
                 <div className="relative mx-auto mb-8 overflow-hidden bg-gray-200 border border-gray-100 rounded-lg w-44 h-44">
                   <Image
-                    src={tourData?.tour?.image1! ?? productPlaceholder}
+                    src={image1! ?? productPlaceholder}
                     layout="fill"
                     objectFit="cover"
                   />
                 </div>
 
-                <h3 className="mb-2 text-lg font-semibold text-center text-gray-600">
-                  {tourData?.tour?.name}
+                <h1 className="text-emerald-400">{applyTourStatus! === ApplyTourStatusValue!.Apply ? "Đã tham gia" : ""}</h1>
+                <h3 className="mb-4 text-lg font-semibold text-center text-gray-600">
+                  
+                  {name!} <p className="text-emerald-400">{status! === "open" ? "Đang mở" : "Đã đóng"}</p>
                 </h3>
-                <div className="flex mb-2">
+                <div className="flex mb-4">
                   <div className="w-6 h-6 mr-2">
                     <ShopIcon />
                   </div>
-                  {tourData?.tour?.farm?.name}
+                  {farm?.name!}
                 </div>
 
-                <div className="flex mb-3">
+                <div className="flex mb-6">
                   <span className="text-gray-400">
-                    Số người đã đăng ký: {tourData?.tour?.numberOfVisitor}/{" "}
-                    {tourData?.tour?.slot}
+                    Số người đã đăng ký: {numberOfVisitor!}/ {slot!}
                   </span>
                   <UserIcon className="ml-1 text-gray-500" />
                 </div>
 
                 {meData?.me ? (
-                  <Button
-                    variant={
-                      tourData!.tour!.applyTourStatus ===
-                      ApplyTourStatusValue!.Apply
-                        ? "outline"
-                        : "normal"
-                    }
-                    disabled={
-                      tourData!.tour!.numberOfVisitor > tourData!.tour!.slot
-                        ? true
-                        : false
-                    }
-                    size="large"
-                    onClick={
-                      tourData!.tour!.applyTourStatus ===
-                      ApplyTourStatusValue!.Apply
-                        ? handleUnApply
-                        : handleApply
-                    }
-                  >
-                    {tourData!.tour!.applyTourStatus ===
-                    ApplyTourStatusValue!.Apply
-                      ? "Huỷ đăng ký"
-                      : "Đăng ký"}
-                  </Button>
+                  numberOfVisitor! === slot! ? (
+                    <Button
+                     
+                      disabled={numberOfVisitor! === slot! ? true : false}
+                      size="large"
+                    >
+                     Đã hết lượt đăng ký
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={
+                        applyTourStatus! === ApplyTourStatusValue!.Apply
+                          ? "outline"
+                          : "normal"
+                      }
+                     
+                      size="large"
+                      onClick={
+                        applyTourStatus! === ApplyTourStatusValue!.Apply
+                          ? handleUnApply
+                          : handleApply
+                      }
+                    >
+                      {applyTourStatus! === ApplyTourStatusValue!.Apply
+                        ? "Huỷ đăng ký"
+                        : "Đăng ký"}
+                    </Button>
+                  )
                 ) : (
                   ""
                 )}
@@ -150,7 +166,7 @@ const TourPage = () => {
         <div className="flex w-full flex-col lg:px-4">
           <div className="relative h-full w-full overflow-hidden rounded">
             <Image
-              src={tourData?.tour?.image1 ?? productPlaceholder}
+              src={image1! ?? productPlaceholder}
               layout="responsive"
               width={2340}
               height={640}
@@ -158,13 +174,13 @@ const TourPage = () => {
               className="h-full w-full"
             />
           </div>
-          <div className="bg-white mt-8 p-4 w-full">
+          <div className="bg-white mt-8 p-4 w-full rounded-md">
             <h1 className="font-bold text-gray-600 text-2xl mb-3">Mô tả</h1>
-            <p>{tourData?.tour?.description}</p>
+            <p>{description!}</p>
           </div>
 
-          <div className="bg-white mt-8 p-4 w-full">
-            <h1 className="font-bold text-gray-600 text-2xl mb-3">
+          <div className="bg-white mt-8 p-4 rounded-md w-full">
+            <h1 className="font-bold text-gray-600 text-2xl mb-6">
               Sản phẩm có sẵn tại nông trại
             </h1>
             <ProductsGrid products={productData?.productsByFarm} />

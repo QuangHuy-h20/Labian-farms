@@ -51,19 +51,12 @@ export default function usePrice(
   } | null
 ) {
 
-  const { amount, baseAmount, currencyCode = 'đ' } = data ?? {};
+  const { amount, baseAmount, currencyCode = 'VND' } = data ?? {};
   const { locale } = useRouter();
   const value = useMemo(() => {
     if (typeof amount !== 'number' || !currencyCode) return '';
     const currentLocale = locale ? locale : 'en';
-    return baseAmount
-      ? formatVariantPrice({
-          amount,
-          baseAmount,
-          currencyCode,
-          locale: currentLocale,
-        })
-      : formatPrice({ amount, currencyCode, locale: currentLocale });
+    return formatPrice({ amount, currencyCode, locale: currentLocale });
   }, [amount, baseAmount, currencyCode, locale]);
 
   return typeof value === 'string'

@@ -11,6 +11,7 @@ import {
 import FarmSidebar from "@components/shops/sidebar";
 import PageLoader from "@components/loader/page-loader";
 import TourList from "@components/tour/tour-list";
+import CartCounterButton from "@components/cart/cart-counter-button";
 
 const FarmPage = () => {
   const router = useRouter();
@@ -69,6 +70,7 @@ const FarmPage = () => {
           <ProductsGrid products={productData?.productsByFarm} />
         </div>
       </div>
+      <CartCounterButton />
     </div>
   );
 };

@@ -1,22 +1,20 @@
-import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import { NavbarIcon } from '@/components/icons/navbar-icon';
-import { HomeIcon } from '@/components/icons/home-icon';
-import { ShoppingBagIcon } from '@/components/icons/shopping-bag-icon';
-import { UserIcon } from '@/components/icons/user-icon';
-import { useTranslation } from 'next-i18next';
-import { useCart } from '@/store/quick-cart/cart.context';
-import { useModalAction } from '@/components/ui/modal/modal.context';
-import { useAtom } from 'jotai';
-import { drawerAtom } from '@/store/drawer-atom';
-import { authorizationAtom } from '@/store/authorization-atom';
-import { useIsRTL } from '@/lib/locals';
+import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { NavbarIcon } from "@components/icons/navbar-icon";
+import { HomeIcon } from "@components/icons/home-icon";
+import { ShoppingBagIcon } from "@components/icons/shopping-bag-icon";
+import { UserIcon } from "@components/icons/user-icon";
+import { useCart } from "@store/quick-cart/cart.context";
+import { useModalAction } from "@components/modal/modal.context";
+import { useAtom } from "jotai";
+import { drawerAtom } from "@store/drawer-atom";
+import { authorizationAtom } from "@store/authorization-atom";
+import { useIsRTL } from "@lib/locals";
 
 export default function MobileNavigation({
   children,
 }: React.PropsWithChildren<{}>) {
   const router = useRouter();
-  const { t } = useTranslation('common');
   const { openModal } = useModalAction();
   const [isAuthorize] = useAtom(authorizationAtom);
   const [_, setDrawerView] = useAtom(drawerAtom);
@@ -33,7 +31,7 @@ export default function MobileNavigation({
   }
 
   function handleJoin() {
-    return openModal('LOGIN_VIEW');
+    return openModal("LOGIN");
   }
 
   return (
@@ -41,30 +39,30 @@ export default function MobileNavigation({
       <nav className="h-12 md:h-14 w-full py-1.5 px-2 flex justify-between fixed ltr:left-0 rtl:right-0 bottom-0 z-10 bg-light shadow-400">
         <motion.button
           whileTap={{ scale: 0.88 }}
-          onClick={() => handleSidebar('MAIN_MENU_VIEW')}
+          onClick={() => handleSidebar("MAIN_MENU_VIEW")}
           className="flex items-center justify-center h-full p-2 focus:outline-none focus:text-accent"
         >
-          <span className="sr-only">{t('text-burger-menu')}</span>
-          <NavbarIcon className={`${isRTL && 'transform rotate-180'}`} />
+          <span className="sr-only">Menu</span>
+          <NavbarIcon className={`${isRTL && "transform rotate-180"}`} />
         </motion.button>
 
         {children}
 
         <motion.button
           whileTap={{ scale: 0.88 }}
-          onClick={() => router.push('/')}
+          onClick={() => router.push("/")}
           className="flex items-center justify-center h-full p-2 focus:outline-none focus:text-accent"
         >
-          <span className="sr-only">{t('text-home')}</span>
+          <span className="sr-only">Trang chủ</span>
           <HomeIcon />
         </motion.button>
 
         <motion.button
           whileTap={{ scale: 0.88 }}
-          onClick={() => handleSidebar('cart')}
+          onClick={() => handleSidebar("cart")}
           className="relative flex items-center justify-center h-full p-2 product-cart focus:outline-none focus:text-accent"
         >
-          <span className="sr-only">{t('text-cart')}</span>
+          <span className="sr-only">Giỏ hàng</span>
           <ShoppingBagIcon />
           {totalUniqueItems > 0 && (
             <span className="bg-accent py-1 px-1.5 text-10px leading-none font-semibold text-light rounded-full absolute top-0 ltr:right-0 rtl:left-0 mt-0.5 ltr:-mr-0.5 rtl:-ml-0.5">
@@ -76,10 +74,10 @@ export default function MobileNavigation({
         {isAuthorize ? (
           <motion.button
             whileTap={{ scale: 0.88 }}
-            onClick={() => handleSidebar('AUTH_MENU_VIEW')}
+            onClick={() => handleSidebar("AUTH_MENU_VIEW")}
             className="flex items-center justify-center h-full p-2 focus:outline-none focus:text-accent"
           >
-            <span className="sr-only">{t('text-user')}</span>
+            <span className="sr-only">Người dùng</span>
             <UserIcon />
           </motion.button>
         ) : (
@@ -88,7 +86,7 @@ export default function MobileNavigation({
             onClick={handleJoin}
             className="flex items-center justify-center h-full p-2 focus:outline-none focus:text-accent"
           >
-            <span className="sr-only">{t('text-user')}</span>
+            <span className="sr-only">Người dùng</span>
             <UserIcon />
           </motion.button>
         )}

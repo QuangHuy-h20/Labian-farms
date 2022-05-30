@@ -31,7 +31,7 @@ const ShortDetails: React.FC<ShortDetailsProps> = ({ product, isSticky }) => {
     slug,
     image1,
     unit,
-    qty,
+    stock,
     price: salePrice,
     originalPrice,
   } = product ?? {};
@@ -84,11 +84,11 @@ const ShortDetails: React.FC<ShortDetailsProps> = ({ product, isSticky }) => {
         <div className={cn("w-full flex shrink-0 max-w-max ")}>
           <div className="w-full">
             <div>
-              {qty! > 0 ? (
+              {stock! > 0 ? (
                 <AddToCart
                   data={product}
                   variant="big"
-                  disabled={qty < 0 ? true : false}
+                  disabled={stock < 0 ? true : false}
                 />
               ) : (
                 <div className="bg-red-500 rounded text-sm text-white px-3 py-2">

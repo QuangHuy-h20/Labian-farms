@@ -29,7 +29,7 @@ export class OrderItem extends BaseEntity {
 
   @Field()
   @Column()
-  qty: number;
+  stock: number;
 
   @Field()
   @Column()

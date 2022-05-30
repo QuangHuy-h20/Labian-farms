@@ -5,19 +5,18 @@ interface Item {
   image: string;
   originalPrice: number;
   price?: number;
-  qty?: number;
+  stock?: number;
   [key: string]: unknown;
 }
-
 export function generateCartItem(item: Item) {
   const {
     id,
     name,
     slug,
-    image,
+    image1,
     price,
     originalPrice,
-    qty,
+    stock,
     unit,
   } = item;
   return {
@@ -25,8 +24,8 @@ export function generateCartItem(item: Item) {
     name,
     slug,
     unit,
-    image,
-    stock: qty,
-    price: Number(originalPrice ? originalPrice : price),
+    image1,
+    stock,
+    price: Number(price ? price : originalPrice),
   };
 }

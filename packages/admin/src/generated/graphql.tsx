@@ -104,7 +104,7 @@ export type CreateProductInput = {
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  qty: Scalars['Float'];
+  stock: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -424,7 +424,7 @@ export type Order = {
 
 export type OrderItem = {
   __typename?: 'OrderItem';
-  qty: Scalars['Float'];
+  stock: Scalars['Float'];
   subTotal: Scalars['Float'];
 };
 
@@ -493,8 +493,8 @@ export type Product = {
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  qty: Scalars['Float'];
   slug: Scalars['String'];
+  stock: Scalars['Float'];
   unAccentName: Scalars['String'];
   unit: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -720,7 +720,7 @@ export type UpdateProductInput = {
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
-  qty: Scalars['Float'];
+  stock: Scalars['Float'];
   unit: Scalars['String'];
 };
 
@@ -788,9 +788,9 @@ export type ProductMutationStatusFragment = { __typename?: 'ProductMutationRespo
 
 export type TourMutationStatusFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null };
 
-export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } };
+export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } };
 
-export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } };
 
@@ -843,7 +843,7 @@ export type CreateProductMutationVariables = Exact<{
 }>;
 
 
-export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type CreateTourMutationVariables = Exact<{
   createTourInput: CreateTourInput;
@@ -908,7 +908,7 @@ export type UpdateProductMutationVariables = Exact<{
 }>;
 
 
-export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type UpdateTourMutationVariables = Exact<{
   updateTourInput: UpdateTourInput;
@@ -960,26 +960,26 @@ export type ProductQueryVariables = Exact<{
 }>;
 
 
-export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null };
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null };
 
 export type GetProductsByCategoryQueryVariables = Exact<{
   categoryId: Scalars['ID'];
 }>;
 
 
-export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type ProductsByFarmQueryVariables = Exact<{
   farmId: Scalars['ID'];
 }>;
 
 
-export type ProductsByFarmQuery = { __typename?: 'Query', productsByFarm?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type ProductsByFarmQuery = { __typename?: 'Query', productsByFarm?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type ProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', allProducts?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, qty: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type ProductsQuery = { __typename?: 'Query', allProducts?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type TourQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -1080,7 +1080,7 @@ export const ProductInfoFragmentDoc = gql`
   image1
   unit
   slug
-  qty
+  stock
   category {
     id
     name

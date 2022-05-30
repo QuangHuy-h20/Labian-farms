@@ -34,7 +34,7 @@ export class Product extends CoreEntity {
 
   @Field()
   @Column({ default: 0 })
-  qty!: number;
+  stock!: number;
 
   @Field()
   @Column({ default: "" })
