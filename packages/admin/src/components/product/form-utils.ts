@@ -8,7 +8,7 @@ export type ProductFormValues = Omit<
   categoryId?: Pick<Category, "id">;
 }
 
-export function getProductDefaultValues(product: UpdateProductInput) {
+export function getProductDefaultValues(product: any) {
   if (!product) {
     return {
       name: '',

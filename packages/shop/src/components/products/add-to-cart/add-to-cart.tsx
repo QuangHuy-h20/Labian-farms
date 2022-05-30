@@ -1,8 +1,8 @@
-import Counter from '@/components/ui/counter';
-import AddToCartBtn from '@/components/products/add-to-cart/add-to-cart-btn';
-import { cartAnimation } from '@/lib/cart-animation';
-import { useCart } from '@/store/quick-cart/cart.context';
-import { generateCartItem } from '@/store/quick-cart/generate-cart-item';
+import Counter from '@components/ui/counter';
+import AddToCartBtn from '@components/products/add-to-cart/add-to-cart-btn';
+import { cartAnimation } from '@lib/cart-animation';
+import { useCart } from '@store/quick-cart/cart.context';
+import { generateCartItem } from '@store/quick-cart/generate-cart-item';
 
 interface Props {
   data: any;
@@ -34,7 +34,7 @@ export const AddToCart = ({
     getItemFromCart,
     isInCart,
   } = useCart();
-  const item = generateCartItem(data, variation);
+  const item = generateCartItem(data);
   const handleAddClick = (
     e: React.MouseEvent<HTMLButtonElement | MouseEvent>
   ) => {

@@ -1,0 +1,8 @@
+mutation UpdateTour($updateTourInput: UpdateTourInput!, $files: [Upload!]!){
+  updateTour(
+    updateTourInput:$updateTourInput
+    files: $files
+  ){
+  ...tourMutationResponse
+  }
+}

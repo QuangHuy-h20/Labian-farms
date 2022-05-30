@@ -1,0 +1,3 @@
+mutation ActiveUser($id: ID!) {
+  activeUser(id: $id)
+}

@@ -14,6 +14,7 @@ import { onError } from "@apollo/client/link/error";
 import { IncomingHttpHeaders } from "http";
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 import Router from "next/router";
+import { Tour } from "@generated/graphql";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -65,32 +66,30 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
     link: links,
     cache: new InMemoryCache({
       typePolicies: {
-        // Query: {
-        //   fields: {
-        //     courses: {
-        //       keyArgs: false,
-        //       merge(existing, incoming) {
-        //         // console.log("existing", existing);
-        //         // console.log("incoming", incoming);
-        //         let paginatedCourses: Course[] = [];
+        Query: {
+          fields: {
+            tours: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                let paginatedTours: Tour[] = [];
 
-        //         if (existing && existing.paginatedCourses) {
-        //           paginatedCourses = paginatedCourses.concat(
-        //             existing.paginatedCourses
-        //           );
-        //         }
+                if (existing && existing.paginatedTours) {
+                  paginatedTours = paginatedTours.concat(
+                    existing.paginatedTours
+                  );
+                }
 
-        //         if (incoming && incoming.paginatedCourses) {
-        //           paginatedCourses = paginatedCourses.concat(
-        //             incoming.paginatedCourses
-        //           );
-        //         }
+                if (incoming && incoming.paginatedTours) {
+                  paginatedTours = paginatedTours.concat(
+                    incoming.paginatedTours
+                  );
+                }
 
-        //         return { ...incoming, paginatedCourses };
-        //       },
-        //     },
-        //   },
-        // },
+                return { ...incoming, paginatedTours };
+              },
+            },
+          },
+        },
       },
     }),
   });

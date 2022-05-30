@@ -1,0 +1,9 @@
+fragment tourMutationResponse on TourMutationResponse {
+  ...tourMutationStatus
+  tour {
+    ...tourInfo
+  }
+  errors {
+    ...fieldError
+  }
+}

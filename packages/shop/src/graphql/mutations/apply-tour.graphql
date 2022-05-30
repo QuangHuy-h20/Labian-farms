@@ -1,0 +1,5 @@
+mutation ApplyTour($tourId: ID!, $applyTourStatusValue: ApplyTourStatus!) {
+  applyTour(tourId: $tourId, applyTourStatusValue: $applyTourStatusValue) {
+    ...tourMutationResponse
+  }
+}

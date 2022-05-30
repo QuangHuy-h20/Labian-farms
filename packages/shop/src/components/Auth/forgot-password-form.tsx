@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useModalAction } from "@components/modal/modal.context";
-import { ChangeEventHandler, FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 
 const schema: yup.SchemaOf<ForgotPasswordInput> = yup.object().shape({
   email: yup.string().required("Email không được để trống").email().default(""),

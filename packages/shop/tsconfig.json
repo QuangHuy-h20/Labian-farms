@@ -29,6 +29,8 @@
       "@types/*":["src/types/*"],
       "@generated/*":["src/generated/*"],
       "@pages/*":["src/pages/*"],
+      "@store/*":["src/store/*"],
+      "@settings/*":["src/settings/*"],
     }
   },
   "exclude": [

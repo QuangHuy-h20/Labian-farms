@@ -51,9 +51,15 @@ export class Farm extends CoreEntity {
   @RelationId((farm: Farm) => farm.products)
   productFarmIds: number[];
 
+  @Field((_type) => [Order], { nullable: true })
   @OneToMany(() => Order, (order) => order.farm)
   orders: Promise<Order[]>;
+  @RelationId((farm: Farm) => farm.orders)
+  orderFarmIds: number[];
 
+  @Field((_type) => [Tour], { nullable: true })
   @OneToMany(() => Tour, (tour) => tour.farm)
   tours: Promise<Tour[]>;
+  @RelationId((farm: Farm) => farm.tours)
+  tourFarmIds: number[];
 }

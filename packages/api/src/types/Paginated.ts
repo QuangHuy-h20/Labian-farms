@@ -2,6 +2,7 @@
 import { Product } from "../entities/Product";
 import { Field, Int, ObjectType } from "type-graphql";
 import { Farm } from "../entities/Farm";
+import { Tour } from "../entities/Tour";
 
 @ObjectType()
 export class Pagination {
@@ -69,4 +70,11 @@ export class PaginatedFarms extends Paginated {
 
   @Field((_type) => [Farm])
   paginatedFarms!: Farm[];
+}
+
+@ObjectType()
+export class PaginatedTours extends Paginated {
+
+  @Field((_type) => [Tour])
+  paginatedTours!: Tour[];
 }

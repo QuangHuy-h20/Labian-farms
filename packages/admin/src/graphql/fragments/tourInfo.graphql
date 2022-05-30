@@ -1,0 +1,17 @@
+fragment tourInfo on Tour {
+  id
+  slug
+  createdAt
+  name
+  description
+  startDate
+  endDate
+  status
+  slot
+  image1
+  farmId
+  farm {
+    name
+    address
+  }
+}

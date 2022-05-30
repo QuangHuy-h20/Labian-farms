@@ -1,10 +1,10 @@
-import { AUTH_TOKEN_KEY } from '@/lib/constants';
+import { useMeQuery } from '@generated/graphql';
 import { atom } from 'jotai';
-import Cookies from 'js-cookie';
 
 export function checkIsLoggedIn() {
-  const token = Cookies.get(AUTH_TOKEN_KEY);
-  if (!token) return false;
+  const { data } = useMeQuery()
+
+  if (!data?.me) return false;
   return true;
 }
 export const authorizationAtom = atom(checkIsLoggedIn());

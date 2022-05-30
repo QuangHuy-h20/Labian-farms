@@ -1,5 +1,4 @@
 import Router from 'next/router';
-import { useTranslation } from 'next-i18next';
 interface Props {
   categories: any;
   basePath: string;
@@ -7,7 +6,6 @@ interface Props {
 }
 
 const CategoryBadges = ({ onClose, categories, basePath }: Props) => {
-  const { t } = useTranslation('common');
 
   const handleClick = (path: string) => {
     Router.push(path);
@@ -18,7 +16,7 @@ const CategoryBadges = ({ onClose, categories, basePath }: Props) => {
   return (
     <div className="w-full mt-4 md:mt-6 pt-4 md:pt-6 flex flex-row items-start border-t border-border-200 border-opacity-60">
       <span className="text-sm font-semibold text-heading capitalize ltr:mr-6 rtl:ml-6 py-1">
-        {t('text-categories')}
+        Loại hàng
       </span>
       <div className="flex flex-row flex-wrap">
         {categories?.map((category: any) => (

@@ -1,0 +1,5 @@
+query Farm($slug: String!){
+  farm(slug: $slug) {
+    ...farmInfo
+  }
+}

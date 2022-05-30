@@ -11,9 +11,9 @@ const Profile = () => {
     <>
       {meLoading ? <div className='flex items-center h-screen'>
         <Spinner size='large' />
-      </div> : <>
+      </div> : 
         <ProfileForm />
-      </>
+
       }
     </>
   )
@@ -23,7 +23,7 @@ const getLayout = (page: ReactElement) =>
   getSiteLayout(
     <div className="bg-gray-100 flex flex-col lg:flex-row items-start h-full w-full mx-auto">
       <div className="flex justify-center bg-white w-full px-1 pb-1 overflow-hidden border rounded">
-        {page}
+        <>{page}</>
       </div>
     </div>
 

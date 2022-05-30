@@ -6,7 +6,6 @@ import Products from "@components/products";
 import Categories from "@components/categories";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { StyledMain } from "@assets/css/styled";
 
 
 const Home = () => {
@@ -21,7 +20,7 @@ const Home = () => {
     }
   }, [query.text, query.category])
   return (
-    <StyledMain>
+    <>
       <Banner />
       <ThumbsCarousel gallery={gallery} />
       <Element
@@ -31,7 +30,7 @@ const Home = () => {
         <Categories />
         <Products className="p-8" />
       </Element>
-    </StyledMain>
+    </>
   );
 }
 

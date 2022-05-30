@@ -8,7 +8,7 @@ export function formatPrice({
 }: {
   amount: number;
   currencyCode: string;
-  locale: string;
+  locale?: string;
 }) {
   const formatCurrency = new Intl.NumberFormat(locale, {
     style: "currency",
@@ -63,3 +63,15 @@ export default function usePrice(data?: PriceProps | null) {
     ? { price: value, basePrice: null, discount: null }
     : value;
 }
+
+export const isHasValue = (value) =>
+  value !== null && typeof value !== 'undefined';
+
+export const isNotEmpty = (value) =>
+  isHasValue(value) && (value + '').trim().length > 0;
+
+
+export const moneyFormatter = (number, currency = ' ₫') => {
+  if (!isNotEmpty(number)) return '';
+  return parseInt(number).toLocaleString('vi-VN') + currency;
+};

@@ -1,0 +1,13 @@
+mutation CreateTour(
+  $createTourInput: CreateTourInput!
+  $files: [Upload!]!
+  $farmId: ID!
+) {
+  createTour(
+    createTourInput: $createTourInput
+    files: $files
+    farmId: $farmId
+  ) {
+    ...tourMutationResponse
+  }
+}

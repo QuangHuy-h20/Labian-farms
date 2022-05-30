@@ -1,174 +1,76 @@
-import Pagination from "@components/ui/pagination";
-import Image from "next/image";
-import { Table } from "@components/ui/table";
 import ActionButtons from "@components/common/action-buttons";
-import { siteSettings } from "@settings/site.settings";
-import { useMeQuery } from "@graphql/me.graphql";
-import { useTranslation } from "next-i18next";
-import { useIsRTL } from "@utils/locals";
-import {
-  UserPaginator,
-  SortOrder,
-  QueryUsersOrderByColumn,
-} from "__generated__/__types__";
-import { useMemo, useState } from "react";
-import debounce from "lodash/debounce";
-import TitleWithSort from "@components/ui/title-with-sort";
+import Table from "@components/ui/table";
+import { Product, User } from "@generated/graphql";
+import { EXECUTIVE_ADMIN } from "@utils/constants";
+import { formatDate } from "@utils/format-date";
+import { numberFormatter } from "@utils/format-price";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
-type IProps = {
-  customers: UserPaginator | null | undefined;
-  onPagination: (current: number) => void;
-  refetch: Function;
-};
+const UserList = ({ users }) => {
+  const router = useRouter();
+  const TableTitle: Object[] = [
+    { key: "image", name: "Ảnh đại diện" },
+    { key: "email", name: "Email" },
+    { key: "phoneNumber", name: "Số điện thoại" },
+    { key: "createdAt", name: "Tham gia ngày" },
+    { key: "role", name: "Role" },
+    { key: "status", name: "Trạng thái" },
+    { key: "action", name: "Thao tác" },
+  ];
 
-const UsersList = ({ customers, onPagination, refetch }: IProps) => {
-  const { data, paginatorInfo } = customers!;
-  const { t } = useTranslation();
-  const { alignLeft, alignRight } = useIsRTL();
+  const renderTableHead = (item: any) => <th key={item.key}>{item.name}</th>;
 
-  const [order, setOrder] = useState<SortOrder>(SortOrder.Desc);
-  const [column, setColumn] = useState<string>();
-
-  const debouncedHeaderClick = useMemo(
-    () =>
-      debounce((value) => {
-        setColumn(value);
-        setOrder(order === SortOrder.Desc ? SortOrder.Asc : SortOrder.Desc);
-        refetch({
-          orderBy: [
-            {
-              column: value,
-              order: order === SortOrder.Desc ? SortOrder.Asc : SortOrder.Desc,
-            },
-          ],
-        });
-      }, 500),
-    [order]
-  );
-
-  const onHeaderClick = (value: string | undefined) => ({
-    onClick: () => {
-      debouncedHeaderClick(value);
-    },
-  });
-
-  const columns = [
-    {
-      title: t("table:table-item-avatar"),
-      dataIndex: "profile",
-      key: "profile",
-      align: "center",
-      width: 74,
-      render: (profile: any, record: any) => (
+  const renderTableBody = (item: User) => (
+    <tr className="text-center border-b" key={item.id}>
+      <td>
         <Image
-          src={profile?.avatar?.thumbnail ?? siteSettings.avatar.placeholder}
-          alt={record?.name}
           layout="fixed"
+          className="rounded"
+          src={item.avatar ? item.avatar : "/rick-roll.webp"}
           width={42}
           height={42}
-          className="rounded overflow-hidden"
         />
-      ),
-    },
-    {
-      title: t("table:table-item-title"),
-      dataIndex: "name",
-      key: "name",
-      align: alignLeft,
-    },
-    {
-      title: t("table:table-item-email"),
-      dataIndex: "email",
-      key: "email",
-      align: alignLeft,
-    },
-    {
-      title: t("table:table-item-permissions"),
-      dataIndex: "permissions",
-      key: "permissions",
-      align: "center",
-      render: (permissions: any, record: any) => {
-        return (
-          <div>
-            {permissions?.map(({ name }: { name: string }) => name).join(", ")}
-          </div>
-        );
-      },
-    },
-    {
-      title: t("table:table-item-available_wallet_points"),
-      dataIndex: ["wallet", "available_points"],
-      key: "available_wallet_points",
-      align: "center",
-    },
-    {
-      title: (
-        <TitleWithSort
-          title={t("table:table-item-status")}
-          ascending={
-            order === SortOrder.Asc &&
-            column === QueryUsersOrderByColumn.IsActive
-          }
-          isActive={column === QueryUsersOrderByColumn.IsActive}
-        />
-      ),
-      className: "cursor-pointer",
-      dataIndex: "is_active",
-      key: "is_active",
-      align: "center",
-      onHeaderCell: () => onHeaderClick(QueryUsersOrderByColumn.IsActive),
-      render: (is_active: boolean) =>
-        is_active ? t("common:text-active") : t("common:text-inactive"),
-    },
-    {
-      title: t("table:table-item-actions"),
-      dataIndex: "id",
-      key: "actions",
-      align: alignRight,
-      render: (id: string, { is_active }: any) => {
-        const { data: currentUser } = useMeQuery();
-        return (
-          <>
-            {currentUser?.me?.id !== id && (
-              <ActionButtons
-                id={id}
-                userStatus={true}
-                isUserActive={is_active}
-                showAddWalletPoints={true}
-                showMakeAdminButton={true}
-              />
-            )}
-          </>
-        );
-      },
-    },
-  ];
+      </td>
+      <td>{item.email}</td>
+      <td>{item.phone}</td>
+      <td>{formatDate(item.createdAt)}</td>
+      <td>{item.roleId}</td>
+      <td>
+        {item.status === 1 ? (
+          <span className="text-emerald-500">Đã kích hoạt</span>
+        ) : (
+          <span className="text-red-400">Chưa kích hoạt</span>
+        )}
+      </td>
+      <td>
+        {item.roleId !== EXECUTIVE_ADMIN ? (
+          <ActionButtons
+            id={item.id}
+            status={item.status}
+            userStatus={true}
+            isUserActive={item.status === 1 ? true : false}
+          />
+        ) : (
+          ""
+        )}
+      </td>
+    </tr>
+  );
 
   return (
     <>
       <div className="rounded overflow-hidden shadow mb-6">
         <Table
-          // @ts-ignore
-          columns={columns}
-          emptyText={t("table:empty-table-data")}
-          data={data}
-          rowKey="id"
-          scroll={{ x: 800 }}
+          limit="6"
+          headData={TableTitle}
+          renderHead={renderTableHead}
+          bodyData={users}
+          renderBody={renderTableBody}
         />
       </div>
-
-      {!!paginatorInfo.total && (
-        <div className="flex justify-end items-center">
-          <Pagination
-            total={paginatorInfo.total}
-            current={paginatorInfo.currentPage}
-            pageSize={paginatorInfo.perPage}
-            onChange={onPagination}
-          />
-        </div>
-      )}
     </>
   );
 };
 
-export default UsersList;
+export default UserList;

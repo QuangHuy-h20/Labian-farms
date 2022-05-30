@@ -1,3 +1,4 @@
+
 export const isHasValue = (value) =>
   value !== null && typeof value !== 'undefined';
 
@@ -10,6 +11,8 @@ export const moneyFormatter = (number, currency = ' ₫') => {
 };
 
 export const calDiscount = (p: any) => {
-	const { priceRoot, price } = p;
-	return Math.ceil(((priceRoot - price) / priceRoot) * 100);
+  const { originalPrice, price } = p;
+  console.log(originalPrice, price);
+  
+  return Math.ceil(((originalPrice - price) / originalPrice) * 100);
 };

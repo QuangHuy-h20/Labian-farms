@@ -1,0 +1,8 @@
+mutation UpdateFarm($updateFarmInput: UpdateFarmInput!, $files: [Upload!]!){
+  updateFarm(
+    updateFarmInput:$updateFarmInput
+    files: $files
+  ){
+  ...farmMutationResponse
+  }
+}

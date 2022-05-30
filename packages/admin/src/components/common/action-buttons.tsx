@@ -9,46 +9,36 @@ import { CloseFillIcon } from "@components/icons/close-fill";
 
 type Props = {
   id: string;
-  farmId?: number;
+  status?: number;
   deleteModalView?: string | any;
   editUrl?: string;
   detailsUrl?: string;
-  isUserActive?: boolean;
-  userStatus?: boolean;
-  isShopActive?: boolean;
   approveButton?: boolean;
-  showAddWalletPoints?: boolean;
-  showMakeAdminButton?: boolean;
-  changeRefundStatus?: boolean;
+  isUserActive?: boolean;
+  isFarmActive?: boolean;
+  userStatus?: boolean;
 };
 
 const ActionButtons = ({
   id,
+  status,
   deleteModalView,
   editUrl,
+  isFarmActive,
   detailsUrl,
+  approveButton = false,
   userStatus = false,
   isUserActive = false,
-  isShopActive,
-  approveButton = false,
 }: Props) => {
   const { openModal } = useModalAction();
   function handleDelete() {
     openModal(deleteModalView, { id });
   }
-  function handleUserStatus(type: string) {
-    openModal("BAN_CUSTOMER", { id, type });
+  function handleUserStatus() {
+    openModal("BAN_CUSTOMER", { id, status });
   }
-  function handleAddWalletPoints() {
-    openModal("ADD_WALLET_POINTS", id);
-  }
-  function handleMakeAdmin() {
-    openModal("MAKE_ADMIN", id);
-  }
-  function handleUpdateRefundStatus() {
-    openModal("UPDATE_REFUND", id);
-  }
-  function handleShopStatus(status: boolean) {
+
+  function handleFarmStatus(status: boolean) {
     if (status === true) {
       openModal("SHOP_APPROVE_VIEW", id);
     } else {
@@ -66,29 +56,12 @@ const ActionButtons = ({
           <Trash width={16} />
         </button>
       )}
-      {approveButton &&
-        (!isShopActive ? (
-          <button
-            onClick={() => handleShopStatus(true)}
-            className="text-accent transition duration-200 hover:text-accent-hover focus:outline-none"
-            title="Chấp thuận"
-          >
-            <CheckMarkCircle width={20} />
-          </button>
-        ) : (
-          <button
-            onClick={() => handleShopStatus(false)}
-            className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
-            title="Không chấp thuận"
-          >
-            <CloseFillIcon width={20} />
-          </button>
-        ))}
+
       {userStatus && (
         <>
           {isUserActive ? (
             <button
-              onClick={() => handleUserStatus("ban")}
+              onClick={() => handleUserStatus()}
               className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
               title="Chặn"
             >
@@ -96,8 +69,8 @@ const ActionButtons = ({
             </button>
           ) : (
             <button
-              onClick={() => handleUserStatus("active")}
-              className="text-accent transition duration-200 hover:text-accent focus:outline-none"
+              onClick={() => handleUserStatus()}
+              className="text-emerald-500 transition duration-200 hover:text-emerald-500 focus:outline-none"
               title="Kích hoạt"
             >
               <CheckMarkCircle width={20} />
@@ -105,7 +78,24 @@ const ActionButtons = ({
           )}
         </>
       )}
-
+      {approveButton &&
+        (!isFarmActive ? (
+          <button
+            onClick={() => handleFarmStatus(true)}
+            className="text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+            title="Duyệt"
+          >
+            <CheckMarkCircle width={20} />
+          </button>
+        ) : (
+          <button
+            onClick={() => handleFarmStatus(false)}
+            className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
+            title="Bỏ duyệt"
+          >
+            <CloseFillIcon width={20} />
+          </button>
+        ))}
       {editUrl && (
         <Link
           href={editUrl}
@@ -118,7 +108,7 @@ const ActionButtons = ({
       {detailsUrl && (
         <Link
           href={detailsUrl}
-          className="ml-2 text-base transition duration-200 hover:text-gray-600"
+          className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
           title="Xem"
         >
           <Eye width={24} />

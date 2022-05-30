@@ -1,20 +1,17 @@
 import React, { InputHTMLAttributes } from "react";
-import { useTranslation } from "next-i18next";
 import styles from "./radio.module.css";
+
 
 export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   label?: string;
-  labelKey?: string;
   name: string;
   id: string;
   error?: string;
-  errorKey?: string;
 }
 
 const Radio = React.forwardRef<HTMLInputElement, Props>(
-  ({ className, label, labelKey, name, id, error, errorKey, ...rest }, ref) => {
-    const { t } = useTranslation();
+  ({ className, label, name, id, error, ...rest }, ref) => {
     return (
       <div className={className}>
         <div className="flex items-center">
@@ -28,13 +25,11 @@ const Radio = React.forwardRef<HTMLInputElement, Props>(
           />
 
           <label htmlFor={id} className="text-gray-400 text-sm">
-            {t(labelKey ? labelKey : label!)}
+            {label}
           </label>
         </div>
 
-        {errorKey && (
-          <p className="my-2 text-xs text-start text-red-500">{t(errorKey)}</p>
-        )}
+        {error && <p className="my-2 text-xs text-end text-red-500">{error}</p>}
       </div>
     );
   }

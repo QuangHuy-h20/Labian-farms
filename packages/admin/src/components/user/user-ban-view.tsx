@@ -1,22 +1,21 @@
 import ConfirmationCard from "@components/common/confirmation-card";
 import { getErrorMessage } from "@utils/form-error";
 import {
-  useBanUserMutation,
-  useActiveUserMutation,
-} from "@graphql/auth.graphql";
-import {
   useModalAction,
   useModalState,
 } from "@components/ui/modal/modal.context";
+import { useActiveUserMutation, useBanUserMutation } from "@generated/graphql";
 
 const CustomerBanView = () => {
-  const [banUser, { loading }] = useBanUserMutation();
+  const [banUser, { loading: banLoading }] = useBanUserMutation();
   const [activeUser, { loading: activeLoading }] = useActiveUserMutation();
   const { data } = useModalState();
   const { closeModal } = useModalAction();
   async function handleDelete() {
     try {
-      if (data?.type === "ban") {
+      console.log(data);
+      
+      if (data?.status === 1) {
         await banUser({
           variables: { id: data?.id },
         });
@@ -35,10 +34,11 @@ const CustomerBanView = () => {
     <ConfirmationCard
       onCancel={closeModal}
       onDelete={handleDelete}
-      deleteBtnText={data?.type === "ban" ? "Block" : "Unblock"}
-      title={data?.type === "ban" ? "Block Customer" : "Unblock Customer"}
-      description="Are you sure you want to block this customer?"
-      deleteBtnLoading={loading || activeLoading}
+      cancelBtnText="Quay lại"
+      deleteBtnText={data?.status === 1 ? "Chặn" : "Bỏ chặn"}
+      title={data?.status === 1 ? "Chặn người dùng" : "Bỏ chặn người dùng"}
+      description="Chặn người dùng này?"
+      deleteBtnLoading={banLoading || activeLoading}
     />
   );
 };

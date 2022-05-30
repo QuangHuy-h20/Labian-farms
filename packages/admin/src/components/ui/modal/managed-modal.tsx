@@ -15,7 +15,7 @@ import { MODAL_VIEWS, useModalAction, useModalState } from "./modal.context";
 // );
 // const TagDeleteView = dynamic(() => import("@components/tag/tag-delete-view"));
 // const TaxDeleteView = dynamic(() => import("@components/tax/tax-delete-view"));
-// const BanCustomerView = dynamic(() => import("@components/user/user-ban-view"));
+const BanCustomerView = dynamic(() => import("@components/user/user-ban-view"));
 // const ShippingDeleteView = dynamic(
 //   () => import("@components/shipping/shipping-delete-view")
 // );
@@ -31,21 +31,21 @@ import { MODAL_VIEWS, useModalAction, useModalState } from "./modal.context";
 const ProductDeleteView = dynamic(
   () => import("@components/product/product-delete-view")
 );
-// const TypeDeleteView = dynamic(
-//   () => import("@components/group/group-delete-view")
-// );
+const TourDeleteView = dynamic(
+  () => import("@components/tour/tour-delete-view")
+);
 // const AttributeDeleteView = dynamic(
 //   () => import("@components/attribute/attribute-delete-view")
 // );
 // const OrderStatusDeleteView = dynamic(
 //   () => import("@components/order-status/order-status-delete-view")
 // );
-// const ApproveShopView = dynamic(
-//   () => import("@components/shop/approve-shop-view")
-// );
-// const DisApproveShopView = dynamic(
-//   () => import("@components/shop/disapprove-shop-view")
-// );
+const ApproveShopView = dynamic(
+  () => import("@components/farm/approve-shop-view")
+);
+const DisApproveShopView = dynamic(
+  () => import("@components/farm/disapprove-shop-view")
+);
 // const RemoveStaffView = dynamic(
 //   () => import("@components/shop/staff-delete-view")
 // );
@@ -77,8 +77,8 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   switch (view) {
     case "DELETE_PRODUCT":
       return <ProductDeleteView />;
-    // case "DELETE_TYPE":
-    //   return <TypeDeleteView />;
+    case "DELETE_TOUR":
+      return <TourDeleteView />;
     // case "DELETE_ATTRIBUTE":
     //   return <AttributeDeleteView />;
     // case "DELETE_CATEGORY":
@@ -99,12 +99,12 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
     //   return <ManufacturerDeleteView />;
     // case "DELETE_AUTHOR":
     //   return <AuthorDeleteView />;
-    // case "BAN_CUSTOMER":
-    //   return <BanCustomerView />;
-    // case "SHOP_APPROVE_VIEW":
-    //   return <ApproveShopView />;
-    // case "SHOP_DISAPPROVE_VIEW":
-    //   return <DisApproveShopView />;
+    case "BAN_CUSTOMER":
+      return <BanCustomerView />;
+    case "SHOP_APPROVE_VIEW":
+      return <ApproveShopView />;
+    case "SHOP_DISAPPROVE_VIEW":
+      return <DisApproveShopView />;
     // case "DELETE_STAFF":
     //   return <RemoveStaffView />;
     // case "UPDATE_REFUND":

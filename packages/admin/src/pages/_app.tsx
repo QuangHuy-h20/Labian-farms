@@ -16,7 +16,6 @@ const Noop: React.FC = ({ children }: any) => <>{children}</>;
 function MyApp({ Component, pageProps }: AppProps) {
   const Layout = (Component as any).Layout || Noop;
   const apolloClient = useApollo(pageProps);
-  const authProps = (Component as any).authenticate;
 
   return (
     <>
@@ -27,7 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <UIProvider>
           <ModalProvider>
             <PrivateRoute>
-              <Layout {...pageProps}>
+              <Layout>
                 <Component {...pageProps} />
               </Layout>
             </PrivateRoute>

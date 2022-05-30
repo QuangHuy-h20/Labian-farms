@@ -1,0 +1,3 @@
+mutation DisApproveFarm($id: ID!) {
+  disApproveFarm(id: $id)
+}

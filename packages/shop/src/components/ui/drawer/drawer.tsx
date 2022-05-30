@@ -7,10 +7,10 @@ import {
   clearAllBodyScrollLocks,
 } from 'body-scroll-lock';
 import cn from 'classnames';
-import Scrollbar from '@/components/ui/scrollbar';
-import { fadeInRight } from '@/lib/motion/fade-in-right';
-import { fadeInLeft } from '@/lib/motion/fade-in-left';
-import { fadeInOut } from '@/lib/motion/fade-in-out';
+import Scrollbar from '@components/ui/scrollbar';
+import { fadeInRight } from '@lib/motion/fade-in-right';
+import { fadeInLeft } from '@lib/motion/fade-in-left';
+import { fadeInOut } from '@lib/motion/fade-in-out';
 
 interface DrawerProps {
   children: any;

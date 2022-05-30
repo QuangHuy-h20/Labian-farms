@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { cartReducer, State, initialState } from './cart.reducer';
 import { Item, getItem, inStock } from './cart.utils';
-import { useLocalStorage } from '@/lib/use-local-storage';
-import { CART_KEY } from '@/lib/constants';
+import { useLocalStorage } from '@lib/use-local-storage';
+import { CART_KEY } from '@lib/constants';
 import { useAtom } from 'jotai';
-import { verifiedResponseAtom } from '@/store/checkout';
+import { verifiedResponseAtom } from '@store/checkout';
 interface CartProviderState extends State {
   addItemToCart: (item: Item, quantity: number) => void;
   removeItemFromCart: (id: Item['id']) => void;

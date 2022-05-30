@@ -1,17 +1,23 @@
-fragment userMutationStatus on UserMutationResponse{
-	code
-	success
-	message
+fragment userMutationStatus on UserMutationResponse {
+  code
+  success
+  message
 }
 
-fragment farmMutationStatus on FarmMutationResponse{
-	code
-	success
-	message
+fragment farmMutationStatus on FarmMutationResponse {
+  code
+  success
+  message
 }
 
-fragment productMutationStatus on ProductMutationResponse{
-	code
-	success
-	message
+fragment productMutationStatus on ProductMutationResponse {
+  code
+  success
+  message
+}
+
+fragment tourMutationStatus on TourMutationResponse {
+  code
+  success
+  message
 }

@@ -15,17 +15,19 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (!loading && !data?.me) router.replace(ROUTES.LOGIN);
-  }, [data, loading, router]);
+  }, [data]);
 
   if (loading) return <PageLoader />;
+
+  // if (!loading && data?.me) {
+  //   return <PageLoader />;
+  // }
 
   if (data?.me?.roleId === CUSTOMER) {
     return <AccessDenied />;
   }
 
-  if (!loading && data) return <>{children}</>;
-
-  return <PageLoader />;
+  return  <>{children}</>;
 };
 
 export default PrivateRoute;

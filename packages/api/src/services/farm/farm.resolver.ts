@@ -12,6 +12,7 @@ import { deleteFile, singleUpload, multipleUploads } from "../../utils/s3";
 import { Product } from "../../entities/Product";
 import { PaginatedFarms } from "../../types/Paginated";
 import { LessThan } from "typeorm";
+import { checkAuth } from "../../middleware/checkAuth";
 
 @Resolver(_of => Farm)
 export class FarmResolver {
@@ -121,6 +122,36 @@ export class FarmResolver {
 
   //----------------------- Mutation -----------------------
 
+  @Mutation(_return => Boolean)
+  @UseMiddleware(checkAuth)
+  async approveFarm(@Arg("id", _type => ID) id: number): Promise<boolean> {
+    try {
+      const existingFarm = await Farm.findOne({ id })
+      if (!existingFarm) return false
+
+      existingFarm.isActive = true
+      existingFarm.save()
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  @Mutation(_return => Boolean)
+  @UseMiddleware(checkAuth)
+  async disApproveFarm(@Arg("id", _type => ID) id: number): Promise<boolean> {
+    try {
+      const existingFarm = await Farm.findOne({ id })
+      if (!existingFarm) return false
+
+      existingFarm.isActive = false
+      existingFarm.save()
+      return true
+    } catch {
+      return false
+    }
+  }
+
   @Mutation((_return) => FarmMutationResponse, { description: "Create new farm." })
   // @UseMiddleware(checkRole)
   async createFarm(
@@ -134,12 +165,11 @@ export class FarmResolver {
       const { name } = createFarmInput;
       const existingFarmName = await Farm.findOne({ where: [{ name }] });
 
-      const existingFarm = await Farm.findOne({ownerId: req.session.userId})
-      
+      const existingFarm = await Farm.findOne({ ownerId: req.session.userId })
 
       if (existingFarm) return failureResponse(400, false, "Mỗi tài khoản chỉ được phép tạo 1 nông trại.")
 
-      if(existingFarmName) return failureResponse(400, false, "Tên nông trại đã được sử dụng.")
+      if (existingFarmName) return failureResponse(400, false, "Tên nông trại đã được sử dụng.")
 
       const slug = toSlug(name)
       const folder = `farms/${slug}`
@@ -164,22 +194,37 @@ export class FarmResolver {
 
   @Mutation((_return) => FarmMutationResponse, { description: "Update farm information." })
   @UseMiddleware(checkRole)
-  async updateFarmInfo(@Arg('updateFarmInput') updateFarmInput: UpdateFarmInput, @Ctx() { req }: Context,
+  async updateFarm(@Arg('updateFarmInput') updateFarmInput: UpdateFarmInput, @Ctx() { req }: Context, @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
   ): Promise<FarmMutationResponse> {
+    let list: string[] = []
     try {
-      const { id, name, address, description } = updateFarmInput
-      const existingFarm = await Farm.findOne(id)
+      const { name, address, description } = updateFarmInput
+      const existingFarm = await Farm.findOne({ ownerId: req.session.userId })
 
       if (!existingFarm) return failureResponse(400, false, 'Không tìm thấy nông trại.')
       if (req.session.userId !== existingFarm.ownerId) return failureResponse(400, false, 'Không thể thực hiện thao tác này.')
 
       const slug = toSlug(name)
+      const folder = `farms/${slug}`
 
-      existingFarm.name = name
-      existingFarm.slug = slug
-      existingFarm.address = address
-      existingFarm.description = description
-      existingFarm.save()
+      await multipleUploads(files, folder, slug).then(async (value) => {
+        list = value as string[];
+
+        const newImage = list[0] !== null ? list[0] : undefined
+
+        const existingLogoImage = existingFarm.logoImage
+
+        if (newImage && newImage !== existingLogoImage) {
+          new Promise((_) => deleteFile(folder, existingLogoImage.split("/").pop() as string));
+          existingFarm.logoImage = newImage
+        }
+
+        existingFarm.name = name
+        existingFarm.slug = slug
+        existingFarm.address = address
+        existingFarm.description = description
+        await existingFarm.save()
+      });
 
       return { code: 200, success: true, message: 'Thông tin nông trại đã được cập nhật thành công.', farm: existingFarm }
     } catch (error) {

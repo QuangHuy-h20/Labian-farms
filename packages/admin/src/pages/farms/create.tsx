@@ -1,19 +1,17 @@
-import FarmForm from "@components/farm/farm-form";
+import CreateOrUpdateFarmForm from "@components/farm/farm-form";
 import FarmerLayout from "@components/layouts/farmer";
-import { allowedRoles } from "@utils/auth-utils";
 
 const CreateFarm = () => {
   return (
-    <div className="w-full bg-white h-full">
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl text-gray-500 italic font-light my-12">Tạo nông trại</h1>
-        <FarmForm />
+    <>
+      <div className="py-5 sm:py-8 flex border-b border-dashed border-border-base">
+        <h1 className="text-lg font-semibold text-gray-600">Tạo nông trại</h1>
       </div>
-    </div>
+      <CreateOrUpdateFarmForm />
+    </>
   );
 };
 
-CreateFarm.authenticate = allowedRoles
 CreateFarm.Layout = FarmerLayout;
 
 export default CreateFarm;

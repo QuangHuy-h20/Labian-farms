@@ -4,7 +4,6 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  // PrimaryColumn,
 } from "typeorm";
 import { CoreEntity } from "./CoreEntity";
 import { Farm } from "./Farm";

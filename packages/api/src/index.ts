@@ -29,7 +29,7 @@ import { Tour } from "./entities/Tour";
 import { ApplyTour } from "./entities/ApplyTour";
 
 const main = async () => {
-  await createConnection({
+  const connection = await createConnection({
     type: "postgres",
     database: "labian-farms",
     username: process.env.DB_USERNAME_DEV,
@@ -82,6 +82,7 @@ const main = async () => {
     context: ({ req, res }): Context => ({
       req,
       res,
+      connection,
       dataLoaders: buildDataLoaders()
     }),
     introspection: true,

@@ -93,7 +93,7 @@ const UploadAvatar = () => {
 							</Button>
 							<button
 								type="submit"
-								className="flex items-center p-2 bg-green-200 hover:bg-green-400 rounded-md bg-opacity-80"
+								className="flex items-center px-3 bg-emerald-500 hover:bg-emerald-600 rounded-md"
 							>
 
 								<span className="mr-1 text-sm">Change</span>

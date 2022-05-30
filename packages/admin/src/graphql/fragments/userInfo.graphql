@@ -6,6 +6,7 @@ fragment userInfo on User{
 	fullName
 	gender
 	address
+	dateOfBirth
 	avatar
 	roleId
 	isActiveEmail

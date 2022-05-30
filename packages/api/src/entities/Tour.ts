@@ -36,9 +36,36 @@ export class Tour extends CoreEntity {
   @Column({ default: new Date() })
   endDate?: Date;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  image1: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  image2: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  image3: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  image4: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  image5: string;
+
   @Field()
   @Column()
   slot: number;
+
+  @Field()
+	@Column({ default: 0 })
+	numberOfVisitor!: number
+
+  @Field()
+  applyTourStatus!: number
 
   @Field()
   @Column({ type: "enum", enum: TourStatus, default: TourStatus.OPEN })

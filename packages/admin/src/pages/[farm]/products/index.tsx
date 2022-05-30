@@ -30,9 +30,6 @@ function ProductsPage() {
     },
   });
 
-  console.log(data);
-  
-
   if (loading || farmLoading) return <PageLoader />;
   if (error) return <ErrorMessage message={error.message} />;
 
@@ -47,6 +44,7 @@ function ProductsPage() {
           <div className="w-full md:w-3/4 flex md:flex-row">
             <div className="w-full flex justify-end">
               <LinkButton
+                disabled={!farmData?.farm?.isActive}
                 href={`/${farm}/products/create`}
                 className="h-12 ms-4 md:ms-6"
               >

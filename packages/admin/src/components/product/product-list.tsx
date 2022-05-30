@@ -1,19 +1,23 @@
 import ActionButtons from "@components/common/action-buttons";
 import Table from "@components/ui/table";
-import { Product, useProductsQuery } from "@generated/graphql";
+import { Product } from "@generated/graphql";
 import { numberFormatter } from "@utils/format-price";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-const ProductList = ({ products }) => {
-  const { data } = useProductsQuery();
+type IProductList = {
+  products: any[];
+  permission?: boolean;
+};
+const ProductList = ({ products, permission }: IProductList) => {
   const router = useRouter();
   const TableTitle: Object[] = [
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên sản phẩm" },
     { key: "category", name: "Loại" },
-    { key: "originalPrice", name: "Giá gốc/ Đơn vị" },
-    { key: "price", name: "Giá Km/ Đơn vị" },
+    { key: "farmName", name: "Nông trại" },
+    { key: "price", name: "Giá khuyến mãi/ Giá gốc" },
+    { key: "unit", name: "Đơn vị" },
     { key: "qty", name: "Số lượng" },
     { key: "action", name: "Thao tác" },
   ];
@@ -27,15 +31,26 @@ const ProductList = ({ products }) => {
       </td>
       <td>{item.name}</td>
       <td>{item.category.name}</td>
-      <td>{numberFormatter(item.originalPrice, ' đ')}</td>
-      <td>{numberFormatter(item.price, ' đ')}</td>
+      <td>{item.farm.name}</td>
+      <td>{`${numberFormatter(item.price, " đ")} / ${numberFormatter(
+        item.originalPrice,
+        " đ"
+      )}`}</td>
+      <td>{item.unit}</td>
       <td>{item.qty}</td>
       <td>
-        <ActionButtons
-          id={item.id}
-          editUrl={`${router.asPath}/${item.id}/edit`}
-          deleteModalView="DELETE_PRODUCT"
-        />
+        {!permission ? (
+          <ActionButtons
+            id={item.id}
+            editUrl={`${router.asPath}/${item.id}/edit`}
+            deleteModalView="DELETE_PRODUCT"
+          />
+        ) : (
+          <ActionButtons
+            id={item.id}
+            detailsUrl={`http://localhost:3000/products/${item.id}`}
+          />
+        )}
       </td>
     </tr>
   );
@@ -47,7 +62,7 @@ const ProductList = ({ products }) => {
           limit="6"
           headData={TableTitle}
           renderHead={renderTableHead}
-          bodyData={data.allProducts}
+          bodyData={products}
           renderBody={renderTableBody}
         />
       </div>

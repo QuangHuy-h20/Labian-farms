@@ -38,9 +38,11 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
           ) : (
             <TrashIcon className="mt-4 w-12 h-12 m-auto text-accent" />
           )}
-          <p className="text-gray-600 text-xl uppercase font-bold mt-4">Xoá</p>
+          <p className="text-gray-600 text-xl uppercase font-bold mt-4">
+            {title}
+          </p>
           <p className="text-gray-500 dark:text-muted leading-relaxed py-2 px-6">
-            Bạn có chắc muốn xoá sản phẩm này?
+            {description}
           </p>
           <div className="flex items-center justify-between space-s-4 w-full mt-4">
             <div className="w-full mr-2">
@@ -54,7 +56,7 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
                   cancelBtnClassName
                 )}
               >
-                Quay lại
+                {cancelBtnText}
               </Button>
             </div>
 
@@ -69,7 +71,7 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
                   deleteBtnClassName
                 )}
               >
-                Xoá
+                {deleteBtnText}
               </Button>
             </div>
           </div>

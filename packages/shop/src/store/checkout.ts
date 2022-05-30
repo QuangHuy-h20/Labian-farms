@@ -1,5 +1,4 @@
-import { Address, Coupon } from '@/framework/types';
-import { CHECKOUT } from '@/lib/constants';
+import { CHECKOUT } from '@lib/constants';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 interface DeliveryTime {
@@ -15,13 +14,10 @@ interface VerifiedResponse {
   wallet_currency: number;
 }
 interface CheckoutState {
-  billing_address: Address | null;
-  shipping_address: Address | null;
-  payment_gateway: PaymentMethodName;
-  delivery_time: DeliveryTime | null;
+  billing_address: any | null;
+  shipping_address: any | null;
   customer_contact: string;
-  verified_response: VerifiedResponse | null;
-  coupon: Coupon | null;
+  coupon: any | null;
   payable_amount: number;
   use_wallet: boolean;
   [key: string]: unknown;
@@ -46,14 +42,14 @@ export const clearCheckoutAtom = atom(null, (_get, set, _data) => {
 });
 export const billingAddressAtom = atom(
   (get) => get(checkoutAtom).billing_address,
-  (get, set, data: Address) => {
+  (get, set, data: any) => {
     const prev = get(checkoutAtom);
     return set(checkoutAtom, { ...prev, billing_address: data });
   }
 );
 export const shippingAddressAtom = atom(
   (get) => get(checkoutAtom).shipping_address,
-  (get, set, data: Address) => {
+  (get, set, data: any) => {
     const prev = get(checkoutAtom);
     return set(checkoutAtom, { ...prev, shipping_address: data });
   }
@@ -95,7 +91,7 @@ export const verifiedResponseAtom = atom(
 );
 export const couponAtom = atom(
   (get) => get(checkoutAtom).coupon,
-  (get, set, data: Coupon | null) => {
+  (get, set, data: any | null) => {
     const prev = get(checkoutAtom);
     return set(checkoutAtom, { ...prev, coupon: data });
   }

@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk'
 import S3 from 'aws-sdk/clients/s3'
 import { FileUpload } from "graphql-upload";
-import shortid from 'shortid';
 
 const region = process.env.S3_REGION;
 const accessKeyId = process.env.S3_ACCESS_ID;
@@ -20,9 +19,8 @@ const s3DefaultParams = {
 }
 
 export const singleUpload = async (file: FileUpload, folder: string | null) => {
-	let { createReadStream, filename } = file
+	const { createReadStream, filename } = file
 	const stream = createReadStream()
-	filename = `${shortid.generate()}-${filename}`
 	const key = `${folder}/${filename}`
 	return new Promise(async resolve => {
 		const data = await s3.upload({ ...s3DefaultParams, Body: stream, Key: key }).promise()
@@ -50,8 +48,7 @@ export const multipleUploads = async (files: FileUpload[], folder: string | null
 	return new Promise(async (resolve) => {
 		for await (let file of files) {
 			new Promise(async (resolve) => {
-				let { createReadStream, filename } = file
-				filename = `${shortid.generate()}-${filename}`
+				const { createReadStream, filename } = file
 				const key = `${folder}/${name}-${filename}`
 				const data = await s3.upload({ ...s3DefaultParams, Body: createReadStream(), Key: key }).promise()
 

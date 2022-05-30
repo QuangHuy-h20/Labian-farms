@@ -1,7 +1,8 @@
 import React from "react";
 import cn from "classnames";
 import { Image } from "@components/ui/image";
-import { moneyFormatter, calDiscount } from "@utils/helper";
+import { moneyFormatter } from "@utils/helper";
+import { useModalAction } from "@components/modal/modal.context";
 
 type CardProps = {
   product: any;
@@ -10,9 +11,11 @@ type CardProps = {
 const ProductCard: React.FC<CardProps> = ({ product, className }) => {
   const { name, price, priceRoot, unit, image1 } = product ?? {};
 
-  const handleProductQuickView = () => {
-    // openModal()
-  };
+  const { openModal } = useModalAction();
+
+  function handleProductQuickView() {
+    return openModal("PRODUCT_DETAILS", product.slug);
+  }
   return (
     <article
       className={cn(
@@ -28,28 +31,27 @@ const ProductCard: React.FC<CardProps> = ({ product, className }) => {
         <Image
           src={image1}
           alt={name}
-          layout="fill"
           objectFit="cover"
-          className="product-image"
+          width={200}
+          height={230}
         />
       </div>
       {/* End of product image */}
 
-      <header className="p-3">
-        <div className="flex items-center mb-2">
-          <span>{priceRoot}</span>
-          <span className="text-sm md:text-base text-gray-600 text-emerald-500 font-semibold">
-            {moneyFormatter(price)} / <span>{unit}</span>
-          </span>
-        </div>
-        {/* End of product price */}
-
+      <header className="p-4 mt-2">
         <h3
-          className="text-xs md:text-sm text-gray-400 truncate mb-4 cursor-pointer"
+          className="text-xs md:text-lg text-emerald-500 truncate font-semibold mb-4 cursor-pointer"
           onClick={handleProductQuickView}
         >
           {name}
         </h3>
+        <div className="flex items-center mb-2">
+          <span>{priceRoot}</span>
+          <span className="text-gray-500 font-medium">
+            {moneyFormatter(price)} / <span>{unit}</span>
+          </span>
+        </div>
+        {/* End of product price */}
 
         {/* End of product title */}
 

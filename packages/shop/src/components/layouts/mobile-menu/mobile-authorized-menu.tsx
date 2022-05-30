@@ -1,13 +1,10 @@
-import { siteSettings } from '@/settings/site';
+import { siteSettings } from '@settings/site.settings';
 import { useRouter } from 'next/router';
-import { useTranslation } from 'next-i18next';
-import DrawerWrapper from '@/components/ui/drawer/drawer-wrapper';
+import DrawerWrapper from '@components/ui/drawer/drawer-wrapper';
 import { useAtom } from 'jotai';
-import { drawerAtom } from '@/store/drawer-atom';
-import { useUser } from '@/framework/user';
+import { drawerAtom } from '@store/drawer-atom';
 
 export default function MobileAuthorizedMenu() {
-  const { t } = useTranslation('common');
   const router = useRouter();
   const { me } = useUser();
   const [_, closeSidebar] = useAtom(drawerAtom);

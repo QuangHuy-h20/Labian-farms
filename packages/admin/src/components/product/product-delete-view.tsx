@@ -25,7 +25,7 @@ const ProductDeleteView = () => {
   async function handleDelete() {
     try {
       await deleteProductById({
-        variables: { id: modalData.id as string, farmId: modalData.farmId },
+        variables: { id: modalData.id as string },
         update(cache, { data }) {
           if (data?.deleteProduct.success) {
             cache.modify({

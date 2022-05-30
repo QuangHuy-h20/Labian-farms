@@ -1,35 +1,67 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
-import Spinner from "@components/loader/spinner";
-import Button from "@components/ui/button";
+import Card from "@components/common/card";
 import { Input } from "@components/form";
-import { CreateFarmInput, useCreateFarmMutation } from "@generated/graphql";
+import Button from "@components/ui/button";
+import Description from "@components/ui/description";
+import TextArea from "@components/ui/text-area";
+import {
+  UpdateFarmInput,
+  useCreateFarmMutation,
+  useUpdateFarmMutation
+} from "@generated/graphql";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useCallback } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+// import { farmValidationSchema } from "./farm-validation-schema";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-const schema: yup.SchemaOf<CreateFarmInput> = yup.object().shape({
+
+
+const schema: yup.SchemaOf<UpdateFarmInput> = yup.object().shape({
   name: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
-  address: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
   description: yup.string().default(""),
+  address: yup.string().required("Trường dữ liệu bắt buộc."),
 });
 
-const FarmForm = () => {
-  const [createFarm] = useCreateFarmMutation();
+const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
+  const router = useRouter();
+  const [createFarm, { loading: creating }] = useCreateFarmMutation({
+    onCompleted: (data) => {
+      if (data.createFarm.success) {
+        toast.success(data.createFarm.message)
+        router.push(ROUTES.DASHBOARD);
+      } else toast.error(data.createFarm.message);
+    },
+  });
+  const [updateFarm, { loading: updating }] = useUpdateFarmMutation({
+    onCompleted: () => {
+      toast.success("Cập nhật thông tin nông trại thành công.");
+    },
+  });
+  const [fileToUpload, setFileToUpload] = useState<File>([] as any);
+  const [imageSrc, setImageSrc] = useState(
+    initialValues ? initialValues.logoImage : ""
+  );
   const {
-    handleSubmit,
     register,
-    formState: { errors, isSubmitting },
-    setError,
-  } = useForm<CreateFarmInput>({
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UpdateFarmInput>({
+    shouldUnregister: true,
+    ...(initialValues
+      ? {
+          defaultValues: {
+            ...initialValues,
+            logoImage: initialValues.logoImage,
+          },
+        }
+      : {}),
     resolver: yupResolver(schema),
   });
 
-  const [fileToUpload, setFileToUpload] = useState<File>([] as any);
-  const [imageSrc, setImageSrc] = useState("");
   const readFile = (file: File) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -51,69 +83,106 @@ const FarmForm = () => {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const onSubmit: SubmitHandler<CreateFarmInput> = async (
-    values: CreateFarmInput
-  ) => {
-    await createFarm({
-      variables: { createFarmInput: values, files: fileToUpload },
-      onCompleted: (data) => {
-        if (data.createFarm.success) toast.success(data.createFarm.message);
-      },
-      onError: () => toast.error("Đã có lỗi xảy ra, vui lòng thử lại."),
-    });
+  const onSubmit: SubmitHandler<UpdateFarmInput> = async (values) => {
+    if (initialValues) {
+      updateFarm({
+        variables: {
+          updateFarmInput: { ...values },
+          files: fileToUpload,
+        },
+      });
+    } else {
+      createFarm({
+        variables: {
+          createFarmInput: { ...values },
+          files: fileToUpload,
+        },
+      });
+    }
   };
 
   return (
-    <form className="w-3/4" onSubmit={handleSubmit(onSubmit)}>
-      <div>
-        <label className="pl-3 text-md" htmlFor="uploadFile">
-          Ảnh đại diện
-        </label>
-        <div
-          {...getRootProps({
-            className: "border border-dashed py-6 px-3 my-2",
-          })}
-        >
-          <input name="uploadFile" {...getInputProps()} />
-          {imageSrc ? <img className=" w-full h-56 object-contain" src={imageSrc} alt="" /> : <p className="text-center">Kéo ảnh hoặc nhấp vào ô để chọn ảnh</p>}
-        </div>
-      </div>
-      <Input
-        name="name"
-        label="Tên trang trại"
-        type="text"
-        {...register("name")}
-        placeholder="Nhập tên trang trại"
-        error={errors?.name?.message!}
-      />
-      <Input
-        name="address"
-        label="Địa chỉ trang trại"
-        type="text"
-        {...register("address")}
-        placeholder="Nhập địa chỉ trang trại"
-        error={errors?.address?.message!}
-      />
-      <Input
-        name="description"
-        label="Mô tả"
-        type="text"
-        {...register("description")}
-        placeholder="Nhập mô tả"
-        error={errors?.description?.message!}
-      />
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <div className="flex flex-wrap pb-8 border-b border-dashed border-border-base my-5 sm:my-8">
+          <Description
+            title="Ảnh logo"
+            details="Tải lên ảnh đại diện cho nông trại của bạn"
+            className="w-full px-0 sm:pe-4 md:pe-5 pb-5 sm:w-4/12 md:w-1/3 sm:py-8"
+          />
 
-      <Button
-        type="submit"
-        loading={isSubmitting}
-        disabled={isSubmitting}
-        size="large"
-        variant="normal"
-      >
-        <span className="cursor-pointer text-xl">Hoàn thành</span>
-      </Button>
-    </form>
+          <Card className="w-full sm:w-8/12 md:w-2/3">
+            <div
+              {...getRootProps({
+                className: "border border-dashed py-6 px-3 my-2",
+              })}
+            >
+              <input name="uploadFile" {...getInputProps()} />
+              {imageSrc ? (
+                <img
+                  className=" w-full h-56 object-contain"
+                  src={imageSrc}
+                  alt=""
+                />
+              ) : (
+                <p className="text-center">
+                  Kéo ảnh hoặc nhấp vào ô để chọn ảnh
+                </p>
+              )}
+            </div>
+          </Card>
+        </div>
+
+        <div className="flex flex-wrap pb-8 border-b border-dashed border-border-base my-5 sm:my-8">
+          <Description
+            title="Thông tin cơ bản"
+            details="Thêm 1 số thông tin cơ bản cho nông trại của bạn"
+            className="w-full px-0 sm:pe-4 md:pe-5 pb-5 sm:w-4/12 md:w-1/3 sm:py-8"
+          />
+          <Card className="w-full sm:w-8/12 md:w-2/3">
+            <Input
+              label="Tên nông trại"
+              {...register("name")}
+              className="mb-5"
+              error={errors.name?.message}
+            />
+            <TextArea
+              label="Mô tả về nông trại"
+              {...register("description")}
+              variant="outline"
+              error={errors.description?.message!}
+            />
+          </Card>
+        </div>
+
+        <div className="flex flex-wrap pb-8 border-b border-dashed border-gray-300 my-5 sm:my-8">
+          <Description
+            title="Địa chỉ"
+            details="Nhập địa chỉ của trang trại"
+            className="w-full px-0 sm:pe-4 md:pe-5 pb-5 sm:w-4/12 md:w-1/3 sm:py-8"
+          />
+
+          <Card className="w-full sm:w-8/12 md:w-2/3">
+            <Input
+              label="Địa chỉ"
+              {...register("address")}
+              className="mb-5"
+              error={errors.address?.message!}
+            />
+          </Card>
+        </div>
+
+        <div className="mb-5 text-right">
+          <Button
+            loading={creating || updating}
+            disabled={creating || updating}
+          >
+            {initialValues ? "Cập nhật" : "Tạo nông trại"}
+          </Button>
+        </div>
+      </form>
+    </>
   );
 };
 
-export default FarmForm;
+export default CreateOrUpdateFarmForm;

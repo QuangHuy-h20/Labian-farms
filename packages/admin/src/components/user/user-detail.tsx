@@ -22,12 +22,16 @@ const FarmerInformation: React.FC = () => {
           layout="fill"
         />
       </div>
-      <h3 className="text-lg font-semibold text-gray-600 mt-4">{fullName ? fullName : email}</h3>
+      <h3 className="text-lg font-semibold text-gray-600 mt-4">
+        {fullName ? fullName : email}
+      </h3>
       <p className="text-sm text-muted mt-1">{email}</p>
       {!fullName ? (
         <p className="text-sm text-muted mt-0.5">
-         
-          <Link href={ROUTES.PROFILE_UPDATE} className="text-emerald-500 underline">
+          <Link
+            href={ROUTES.PROFILE_UPDATE}
+            className="text-emerald-500 underline"
+          >
             Cập nhật thông tin cá nhân
           </Link>
         </p>
@@ -42,7 +46,9 @@ const FarmerInformation: React.FC = () => {
         ) : (
           <CloseFillIcon width={16} className="me-2 text-red-500" />
         )}
-        {isActiveEmail ? "Enabled" : "Disabled"}
+        <span className="ml-2">
+          {isActiveEmail ? "Đã xác thực email" : "Chưa xác thực email"}
+        </span>
       </div>
     </div>
   );

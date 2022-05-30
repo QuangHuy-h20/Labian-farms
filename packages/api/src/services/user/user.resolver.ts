@@ -15,7 +15,7 @@ import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { TokenModel } from "../../models/Token";
 import { sendEmail } from "../../utils/sendEmail";
 import { deleteFile, singleUpload } from "../../utils/s3";
-
+import { Tour } from "../../entities/Tour";
 
 registerEnumType(Gender, {
   name: "Gender"
@@ -26,6 +26,19 @@ export class UserResolver {
 
   //-------------------- Field resolver ----------------------
 
+
+  @FieldResolver((_return) => [Tour], { nullable: true })
+  async toursApplyByCustomer(
+    @Root() root: User,
+    @Ctx() { dataLoaders: { tourLoader } }: Context
+  ) {
+    try {
+      return await tourLoader.load(root.id);
+    } catch (error) {
+      return null;
+    }
+  }
+
   @FieldResolver(_return => [Address], { nullable: true })
   async addresses(@Root() root: User, @Ctx() { dataLoaders: { addressLoader } }: Context) {
     try {
@@ -35,13 +48,11 @@ export class UserResolver {
     }
   }
 
-  @FieldResolver(_return => [Farm], { nullable: true })
-  async farms(@Root() root: User, @Ctx() { dataLoaders: { farmLoader } }: Context) {
-    try {
-      return await farmLoader.loadMany(root.userFarmIds)
-    } catch (error) {
-      return null
-    }
+  @FieldResolver((_return) => Farm)
+  async farm(
+    @Root() root: User,
+  ) {
+    return await Farm.findOne({ ownerId: root.id });
   }
 
   //----------------------- Query -----------------------
@@ -62,7 +73,47 @@ export class UserResolver {
     }
   }
 
+  @Query(_return => User, { description: "Get user", nullable: true })
+  async user(@Arg("id", _type => ID) id: number) {
+    try {
+      return await User.findOne({ id })
+    } catch {
+      return null
+    }
+  }
+
   //----------------------- Mutation -----------------------
+
+  @Mutation(_return => Boolean)
+  @UseMiddleware(checkAuth)
+  async banUser(@Arg("id", _type => ID) id: number): Promise<boolean> {
+    try {
+      const existingUser = await User.findOne({ id })
+      if (!existingUser) return false
+
+      existingUser.status = 0
+
+      existingUser.save()
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  @Mutation(_return => Boolean)
+  @UseMiddleware(checkAuth)
+  async activeUser(@Arg("id", _type => ID) id: number): Promise<boolean> {
+    try {
+      const existingUser = await User.findOne({ id })
+      if (!existingUser) return false
+
+      existingUser.status = 1
+      existingUser.save()
+      return true
+    } catch {
+      return false
+    }
+  }
 
   @Mutation((_return) => UserMutationResponse, { description: "Register for customer." })
   async register(@Arg("registerInput") registerInput: RegisterInput, @Ctx() { req }: Context): Promise<UserMutationResponse> {

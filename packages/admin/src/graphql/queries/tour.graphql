@@ -1,0 +1,5 @@
+query Tour($id: ID, $slug: String) {
+  tour(id: $id, slug: $slug) {
+    ...tourInfo
+  }
+}

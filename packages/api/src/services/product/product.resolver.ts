@@ -153,10 +153,12 @@ export class ProductResolver {
     description: "Get specific product by id",
   })
   async product(
-    @Arg("id", (_type) => ID) id: number
+    @Arg("id", (_type) => ID, { nullable: true }) id: number,
+    @Arg("slug", (_type) => String, { nullable: true }) slug: string
   ): Promise<Product | undefined> {
     try {
-      return await Product.findOne(id);
+      if (id) return await Product.findOne(id)
+      else return await Product.findOne({ slug });
     } catch (error) {
       return undefined;
     }
@@ -193,24 +195,27 @@ export class ProductResolver {
   async createProduct(
     @Arg("createProductInput") createProductInput: CreateProductInput,
     @Arg("farmId", (_type) => ID) farmId: number,
+    @Ctx() { req }: Context,
     @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
   ): Promise<ProductMutationResponse> {
     let list: string[] = [];
 
     try {
       const { name } = createProductInput;
-      const existingFarm = await Farm.findOne({ id: farmId });
       const existingProduct = await Product.findOne({ where: [{ name }] });
 
-      if (!existingFarm)
-        return failureResponse(404, false, "Không có quyền truy cập.");
-      if (existingProduct)
-        return failureResponse(400, false, "Tên sản phẩm đã được sử dụng.");
+      if (existingProduct) return failureResponse(400, false, "Tên sản phẩm đã được sử dụng.");
+
+      const existingFarm = await Farm.findOne({ id: farmId });
+      if (!existingFarm) return failureResponse(404, false, "Nông trại không tồn tại.");
+
+      if (existingFarm.ownerId !== req.session.userId) return failureResponse(401, false, "Không có quyền truy cập.");
 
       const getFarmSlug = existingFarm.slug;
       const productSlug = toSlug(name);
       const unAccentName = toNonAccent(name);
       const folder = `products/${getFarmSlug}`;
+
       await multipleUploads(files, folder, productSlug).then(async (value) => {
         list = value as string[];
 
@@ -243,7 +248,7 @@ export class ProductResolver {
   @UseMiddleware(checkRole)
   async updateProduct(
     @Arg("updateProductInput") updateProductInput: UpdateProductInput,
-    @Arg("farmId", (_type) => ID) farmId: number,
+    @Ctx() { req }: Context,
     @Arg("files", () => [GraphQLUpload]) files: [FileUpload]
   ):
     Promise<ProductMutationResponse> {
@@ -260,13 +265,14 @@ export class ProductResolver {
         unit,
         categoryId
       } = updateProductInput;
-      const existingProduct = await Product.findOne(id);
-      const existingFarm = await Farm.findOne({ id: farmId });
 
-      if (!existingFarm)
-        return failureResponse(404, false, "Không có quyền truy cập.");
-      if (!existingProduct)
-        return failureResponse(404, false, "Sản phẩm không tồn tại.");
+      const existingProduct = await Product.findOne(id);
+      if (!existingProduct) return failureResponse(404, false, "Sản phẩm không tồn tại.");
+
+      const existingFarm = await Farm.findOne({ id: existingProduct.farmId });
+      if (!existingFarm) return failureResponse(400, false, "Không tìm thấy nông trại.");
+
+      if (existingFarm.ownerId !== req.session.userId) return failureResponse(400, false, "Không có quyền truy cập.");
 
       const getFarmSlug = existingFarm.slug
       const folder = `products/${getFarmSlug}`

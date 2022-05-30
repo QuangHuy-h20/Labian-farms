@@ -1,19 +1,17 @@
-import { Image } from '@/components/ui/image';
+import { Image } from '@components/ui/image';
 import { motion } from 'framer-motion';
-import { siteSettings } from '@/settings/site';
-import Counter from '@/components/ui/counter';
-import { CloseIcon } from '@/components/icons/close-icon';
-import { fadeInOut } from '@/lib/motion/fade-in-out';
-import usePrice from '@/lib/use-price';
-import { useTranslation } from 'next-i18next';
-import { useCart } from '@/store/quick-cart/cart.context';
+import { siteSettings } from '@settings/site.settings';
+import Counter from '@components/ui/counter';
+import { CloseIcon } from '@components/icons/close-icon';
+import { fadeInOut } from '@lib/motion/fade-in-out';
+import usePrice from '@lib/use-price';
+import { useCart } from '@store/quick-cart/cart.context';
 
 interface CartItemProps {
   item: any;
 }
 
 const CartItem = ({ item }: CartItemProps) => {
-  const { t } = useTranslation('common');
   const { isInStock, clearItemFromCart, addItemToCart, removeItemFromCart } =
     useCart();
 
@@ -53,14 +51,13 @@ const CartItem = ({ item }: CartItemProps) => {
 
       <div className="w-10 sm:w-16 h-10 sm:h-16 flex items-center justify-center overflow-hidden bg-gray-100 mx-4 shrink-0 relative">
         <Image
-          src={item?.image ?? siteSettings?.product?.placeholderImage}
+          src={item?.image ?? siteSettings?.product?.placeholder}
           alt={item.name}
           layout="fill"
           objectFit="contain"
         />
       </div>
       <div>
-        {/* <h3 className="font-bold text-heading">{item.name}</h3> */}
         <h3 className="font-bold text-heading">{item.name} </h3>
         <p className="my-2.5 font-semibold text-accent">{price}</p>
         <span className="text-xs text-body">
@@ -74,7 +71,7 @@ const CartItem = ({ item }: CartItemProps) => {
         className="w-7 h-7 ltr:ml-3 rtl:mr-3 ltr:-mr-2 rtl:-ml-2 flex items-center justify-center shrink-0 rounded-full text-muted transition-all duration-200 focus:outline-none hover:bg-gray-100 focus:bg-gray-100 hover:text-red-600 focus:text-red-600"
         onClick={() => clearItemFromCart(item.id)}
       >
-        <span className="sr-only">{t('text-close')}</span>
+        <span className="sr-only">Đóng</span>
         <CloseIcon className="w-3 h-3" />
       </button>
     </motion.div>

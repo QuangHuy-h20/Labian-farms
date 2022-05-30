@@ -29,7 +29,8 @@ export const validateRegisterInput = (registerInput: RegisterInput) => {
 
   if (!phone.match(REGEXP_PHONE_NUMBER))
     return {
-      message: "Số điện thoại không hợp lệ."
+      message: "Số điện thoại không hợp lệ.",
+      errors: [{ field: "phone", message: "Số điện thoại không hợp lệ." }],
     };
 
   if (password.length >= MAX_LENGTH || password.length <= MIN_LENGTH)

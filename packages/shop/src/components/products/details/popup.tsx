@@ -1,47 +1,38 @@
-import Spinner from '@/components/ui/loaders/spinner/spinner';
-import dynamic from 'next/dynamic';
-import { useTranslation } from 'next-i18next';
-import Details from './details';
-import ShortDetails from './short-details';
-import { stickyShortDetailsAtom } from '@/store/sticky-short-details-atom';
-import { useAtom } from 'jotai';
-import { AttributesProvider } from './attributes.context';
-import { useProduct } from '@/framework/product';
+import Spinner from "@components/ui/loaders/spinner/spinner";
+import Details from "./details";
+import ShortDetails from "./short-details";
+import { stickyShortDetailsAtom } from "@store/sticky-short-details-atom";
+import { useAtom } from "jotai";
+import { AttributesProvider } from "./attributes.context";
+import { useProductQuery } from "@generated/graphql";
 
-const RelatedProducts = dynamic(() => import('./related-products'));
 interface ProductPopupProps {
-  productSlug: string;
+  productId: number;
 }
-const Popup: React.FC<ProductPopupProps> = ({ productSlug }) => {
-  const { t } = useTranslation('common');
+
+const Popup: React.FC<ProductPopupProps> = ({ productId }) => {
   const [showStickyShortDetails] = useAtom(stickyShortDetailsAtom);
-  const { product, isLoading } = useProduct({ slug: productSlug });
+  const { data, loading } = useProductQuery({
+    variables: { id: productId },
+  });
 
-  const { id, related_products } = product ?? {};
-
-  if (isLoading || !product)
+  if (loading || !data?.product!)
     return (
-      <div className="relative flex items-center justify-center w-96 h-96 bg-light">
-        <Spinner text={t('common:text-loading')} />
+      <div className="relative flex items-center justify-center w-96 h-96 bg-white">
+        <Spinner />
       </div>
     );
 
   return (
     <AttributesProvider>
-      <article className="bg-light w-full max-w-6xl xl:min-w-[1152px] relative z-[51] md:rounded-xl">
+      <article className="bg-white w-full max-w-6xl xl:min-w-[1152px] relative z-[51] md:rounded-xl">
         {/* Sticky bar */}
-        <ShortDetails product={product} isSticky={showStickyShortDetails} />
+        <ShortDetails
+          product={data?.product!}
+          isSticky={showStickyShortDetails as boolean}
+        />
         {/* End of sticky bar */}
-        <Details product={product} backBtn={false} isModal={true} />
-
-        {related_products?.length! > 1 && (
-          <div className="p-5 md:pb-10 lg:p-14 xl:p-16">
-            <RelatedProducts
-              products={related_products}
-              currentProductId={id}
-            />
-          </div>
-        )}
+        <Details product={data?.product!} backBtn={false} isModal={true} />
       </article>
     </AttributesProvider>
   );

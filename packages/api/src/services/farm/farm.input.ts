@@ -15,6 +15,4 @@ export class CreateFarmInput {
 @InputType()
 export class UpdateFarmInput extends CreateFarmInput{
 
-  @Field()
-  id: string
 }

@@ -22,7 +22,7 @@ const schema: yup.SchemaOf<LoginInput> = yup.object().shape({
 });
 
 export default function LoginPage() {
-  const [loginUser] = useLoginMutation();
+  const [loginUser, { loading }] = useLoginMutation();
   const router = useRouter();
   const {
     handleSubmit,
@@ -83,8 +83,8 @@ export default function LoginPage() {
         </div>
         <Button
           type="submit"
-          loading={isSubmitting}
-          disabled={isSubmitting}
+          loading={loading}
+          disabled={loading}
           size="large"
           variant="normal"
         >

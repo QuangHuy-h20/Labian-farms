@@ -15,7 +15,7 @@ const Sidebar: FC<SidebarProps> = ({ className }) => {
 
 	return (
 		<aside className="flex-shrink-0 hidden mr-8 lg:block lg:w-80">
-			<div className="bg-white border rounded  px-10 py-8 mb-5">
+			<div className="bg-white border min-h-full rounded  px-10 py-8 mb-5">
 				<h3 className="text-center text-lg font-semibold mb-4">
 					Avatar
 				</h3>

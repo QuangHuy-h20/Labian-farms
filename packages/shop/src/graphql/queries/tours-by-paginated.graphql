@@ -1,0 +1,10 @@
+query ToursPaginated($limit: Int!, $cursor: String) {
+  toursPaginated(limit: $limit, cursor: $cursor) {
+    totalCount
+    hasMore
+    cursor
+    paginatedTours {
+      ...tourInfo
+    }
+  }
+}

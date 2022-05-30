@@ -1,6 +1,6 @@
 import FarmCard from '@components/ui/cards/farm';
 import ErrorMessage from '@components/ui/error-message';
-import CouponLoader from '@components/ui/loaders/coupon-loader';
+import ManufacturerLoader from '@components/ui/loaders/manufacturer-loader';
 import NotFound from '@components/ui/not-found';
 import { useFarmsQuery } from '@generated/graphql';
 import { FARMS_LIMIT } from '@lib/constants';
@@ -32,7 +32,7 @@ const FarmsPage: NextPageWithLayout = () => {
           {loading && !data?.allFarms?.length ? (
             <>
               {rangeMap(limit, (i) => (
-                <CouponLoader key={i} uniqueKey={`shops-${i}`} />
+                <ManufacturerLoader key={i} uniqueKey={`farms-${i}`} />
               ))}
             </>
           ) : (

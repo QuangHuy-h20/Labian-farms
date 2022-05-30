@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useState } from "react";
 
 type TruncateProps = {
   expandedText?: string;
@@ -12,13 +11,12 @@ type TruncateProps = {
 
 const Truncate: React.FC<TruncateProps> = ({
   children,
-  expandedText = 'common:text-less',
-  compressText = 'common:text-read-more',
+  expandedText = "Thu gọn",
+  compressText = "Xem thêm",
   character = 150,
   btnClassName,
   onClick,
 }) => {
-  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   const toggleLines = () => {
@@ -37,16 +35,16 @@ const Truncate: React.FC<TruncateProps> = ({
   }
   return (
     <>
-      {!expanded ? children.substring(0, character) + '...' : children}
+      {!expanded ? children.substring(0, character) + "..." : children}
       <br />
       <span>
         <button
           onClick={handleClick}
           className={`mt-1 inline-block font-bold text-accent ${
-            btnClassName ? btnClassName : ''
+            btnClassName ? btnClassName : ""
           }`}
         >
-          {t(!expanded ? compressText : expandedText)}
+          {!expanded ? "Xem thêm" : "Thu gọn"}
         </button>
       </span>
     </>

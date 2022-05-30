@@ -1,0 +1,8 @@
+query TourIds($limit: Int!, $cursor: String) {
+  toursPaginated(limit: $limit, cursor: $cursor) {
+    paginatedTours {
+      id
+      slug
+    }
+  }
+}

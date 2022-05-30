@@ -1,15 +1,15 @@
 export const ROUTES = {
 	menu: [
 		{
-			name: 'Cửa hàng',
+			name: 'Nông trại',
 			route: '/farms'
 		},
 		{
-			name: 'Đăng ký trang trại',
+			name: 'Đăng ký nông trại',
 			route: 'http://localhost:3001'
 		},
 		{
-			name: 'Tham quan',
+			name: 'Tour tham quan',
 			route: '/tours'
 		}
 	],

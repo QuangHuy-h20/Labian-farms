@@ -6,7 +6,6 @@ import Input from "@components/ui/input";
 import TextArea from "@components/ui/text-area";
 import {
   Product,
-  UpdateProductInput,
   useCreateProductMutation,
   useFarmQuery,
   useUpdateProductMutation,
@@ -28,7 +27,7 @@ import {
 import ProductCategoryInput from "./product-category-input";
 
 type ProductFormProps = {
-  initialValues?: Product | null;
+  initialValues?: any;
 };
 
 const schema: yup.SchemaOf<Omit<ProductFormValues, "categoryId">> = yup
@@ -56,13 +55,14 @@ const schema: yup.SchemaOf<Omit<ProductFormValues, "categoryId">> = yup
       ),
   });
 
-export default function CreateOrUpdateProductForm({
-  initialValues,
-}: ProductFormProps) {
+export default function CreateOrUpdateProductForm({ initialValues }: any) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File>([] as any);
-  const [imageSrc, setImageSrc] = useState(initialValues ? initialValues.image1 : "");
+  const [imageSrc, setImageSrc] = useState(
+    initialValues ? initialValues.image1 : ""
+  );
+
   const { data: farmData } = useFarmQuery({
     variables: {
       slug: router.query.farm as string,
@@ -85,11 +85,14 @@ export default function CreateOrUpdateProductForm({
     formState: { errors },
   } = methods;
 
-
+  console.log(`${router.query.farm}${ROUTES.PRODUCTS}`);
+  
   const [createProduct, { loading: creating }] = useCreateProductMutation({
-    onCompleted: () => {
-      toast.success("Thêm sản phẩm mới thành công");
-      router.push(ROUTES.PRODUCTS);
+    onCompleted: (data) => {
+      if (data.createProduct.success) {
+        toast.success(data.createProduct.message);
+        router.back();
+      } else toast.error(data.createProduct.message);
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -107,9 +110,12 @@ export default function CreateOrUpdateProductForm({
   });
 
   const [updateProduct, { loading: updating }] = useUpdateProductMutation({
-    onCompleted: () => {
-      toast.success("Cập nhật sản phẩm thành công");
-      router.push(ROUTES.PRODUCTS);
+    onCompleted: (data) => {
+      if (data.updateProduct.success) {
+        
+        toast.success(data.updateProduct.message);
+        router.back();
+      } else toast.error(data.updateProduct.message);
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -155,7 +161,6 @@ export default function CreateOrUpdateProductForm({
     if (initialValues) {
       updateProduct({
         variables: {
-          farmId,
           updateProductInput: { ...inputValues, id: initialValues.id },
           files: fileToUpload,
         },
@@ -225,7 +230,7 @@ export default function CreateOrUpdateProductForm({
             />
 
             <Card className="w-full sm:w-8/12 md:w-2/3">
-              <ProductCategoryInput  control={control} />
+              <ProductCategoryInput control={control} />
             </Card>
           </div>
 

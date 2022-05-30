@@ -1,0 +1,5 @@
+query FarmByFarmer($ownerId: ID!) {
+  farmByFarmer(ownerId: $ownerId) {
+    ...farmInfo
+  }
+}

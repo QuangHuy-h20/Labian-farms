@@ -1,11 +1,9 @@
-import Logo from '@/components/ui/logo';
+import Logo from '@components/ui/logo';
 import { useAtom } from 'jotai';
-import { drawerAtom } from '@/store/drawer-atom';
-import { CloseIcon } from '@/components/icons/close-icon';
-import { useTranslation } from 'next-i18next';
+import { drawerAtom } from '@store/drawer-atom';
+import { CloseIcon } from '@components/icons/close-icon';
 
-const DrawerWrapper: React.FC = ({ children }) => {
-  const { t } = useTranslation('common');
+const DrawerWrapper: React.FC = ({ children }: any) => {
   const [_, closeSidebar] = useAtom(drawerAtom);
   return (
     <div className="flex h-full flex-col">
@@ -13,9 +11,9 @@ const DrawerWrapper: React.FC = ({ children }) => {
         <Logo className="w-24 md:w-auto" />
         <button
           onClick={() => closeSidebar({ display: false, view: '' })}
-          className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-body transition-all duration-200 hover:bg-accent hover:text-light focus:bg-accent focus:text-light focus:outline-none"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-body transition-all duration-200 hover:bg-accent hover:text-white focus:bg-accent focus:text-white focus:outline-none"
         >
-          <span className="sr-only">{t('text-close')}</span>
+          <span className="sr-only">Đóng</span>
           <CloseIcon className="h-2.5 w-2.5" />
         </button>
       </div>

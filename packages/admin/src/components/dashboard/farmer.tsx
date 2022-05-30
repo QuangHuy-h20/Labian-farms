@@ -1,50 +1,89 @@
-// import ErrorMessage from "@components/ui/error-message";
-// import Loader from "@components/ui/loader/loader";
-// import { useMyShopsQuery } from "@graphql/shops.graphql";
-// import ShopCard from "@components/shop/shop-card";
-// import Image from "next/image";
-// import NoShopSvg from "../../../public/no-shop.svg";
+import Link from "@components/ui/link";
+import PageLoader from "@components/ui/page-loader";
+import { useFarmByFarmerQuery } from "@generated/graphql";
+import greetingLottie from "@lotties/greeting.json";
+import waitingForApprove from "@lotties/waiting-to-approve.json";
+import haveAGoodDay from "@lotties/have-a-good-day.json";
+import { useCheckAuth } from "@utils/useCheckAuth";
+import Lottie from "react-lottie";
 
-export default function FarmerDashboard() {
-  // const { data, loading, error } = useMyShopsQuery();
+const FarmerDashboard = () => {
+  const { meData, meLoading } = useCheckAuth();
+  const { data, loading } = useFarmByFarmerQuery({
+    variables: {
+      ownerId: meData?.me?.id,
+    },
+  });
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: !data?.farmByFarmer ? greetingLottie : haveAGoodDay,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
-  // if (loading) return <Loader text={t("common:text-loading")} />;
-  // if (error) return <ErrorMessage message={error.message} />;
-  return (
+  const options = {
+    loop: true,
+    autoplay: true,
+    animationData: waitingForApprove,
+    rendererSettings: {
+      preserveAspectRatio: "",
+    },
+  };
+
+  const NewFarmerScreen = () => (
     <>
-      Farmer Dashboard
-      {/* <div className="border-b border-dashed border-border-base mb-5 sm:mb-8 pb-8">
-        <h1 className="text-lg font-semibold text-gray-600">
-          {t("common:sidebar-nav-item-my-shops")}
-        </h1>
+      <div className="w-full relative">
+        <Lottie options={defaultOptions} height={350} width={350} />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-5">
-        {data?.me?.shops?.map((myShop: any, idx: number) => (
-          <ShopCard shop={myShop} key={idx} />
-        ))}
+      <h3 className="mt-5 sm:mt-10 text-xl italic md:text-5xl text-gray-500 font-semibold text-center">
+        Cô chú/ anh chị mới tham gia bán hàng với tụi con/ tụi em?
+      </h3>
+      <div className="flex items-center justify-center mt-14">
+        <p className="text-2xl 3xl:text-xl text-gray-500 text-center">
+          Mở nông trại bán hàng cùng với
+          <span className="text-emerald-500 italic">Labian Farms</span> nào!
+        </p>
+        <Link
+          className="flex items-center py-4 px-3 justify-center flex-shrink-0 font-semibold leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow bg-emerald-500 text-white border border-transparent hover:bg-emerald-500 ml-6"
+          href="farms/create"
+        >
+          Tạo nông trại
+        </Link>
       </div>
-
-      {!data?.me?.managed_shop && !data?.me?.shops?.length ? (
-        <div className="w-full flex flex-col items-center p-10">
-          <div className="w-[300px] sm:w-[490px] h-[180px] sm:h-[370px] relative">
-            <Image
-              alt={t("common:text-image")}
-              src={NoShopSvg}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-          <span className="text-lg font-semibold text-center text-gray-500 mt-6 sm:mt-10">
-            {t("common:text-no-shop")}
-          </span>
-        </div>
-      ) : null}
-      {!!data?.me?.managed_shop ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-5">
-          <ShopCard shop={data?.me?.managed_shop} />
-        </div>
-      ) : null} */}
     </>
   );
-}
+
+  if (loading || meLoading) return <PageLoader />;
+
+  if (!data?.farmByFarmer) return <NewFarmerScreen />;
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center p-4 sm:p-8">
+      {data?.farmByFarmer && !data?.farmByFarmer?.isActive ? (
+        <>
+          <div className="w-full relative">
+            <Lottie options={defaultOptions} height={480} width={1024} />
+          </div>
+          <h3 className="mt-5 sm:mt-10 text-xl italic md:text-5xl text-gray-400 font-medium text-center">
+            Cô chú/ anh chị vui lòng chờ tụi con/ tụi em xác thực thông tin nông
+            trại mình đã tạo nhé!
+          </h3>
+        </>
+      ) : (
+        <>
+          <div className="w-full relative">
+            <Lottie options={defaultOptions} height={350} width={350} />
+          </div>
+          <p className="text-3xl 3xl:text-xl text-gray-500 mt-8 text-center">
+          <span className="text-emerald-500 italic ">Labian Farms</span> chúc cô chú/ anh chị ngày làm việc thật vui vẻ!
+        </p>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default FarmerDashboard;

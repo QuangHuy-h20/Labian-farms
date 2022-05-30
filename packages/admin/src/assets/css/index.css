@@ -1,5 +1,6 @@
 
-
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
 /* Your own custom component styles */
 
 @import 'tailwindcss/utilities';
@@ -46,6 +47,8 @@
     * shade of primary color
     */
     --color-accent-700: 0, 119, 95;
+
+    --color-border-base: 209, 213, 219;
 }
 
 html {
@@ -64,6 +67,7 @@ html {
 	  backdrop-filter: blur(13px);
 	  border-radius: 10px;
 	}
+
 	html,
 	body {
 	  scroll-behavior: smooth;
@@ -156,6 +160,5 @@ td {
 	}
   }
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+
 @import "./custom-plugins.css";

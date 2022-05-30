@@ -12,7 +12,7 @@
 // import { ShopIcon } from "@components/icons/sidebar";
 // import { DollarIcon } from "@components/icons/shops/dollar";
 
-export default function Dashboard() {
+export default function AdminDashboard() {
 //   const { data, loading, error } = useAdminDashboardQuery();
 //   const { price: total_revenue } = usePrice(
 //     data && {

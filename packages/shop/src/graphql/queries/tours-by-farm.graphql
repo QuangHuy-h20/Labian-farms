@@ -1,0 +1,5 @@
+query ToursByFarm($farmId: ID!) {
+  toursByFarm(farmId: $farmId) {
+    ...tourInfo
+  }
+}

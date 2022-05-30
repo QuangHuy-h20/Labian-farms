@@ -19,7 +19,11 @@ import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
 
 const schema: yup.SchemaOf<RegisterInput> = yup.object().shape({
-  email: yup.string().email().required("Email không được để trống").default(""),
+  email: yup
+    .string()
+    .email("Email phải đúng định dạng có đuôi @gmail.com")
+    .required("Email không được để trống")
+    .default(""),
   password: yup.string().required("Mật khẩu không được để trống").default(""),
   phone: yup.string().required("Số điện thoại không được để trống").default(""),
 });

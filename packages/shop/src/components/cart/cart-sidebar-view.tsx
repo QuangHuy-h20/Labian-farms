@@ -1,20 +1,18 @@
 import { useRouter } from 'next/router';
 import { motion, AnimateSharedLayout } from 'framer-motion';
-import CartCheckBagIcon from '@/components/icons/cart-check-bag';
-import EmptyCartIcon from '@/components/icons/empty-cart';
-import { CloseIcon } from '@/components/icons/close-icon';
-import CartItem from '@/components/cart/cart-item';
-import { fadeInOut } from '@/lib/motion/fade-in-out';
-import { ROUTES } from '@/lib/routes';
-import usePrice from '@/lib/use-price';
-import { useCart } from '@/store/quick-cart/cart.context';
-import { formatString } from '@/lib/format-string';
-import { useTranslation } from 'next-i18next';
+import CartCheckBagIcon from '@components/icons/cart-check-bag';
+import EmptyCartIcon from '@components/icons/empty-cart';
+import { CloseIcon } from '@components/icons/close-icon';
+import CartItem from '@components/cart/cart-item';
+import { fadeInOut } from '@lib/motion/fade-in-out';
+import { ROUTES } from '@lib/routes';
+import usePrice from '@lib/use-price';
+import { useCart } from '@store/quick-cart/cart.context';
+import { formatString } from '@lib/format-string';
 import { useAtom } from 'jotai';
-import { drawerAtom } from '@/store/drawer-atom';
+import { drawerAtom } from '@store/drawer-atom';
 
 const CartSidebarView = () => {
-  const { t } = useTranslation('common');
   const { items, totalUniqueItems, total } = useCart();
   const [_, closeSidebar] = useAtom(drawerAtom);
   const router = useRouter();
@@ -38,14 +36,14 @@ const CartSidebarView = () => {
         <div className="flex text-accent font-semibold">
           <CartCheckBagIcon className="shrink-0" width={24} height={22} />
           <span className="flex ltr:ml-2 rtl:mr-2">
-            {formatString(totalUniqueItems, t('text-item'))}
+            {formatString(totalUniqueItems, "Sản phẩm")}
           </span>
         </div>
         <button
           onClick={() => closeSidebar({ display: false, view: '' })}
           className="w-7 h-7 ltr:ml-3 rtl:mr-3 ltr:-mr-2 rtl:-ml-2 flex items-center justify-center rounded-full text-muted bg-gray-100 transition-all duration-200 focus:outline-none hover:bg-accent focus:bg-accent hover:text-light focus:text-light"
         >
-          <span className="sr-only">{t('text-close')}</span>
+          <span className="sr-only">Đóng</span>
           <CloseIcon className="w-3 h-3" />
         </button>
       </header>
@@ -66,7 +64,7 @@ const CartSidebarView = () => {
             >
               <EmptyCartIcon width={140} height={176} />
               <h4 className="mt-6 text-base font-semibold">
-                {t('text-no-products')}
+                Không có sản phẩm nào
               </h4>
             </motion.div>
           )}
@@ -81,7 +79,7 @@ const CartSidebarView = () => {
           onClick={handleCheckout}
         >
           <span className="flex flex-1 items-center h-full px-5 text-light">
-            {t('text-checkout')}
+            Thanh toán
           </span>
           <span className="flex items-center shrink-0 h-full bg-light text-accent rounded-full px-5">
             {totalPrice}
