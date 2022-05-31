@@ -12,7 +12,11 @@ export const moneyFormatter = (number, currency = ' ₫') => {
 
 export const calDiscount = (p: any) => {
   const { originalPrice, price } = p;
-  console.log(originalPrice, price);
-  
   return Math.ceil(((originalPrice - price) / originalPrice) * 100);
 };
+
+
+export const isEngCharacters = (text: string | null) => {
+  const regex = /^[a-zA-Z \t\r\n\f]+$/i
+  return regex.test(text);
+}

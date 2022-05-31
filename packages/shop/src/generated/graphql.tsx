@@ -598,6 +598,7 @@ export type QueryProductsArgs = {
   categoryId?: InputMaybe<Scalars['String']>;
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
+  text?: InputMaybe<Scalars['String']>;
 };
 
 
