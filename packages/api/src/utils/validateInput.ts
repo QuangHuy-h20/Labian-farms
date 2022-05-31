@@ -56,7 +56,7 @@ export const validateChangePasswordInput = (changePasswordInput: ChangePasswordI
       message: "Mật khẩu không hợp lệ",
       errors: [
         {
-          field: "password",
+          field: "newPassword",
           message: `${newPassword.length <= MIN_LENGTH
             ? "Độ dài mật khẩu phải lớn hơn 6."
             : "Độ dài mật khẩu phải nhỏ hơn 16."

@@ -27,7 +27,7 @@ import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { toNonAccent, toSlug } from "../../utils/common";
 import { PaginatedProducts } from "../../types/Paginated";
 import { getConnection, LessThan } from "typeorm";
-
+import Fuse from 'fuse.js';
 
 @Resolver((_of) => Product)
 export class ProductResolver {
@@ -68,8 +68,9 @@ export class ProductResolver {
   async products(
     @Arg("limit", (_type) => Int) limit: number,
     @Arg("cursor", { nullable: true }) cursor?: string,
-    @Arg("categoryId", (_type) => String, { nullable: true })
-    categoryId?: string | null
+    @Arg("categoryId", (_type) => String, { nullable: true }) categoryId?: string | null,
+    @Arg("text", (_type) => String, { nullable: true }) text?: string | null
+
   ): Promise<PaginatedProducts | null> {
     try {
       const totalCount = categoryId
@@ -100,11 +101,18 @@ export class ProductResolver {
           take: 1,
         });
       }
-      const products = await Product.find(
+      let products = await Product.find(
         categoryId === undefined
           ? findOptions
           : { ...findOptions, where: { categoryId } }
       );
+
+      const fuse = new Fuse(products);
+
+      if (text?.replace(/%/g, '')) {
+        products = fuse.search(text)?.map(({ item }) => item)
+        console.log(products);
+      }
 
       return {
         totalCount,
