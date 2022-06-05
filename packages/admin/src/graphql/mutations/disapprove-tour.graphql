@@ -1,0 +1,3 @@
+mutation DisApproveTour($id: ID!) {
+  disApproveTour(id: $id)
+}

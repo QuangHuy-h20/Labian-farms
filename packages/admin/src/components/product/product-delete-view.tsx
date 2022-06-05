@@ -1,3 +1,4 @@
+import { Reference } from "@apollo/client";
 import ConfirmationCard from "@components/common/confirmation-card";
 import {
   useModalAction,
@@ -5,17 +6,17 @@ import {
 } from "@components/ui/modal/modal.context";
 import { useDeleteProductMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
+import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
 const ProductDeleteView = () => {
-
+  const router = useRouter();
   const [deleteProductById, { loading }] = useDeleteProductMutation({
     onCompleted: () => {
       toast.success("Xoá sản phẩm thành công");
-     
     },
     onError: (error) => {
-      toast.error(`${error}`)
+      toast.error(`${error}`);
     },
   });
 
@@ -30,20 +31,19 @@ const ProductDeleteView = () => {
           if (data?.deleteProduct.success) {
             cache.modify({
               fields: {
-                products(existingProductRefs) {
-                  const newProductsAfterDeletion = {
-                    ...existingProductRefs,
-                    products: existingProductRefs.filter(
-                      (productFefObject) =>
-                      productFefObject.__ref !== `Product:${modalData.id}`
-                    ),
-                  };
-                  return newProductsAfterDeletion;
+                productsByFarm(existing) {
+                  return existing.filter(
+                    (productRefObject) =>
+                      productRefObject.__ref !==
+                      `Product:${modalData.id as string}`
+                  );
                 },
               },
             });
-            toast
           }
+        },
+        onCompleted: () => {
+          router.reload();
         },
       });
       closeModal();
@@ -54,8 +54,12 @@ const ProductDeleteView = () => {
   }
   return (
     <ConfirmationCard
+      title="Xoá sản phẩm"
+      description="Bạn có chắc muốn xoá sản phẩm này?"
       onCancel={closeModal}
       onDelete={handleDelete}
+      deleteBtnText="Xoá"
+      cancelBtnText="Quay lại"
       deleteBtnLoading={loading}
     />
   );

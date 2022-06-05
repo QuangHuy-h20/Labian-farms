@@ -19,10 +19,10 @@ const UpdateTourPage = () => {
     <>
       <div className="py-5 sm:py-8 flex border-b border-dashed border-border-base">
         <h1 className="text-lg font-semibold text-gray-600">
-          Cập nhật sản phẩm
+          Cập nhật tour
         </h1>
       </div>
-      <CreateOrUpdateTourForm initialValues={data?.tour} />
+      <CreateOrUpdateTourForm initialValues={data?.tour!} />
     </>
   );
 };

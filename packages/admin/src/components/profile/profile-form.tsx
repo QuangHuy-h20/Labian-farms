@@ -24,7 +24,7 @@ const schema = yup.object().shape({
 
 const ProfileForm = () => {
   const { data: meData } = useMeQuery();
-  const { fullName, nickname, gender, dateOfBirth, address } = meData!.me!;
+  const { fullName, nickname, gender, dateOfBirth, address } = meData?.me!;
   const [updateProfile] = useUpdateProfileMutation();
   const {
     control,

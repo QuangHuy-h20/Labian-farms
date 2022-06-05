@@ -60,7 +60,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
         {...rest}
       >
         <>
-          {loading && <Spinner size="small" className="ml-2" />} {children}
+          {loading && <Spinner size="small" className="mr-2" />} {children}
         </>
       </button>
     </>

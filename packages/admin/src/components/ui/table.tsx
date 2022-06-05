@@ -1,12 +1,10 @@
-
 import { ComponentProps, useState } from "react";
-
 
 const Table = (props: ComponentProps<any>) => {
   const initDataShow =
-    props.limit && props.bodyData
-      ? props.bodyData.slice(0, Number(props.limit))
-      : props.bodyData;
+    props?.limit && props?.bodyData
+      ? props?.bodyData?.slice(0, Number(props?.limit))
+      : props?.bodyData;
 
   const [dataShow, setDataShow] = useState(initDataShow);
   const [currPage, setCurrPage] = useState(0);
@@ -16,8 +14,8 @@ const Table = (props: ComponentProps<any>) => {
   let range: number[] = [];
 
   if (props.limit !== undefined) {
-    let page = Math.floor(props.bodyData.length / Number(props.limit));
-    pages = props.bodyData.length % Number(props.limit) === 0 ? page : page + 1;
+    let page = Math.floor(props?.bodyData?.length / Number(props.limit));
+    pages = props?.bodyData?.length % Number(props.limit) === 0 ? page : page + 1;
     range = [...Array.from(Array(pages).keys())];
   }
 
@@ -42,7 +40,9 @@ const Table = (props: ComponentProps<any>) => {
             </thead>
           ) : null}
           {props.bodyData && props.renderBody ? (
-            <tbody className="bg-white">{dataShow.map((item: any) => props.renderBody(item))}</tbody>
+            <tbody className="bg-white">
+              {dataShow.map((item: any) => props.renderBody(item))}
+            </tbody>
           ) : null}
         </table>
       </div>

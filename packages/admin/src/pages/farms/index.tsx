@@ -3,7 +3,12 @@ import FarmList from "@components/farm/farm-list";
 import AdminLayout from "@components/layouts/admin";
 import ErrorMessage from "@components/ui/error-message";
 import PageLoader from "@components/ui/page-loader";
-import { FarmsDocument, useFarmsQuery } from "@generated/graphql";
+import {
+  FarmDocument,
+  FarmQuery,
+  FarmsDocument,
+  useFarmsQuery,
+} from "@generated/graphql";
 import { addApolloState, initializeApollo } from "@lib/apolloClient";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 

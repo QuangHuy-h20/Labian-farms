@@ -114,10 +114,10 @@ export type CreateRoleInput = {
 
 export type CreateTourInput = {
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   slot: Scalars['Float'];
-  startDate: Scalars['DateTime'];
+  startDate?: InputMaybe<Scalars['DateTime']>;
   status: TourStatus;
 };
 
@@ -184,6 +184,7 @@ export type Mutation = {
   activeUser: Scalars['Boolean'];
   applyTour: TourMutationResponse;
   approveFarm: Scalars['Boolean'];
+  approveTour: Scalars['Boolean'];
   banUser: Scalars['Boolean'];
   /** Change user password */
   changePassword: UserMutationResponse;
@@ -208,6 +209,7 @@ export type Mutation = {
   /** Delete tour */
   deleteTour: Scalars['Boolean'];
   disApproveFarm: Scalars['Boolean'];
+  disApproveTour: Scalars['Boolean'];
   /** Register for farmer */
   farmerRegister: UserMutationResponse;
   /** Forgot password */
@@ -259,6 +261,11 @@ export type MutationApplyTourArgs = {
 
 
 export type MutationApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationApproveTourArgs = {
   id: Scalars['ID'];
 };
 
@@ -329,6 +336,11 @@ export type MutationDeleteTourArgs = {
 
 
 export type MutationDisApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDisApproveTourArgs = {
   id: Scalars['ID'];
 };
 
@@ -623,7 +635,8 @@ export type QueryTourArgs = {
 
 
 export type QueryToursByFarmArgs = {
-  farmId: Scalars['ID'];
+  farmId?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -666,8 +679,9 @@ export type Tour = {
   __typename?: 'Tour';
   applyTourStatus: Scalars['Float'];
   createdAt: Scalars['DateTime'];
+  customerAppliedTour?: Maybe<Array<User>>;
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
+  endDate?: Maybe<Scalars['DateTime']>;
   farm: Farm;
   farmId: Scalars['Float'];
   id: Scalars['ID'];
@@ -676,11 +690,12 @@ export type Tour = {
   image3?: Maybe<Scalars['String']>;
   image4?: Maybe<Scalars['String']>;
   image5?: Maybe<Scalars['String']>;
+  isActive: Scalars['Boolean'];
   name: Scalars['String'];
   numberOfVisitor: Scalars['Float'];
   slot: Scalars['Float'];
   slug: Scalars['String'];
-  startDate: Scalars['DateTime'];
+  startDate?: Maybe<Scalars['DateTime']>;
   status: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -716,7 +731,7 @@ export type UpdateFarmInput = {
 export type UpdateProductInput = {
   categoryId: Scalars['String'];
   description: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['Float'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
@@ -726,11 +741,11 @@ export type UpdateProductInput = {
 
 export type UpdateTourInput = {
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
-  id: Scalars['String'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['Float'];
   name: Scalars['String'];
   slot: Scalars['Float'];
-  startDate: Scalars['DateTime'];
+  startDate?: InputMaybe<Scalars['DateTime']>;
   status: TourStatus;
 };
 
@@ -792,13 +807,21 @@ export type ProductInfoFragment = { __typename?: 'Product', id: string, name: st
 
 export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
-export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } };
+export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } };
 
-export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, dateOfBirth?: any | null, avatar?: string | null, roleId: string, isActiveEmail: boolean };
 
 export type UserMutationResponseFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, dateOfBirth?: any | null, avatar?: string | null, roleId: string, isActiveEmail: boolean } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+
+export type ActiveEmailMutationVariables = Exact<{
+  token: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type ActiveEmailMutation = { __typename?: 'Mutation', activeEmail: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null, user?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, dateOfBirth?: any | null, avatar?: string | null, roleId: string, isActiveEmail: boolean } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type ActiveUserMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -814,12 +837,26 @@ export type ApproveFarmMutationVariables = Exact<{
 
 export type ApproveFarmMutation = { __typename?: 'Mutation', approveFarm: boolean };
 
+export type ApproveTourMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type ApproveTourMutation = { __typename?: 'Mutation', approveTour: boolean };
+
 export type BanUserMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
 export type BanUserMutation = { __typename?: 'Mutation', banUser: boolean };
+
+export type ConfirmEmailMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ConfirmEmailMutation = { __typename?: 'Mutation', confirmEmail: boolean };
 
 export type CreateCategoryMutationVariables = Exact<{
   createCategoryInput: CreateCategoryInput;
@@ -852,7 +889,7 @@ export type CreateTourMutationVariables = Exact<{
 }>;
 
 
-export type CreateTourMutation = { __typename?: 'Mutation', createTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type CreateTourMutation = { __typename?: 'Mutation', createTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type DeleteProductMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -874,6 +911,13 @@ export type DisApproveFarmMutationVariables = Exact<{
 
 
 export type DisApproveFarmMutation = { __typename?: 'Mutation', disApproveFarm: boolean };
+
+export type DisApproveTourMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DisApproveTourMutation = { __typename?: 'Mutation', disApproveTour: boolean };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
@@ -916,7 +960,7 @@ export type UpdateTourMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTourMutation = { __typename?: 'Mutation', updateTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type UpdateTourMutation = { __typename?: 'Mutation', updateTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type UpdateProfileMutationVariables = Exact<{
   profileInput: ProfileInput;
@@ -987,19 +1031,20 @@ export type TourQueryVariables = Exact<{
 }>;
 
 
-export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null };
+export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null };
 
 export type ToursByFarmQueryVariables = Exact<{
-  farmId: Scalars['ID'];
+  farmId?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
+export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
 
 export type ToursQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
+export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
 
 export type UserQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1122,6 +1167,8 @@ export const TourInfoFragmentDoc = gql`
   endDate
   status
   slot
+  numberOfVisitor
+  isActive
   image1
   farmId
   farm {
@@ -1178,6 +1225,40 @@ export const UserMutationResponseFragmentDoc = gql`
     ${UserMutationStatusFragmentDoc}
 ${UserInfoFragmentDoc}
 ${FieldErrorFragmentDoc}`;
+export const ActiveEmailDocument = gql`
+    mutation ActiveEmail($token: String!, $userId: String!) {
+  activeEmail(token: $token, userId: $userId) {
+    ...userMutationResponse
+  }
+}
+    ${UserMutationResponseFragmentDoc}`;
+export type ActiveEmailMutationFn = Apollo.MutationFunction<ActiveEmailMutation, ActiveEmailMutationVariables>;
+
+/**
+ * __useActiveEmailMutation__
+ *
+ * To run a mutation, you first call `useActiveEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActiveEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activeEmailMutation, { data, loading, error }] = useActiveEmailMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useActiveEmailMutation(baseOptions?: Apollo.MutationHookOptions<ActiveEmailMutation, ActiveEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActiveEmailMutation, ActiveEmailMutationVariables>(ActiveEmailDocument, options);
+      }
+export type ActiveEmailMutationHookResult = ReturnType<typeof useActiveEmailMutation>;
+export type ActiveEmailMutationResult = Apollo.MutationResult<ActiveEmailMutation>;
+export type ActiveEmailMutationOptions = Apollo.BaseMutationOptions<ActiveEmailMutation, ActiveEmailMutationVariables>;
 export const ActiveUserDocument = gql`
     mutation ActiveUser($id: ID!) {
   activeUser(id: $id)
@@ -1240,6 +1321,37 @@ export function useApproveFarmMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ApproveFarmMutationHookResult = ReturnType<typeof useApproveFarmMutation>;
 export type ApproveFarmMutationResult = Apollo.MutationResult<ApproveFarmMutation>;
 export type ApproveFarmMutationOptions = Apollo.BaseMutationOptions<ApproveFarmMutation, ApproveFarmMutationVariables>;
+export const ApproveTourDocument = gql`
+    mutation ApproveTour($id: ID!) {
+  approveTour(id: $id)
+}
+    `;
+export type ApproveTourMutationFn = Apollo.MutationFunction<ApproveTourMutation, ApproveTourMutationVariables>;
+
+/**
+ * __useApproveTourMutation__
+ *
+ * To run a mutation, you first call `useApproveTourMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveTourMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveTourMutation, { data, loading, error }] = useApproveTourMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveTourMutation(baseOptions?: Apollo.MutationHookOptions<ApproveTourMutation, ApproveTourMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ApproveTourMutation, ApproveTourMutationVariables>(ApproveTourDocument, options);
+      }
+export type ApproveTourMutationHookResult = ReturnType<typeof useApproveTourMutation>;
+export type ApproveTourMutationResult = Apollo.MutationResult<ApproveTourMutation>;
+export type ApproveTourMutationOptions = Apollo.BaseMutationOptions<ApproveTourMutation, ApproveTourMutationVariables>;
 export const BanUserDocument = gql`
     mutation BanUser($id: ID!) {
   banUser(id: $id)
@@ -1271,6 +1383,37 @@ export function useBanUserMutation(baseOptions?: Apollo.MutationHookOptions<BanU
 export type BanUserMutationHookResult = ReturnType<typeof useBanUserMutation>;
 export type BanUserMutationResult = Apollo.MutationResult<BanUserMutation>;
 export type BanUserMutationOptions = Apollo.BaseMutationOptions<BanUserMutation, BanUserMutationVariables>;
+export const ConfirmEmailDocument = gql`
+    mutation ConfirmEmail($email: String!) {
+  confirmEmail(email: $email)
+}
+    `;
+export type ConfirmEmailMutationFn = Apollo.MutationFunction<ConfirmEmailMutation, ConfirmEmailMutationVariables>;
+
+/**
+ * __useConfirmEmailMutation__
+ *
+ * To run a mutation, you first call `useConfirmEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmEmailMutation, { data, loading, error }] = useConfirmEmailMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useConfirmEmailMutation(baseOptions?: Apollo.MutationHookOptions<ConfirmEmailMutation, ConfirmEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ConfirmEmailMutation, ConfirmEmailMutationVariables>(ConfirmEmailDocument, options);
+      }
+export type ConfirmEmailMutationHookResult = ReturnType<typeof useConfirmEmailMutation>;
+export type ConfirmEmailMutationResult = Apollo.MutationResult<ConfirmEmailMutation>;
+export type ConfirmEmailMutationOptions = Apollo.BaseMutationOptions<ConfirmEmailMutation, ConfirmEmailMutationVariables>;
 export const CreateCategoryDocument = gql`
     mutation CreateCategory($createCategoryInput: CreateCategoryInput!) {
   createCategory(createCategoryInput: $createCategoryInput) {
@@ -1505,6 +1648,37 @@ export function useDisApproveFarmMutation(baseOptions?: Apollo.MutationHookOptio
 export type DisApproveFarmMutationHookResult = ReturnType<typeof useDisApproveFarmMutation>;
 export type DisApproveFarmMutationResult = Apollo.MutationResult<DisApproveFarmMutation>;
 export type DisApproveFarmMutationOptions = Apollo.BaseMutationOptions<DisApproveFarmMutation, DisApproveFarmMutationVariables>;
+export const DisApproveTourDocument = gql`
+    mutation DisApproveTour($id: ID!) {
+  disApproveTour(id: $id)
+}
+    `;
+export type DisApproveTourMutationFn = Apollo.MutationFunction<DisApproveTourMutation, DisApproveTourMutationVariables>;
+
+/**
+ * __useDisApproveTourMutation__
+ *
+ * To run a mutation, you first call `useDisApproveTourMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisApproveTourMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disApproveTourMutation, { data, loading, error }] = useDisApproveTourMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDisApproveTourMutation(baseOptions?: Apollo.MutationHookOptions<DisApproveTourMutation, DisApproveTourMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisApproveTourMutation, DisApproveTourMutationVariables>(DisApproveTourDocument, options);
+      }
+export type DisApproveTourMutationHookResult = ReturnType<typeof useDisApproveTourMutation>;
+export type DisApproveTourMutationResult = Apollo.MutationResult<DisApproveTourMutation>;
+export type DisApproveTourMutationOptions = Apollo.BaseMutationOptions<DisApproveTourMutation, DisApproveTourMutationVariables>;
 export const RegisterDocument = gql`
     mutation Register($registerInput: RegisterInput!) {
   farmerRegister(registerInput: $registerInput) {
@@ -2086,8 +2260,8 @@ export type TourQueryHookResult = ReturnType<typeof useTourQuery>;
 export type TourLazyQueryHookResult = ReturnType<typeof useTourLazyQuery>;
 export type TourQueryResult = Apollo.QueryResult<TourQuery, TourQueryVariables>;
 export const ToursByFarmDocument = gql`
-    query ToursByFarm($farmId: ID!) {
-  toursByFarm(farmId: $farmId) {
+    query ToursByFarm($farmId: ID, $slug: String) {
+  toursByFarm(farmId: $farmId, slug: $slug) {
     ...tourInfo
   }
 }
@@ -2106,10 +2280,11 @@ export const ToursByFarmDocument = gql`
  * const { data, loading, error } = useToursByFarmQuery({
  *   variables: {
  *      farmId: // value for 'farmId'
+ *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useToursByFarmQuery(baseOptions: Apollo.QueryHookOptions<ToursByFarmQuery, ToursByFarmQueryVariables>) {
+export function useToursByFarmQuery(baseOptions?: Apollo.QueryHookOptions<ToursByFarmQuery, ToursByFarmQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ToursByFarmQuery, ToursByFarmQueryVariables>(ToursByFarmDocument, options);
       }

@@ -1,17 +1,20 @@
 import usePrice from "@lib/use-price";
 import cn from "classnames";
+import Image from "next/image";
 interface Props {
   item: any;
   notAvailable?: boolean;
+  className?: string;
 }
 
-const ItemCard = ({ item, notAvailable }: Props) => {
+const ItemCard = ({ item, notAvailable, className }: Props) => {
   const { price } = usePrice({
     amount: item.itemTotal,
   });
   return (
-    <div className="flex justify-between py-2">
+    <div className={cn("flex justify-between items-center py-2", className)}>
       <div className="flex items-center justify-between text-base">
+        <Image src={item.image1} width={72} height={72} objectFit="cover" />
         <span
           className={cn("text-sm", notAvailable ? "text-red-500" : "text-body")}
         >
@@ -28,7 +31,10 @@ const ItemCard = ({ item, notAvailable }: Props) => {
         </span>
       </div>
       <span
-        className={cn("text-sm", notAvailable ? "text-red-500" : "text-body")}
+        className={cn(
+          "text-sm",
+          notAvailable ? "text-red-500" : "text-gray-400"
+        )}
       >
         {!notAvailable ? price : ""}
       </span>

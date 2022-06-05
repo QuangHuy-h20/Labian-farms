@@ -3,10 +3,12 @@ import AdminLayout from "@components/layouts/admin";
 import TourList from "@components/tour/tour-list";
 import ErrorMessage from "@components/ui/error-message";
 import PageLoader from "@components/ui/page-loader";
-import { useToursQuery } from "@generated/graphql";
+import { useMeQuery, useToursQuery } from "@generated/graphql";
+import { EXECUTIVE_ADMIN } from "@utils/constants";
 import React from "react";
 
 const ToursAdmin = () => {
+  const { data: meData } = useMeQuery();
   const { data, loading, error } = useToursQuery();
 
   if (loading) return <PageLoader />;
@@ -24,7 +26,10 @@ const ToursAdmin = () => {
         </div>
       </Card>
 
-      <TourList tour={data?.tours} />
+      <TourList
+        tours={data?.tours!}
+        permission={meData?.me.roleId === EXECUTIVE_ADMIN ? true : false}
+      />
     </>
   );
 };

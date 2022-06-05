@@ -6,7 +6,7 @@ import { TourMutationResponse } from "./tour.mutation";
 import { checkRole } from "../../middleware/checkRole";
 import { CreateTourInput, UpdateTourInput } from "./tour.input";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { failureResponse, successResponse } from "../../utils/statusResponse";
+import { failureResponse } from "../../utils/statusResponse";
 import { toSlug } from "../../utils/common";
 import { multipleUploads, deleteFile } from "../../utils/s3";
 import { ApplyTourStatus } from "../../types/ApplyTourStatus";
@@ -14,6 +14,8 @@ import { UserInputError } from "apollo-server-core";
 import { ApplyTour } from "../../entities/ApplyTour";
 import { PaginatedTours } from "../../types/Paginated";
 import { LessThan } from "typeorm";
+import { User } from "../../entities/User";
+import { checkAuth } from "../../middleware/checkAuth";
 
 registerEnumType(TourStatus, {
 	name: "TourStatus"
@@ -28,6 +30,18 @@ export class TourResolver {
 	@FieldResolver(_return => Tour)
 	async farm(@Root() root: Tour, @Ctx() { dataLoaders: { farmLoader } }: Context) {
 		return await farmLoader.load(root.farmId)
+	}
+
+	@FieldResolver(_return => [User], { nullable: true })
+	async customerAppliedTour(
+		@Root() root: Tour,
+		@Ctx() { dataLoaders: { userLoader } }: Context
+	) {
+		try {
+			return await userLoader.load(root.id)
+		} catch {
+			return null
+		}
 	}
 
 	@FieldResolver((_return) => Int)
@@ -47,9 +61,13 @@ export class TourResolver {
 	//----------------------- Query -----------------------
 
 	@Query(_return => [Tour], { description: "Get tours by farm", nullable: true })
-	async toursByFarm(@Arg("farmId", _type => ID) farmId: number): Promise<Tour[] | null> {
+	async toursByFarm(
+		@Arg("farmId", _type => ID, { nullable: true }) farmId: number,
+		@Arg("slug", (_type) => String, { nullable: true }) slug: string
+	): Promise<Tour[] | null> {
 		try {
-			return await Tour.find({ farmId })
+			if (farmId) return await Tour.find({ farmId })
+			else return await Tour.find({ slug });
 		} catch (error) {
 			return null
 		}
@@ -61,10 +79,14 @@ export class TourResolver {
 		@Arg("cursor", { nullable: true }) cursor?: string
 	): Promise<PaginatedTours | null> {
 		try {
-			const totalCount = await Tour.count();
+			const totalCount = await Tour.count({ isActive: true });
+
+			if (totalCount === 0) return null;
+
 			const realLimit = Math.min(10, limit);
 
 			const findOptions: { [key: string]: any } = {
+				where: { isActive: true },
 				order: {
 					createdAt: "DESC",
 				},
@@ -76,11 +98,13 @@ export class TourResolver {
 			if (cursor) {
 				findOptions.where = { createdAt: LessThan(cursor) };
 				lastTour = await Tour.find({
+					where: { isActive: true },
 					order: {
 						createdAt: "ASC",
 					},
 					take: 1,
 				});
+
 			}
 
 			const tours = await Tour.find(findOptions);
@@ -124,6 +148,36 @@ export class TourResolver {
 
 	//----------------------- Mutation -----------------------
 
+	@Mutation(_return => Boolean)
+	@UseMiddleware(checkAuth)
+	async approveTour(@Arg("id", _type => ID) id: number): Promise<boolean> {
+		try {
+			const existingTour = await Tour.findOne({ id })
+			if (!existingTour) return false
+
+			existingTour.isActive = true
+			existingTour.save()
+			return true
+		} catch {
+			return false
+		}
+	}
+
+	@Mutation(_return => Boolean)
+	@UseMiddleware(checkAuth)
+	async disApproveTour(@Arg("id", _type => ID) id: number): Promise<boolean> {
+		try {
+			const existingTour = await Tour.findOne({ id })
+			if (!existingTour) return false
+
+			existingTour.isActive = false
+			existingTour.save()
+			return true
+		} catch {
+			return false
+		}
+	}
+
 	@Mutation((_return) => TourMutationResponse, { description: "Create new tour." })
 	@UseMiddleware(checkRole)
 	async createTour(
@@ -148,6 +202,8 @@ export class TourResolver {
 			const slug = toSlug(name)
 			const folder = `farms/${existingFarm.slug}/tour/${slug}`
 
+			let response: any;
+
 
 			await multipleUploads(files, folder, slug).then(async (value) => {
 				list = value as string[];
@@ -165,10 +221,11 @@ export class TourResolver {
 						farmId: existingFarm.id,
 					}
 				);
+				response = newTour
 				await newTour.save();
 			});
 
-			return successResponse(200, true, "Tour đã được tạo thành công.")
+			return { code: 200, success: true, message: "Tạo tour tham quan thành công", tour: response }
 		} catch (error) {
 			return failureResponse(500, false, `Internal Server Error ${error.message}`)
 		}
@@ -180,7 +237,7 @@ export class TourResolver {
 	): Promise<TourMutationResponse> {
 		let list: string[] = []
 		try {
-			const { id, name, description } = updateTourInput
+			const { id, name, description, startDate, endDate, slot, status } = updateTourInput
 			const existingTour = await Tour.findOne(id)
 			if (!existingTour) return failureResponse(400, false, 'Không tìm thấy tour.')
 
@@ -205,6 +262,10 @@ export class TourResolver {
 
 				existingTour.name = name
 				existingTour.slug = slug
+				existingTour.startDate = startDate
+				existingTour.endDate = endDate
+				existingTour.slot = slot
+				existingTour.status = status
 				existingTour.description = description
 				await existingTour.save()
 			});
@@ -231,15 +292,15 @@ export class TourResolver {
 			if (!existingFarm) return false
 
 
-			const existingTour = await Tour.findOne({ farmId: existingFarm.id });
+			const existingTour = await Tour.findOne(id);
 
 			if (!existingTour) return false
 
-			const folder = `farms/${existingFarm.slug}/tour`
+			const folder = `farms/${existingFarm.slug}/tour/${existingTour.slug}`
 
 
 			await Tour.delete({ id });
-			await deleteFile(folder)
+			new Promise((_) => deleteFile(folder, existingTour.image1.split("/").pop() as string));
 
 			return true
 		} catch {

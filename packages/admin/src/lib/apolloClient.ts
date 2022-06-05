@@ -14,7 +14,7 @@ import { onError } from "@apollo/client/link/error";
 import { IncomingHttpHeaders } from "http";
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 import Router from "next/router";
-import { Farm } from "@generated/graphql";
+import { Farm, Tour } from "@generated/graphql";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
@@ -68,26 +68,37 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
       typePolicies: {
         Query: {
           fields: {
-            farms: {
+            // tours: {
+            //   keyArgs: false,
+            //   merge(existing, incoming) {
+            //     let tours: Tour[] = [];
+
+            //     if (existing && existing.tours) {
+            //       tours = tours.concat(
+            //         existing.tours
+            //       );
+            //     }
+
+            //     if (incoming && incoming.tours) {
+            //       tours = tours.concat(
+            //         incoming.tours
+            //       );
+            //     }
+
+            //     return { ...incoming, tours };
+            //   },
+            // },
+            toursByFarm: {
               keyArgs: false,
-              merge(existing, incoming) {
-                let paginatedFarms: Farm[] = [];
+              merge(existing = [], incoming: any) {
+                console.log("existing ", existing);
+                console.log("incoming ", incoming);
 
-                if (existing && existing.paginatedFarms) {
-                  paginatedFarms = paginatedFarms.concat(
-                    existing.paginatedFarms
-                  );
+                if (incoming && incoming.__ref) {
+                  return { ...existing, ...incoming }
                 }
-
-                if (incoming && incoming.paginatedFarms) {
-                  paginatedFarms = paginatedFarms.concat(
-                    incoming.paginatedCourses
-                  );
-                }
-
-                return { ...incoming, paginatedFarms };
-              },
-            },
+              }
+            }
           },
         },
       },

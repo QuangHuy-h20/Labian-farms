@@ -31,6 +31,8 @@ export const singleUpload = async (file: FileUpload, folder: string | null) => {
 
 export const deleteFile = async (folder: string, filename?: string | undefined) => {
 	let key = filename !== undefined ? `${folder}/${filename}` : `${folder}/`
+	console.log(key);
+
 	return new Promise(async _ => {
 		await s3.deleteObject({ Bucket: process.env.S3_BUCKET_NAME!, Key: key }, (error, data) => {
 			if (error) console.log("error: ", error);

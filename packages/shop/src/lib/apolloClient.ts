@@ -68,7 +68,7 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
       typePolicies: {
         Query: {
           fields: {
-            tours: {
+            toursPaginated: {
               keyArgs: false,
               merge(existing, incoming) {
                 let paginatedTours: Tour[] = [];

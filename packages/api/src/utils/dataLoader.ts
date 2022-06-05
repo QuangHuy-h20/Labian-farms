@@ -50,10 +50,37 @@ const batchGetTours = async (tourIds: number[]) => {
 }
 
 const batchGetUsers = async (userIds: number[]) => {
-	const users = await User.findByIds(userIds)
-	return userIds.map((userId) => users.find((user) => user.id === userId));
+	// const users = await User.findByIds(userIds)
+	// return userIds.map((userId) => users.find((user) => user.id === userId));
+
+	const toursApplied = await ApplyTour.find({
+		join: {
+			alias: "applyTour",
+			innerJoinAndSelect: {
+				customer: "applyTour.customer",
+			},
+		},
+		where: {
+			tourId: In(userIds),
+		},
+
+	});
+	const tourIdToCustomers: { [key: number]: User[] } = {};
+
+	toursApplied.forEach((customer) => {
+		if (customer.tourId in tourIdToCustomers) {
+			tourIdToCustomers[customer.tourId].push((customer as any).customer);
+		} else {
+			tourIdToCustomers[customer.tourId] = [(customer as any).customer];
+		}
+	});
+	return userIds.map(userId => tourIdToCustomers[userId])
 }
 
+const batchGetOwners = async (ownerIds: number[]) => {
+	const owners = await User.findByIds(ownerIds)
+	return ownerIds.map(ownerId => owners.find(owner => owner.id === ownerId))
+}
 const batchGetAddresses = async (addrIds: number[]) => {
 	const addresses = await Address.findByIds(addrIds)
 	return addrIds.map(addrId => addresses.find(address => address.id === addrId))
@@ -75,7 +102,8 @@ const batchGetProducts = async (productIds: number[]) => {
 }
 
 export const buildDataLoaders = () => ({
-	userLoader: new DataLoader<number, User | undefined>(userIds => batchGetUsers(userIds as number[])),
+	userLoader: new DataLoader(userIds => batchGetUsers(userIds as number[])),
+	ownerLoader: new DataLoader<number, User | undefined>(ownerIds => batchGetOwners(ownerIds as number[])),
 	addressLoader: new DataLoader<number, Address | undefined>(addressIds => batchGetAddresses(addressIds as number[])),
 	farmLoader: new DataLoader<number, Farm | undefined>(farmIds => batchGetFarms(farmIds as number[])),
 	categoryLoader: new DataLoader<string, Category | undefined>(categoryIds => batchGetCategories(categoryIds as string[])),

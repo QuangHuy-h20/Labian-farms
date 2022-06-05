@@ -19,8 +19,8 @@ export class FarmResolver {
 
   //----------------------- Field resolver -----------------------
   @FieldResolver(_return => User)
-  async owner(@Root() root: Farm, @Ctx() { dataLoaders: { userLoader } }: Context) {
-    return await userLoader.load(root.ownerId)
+  async owner(@Root() root: Farm, @Ctx() { dataLoaders: { ownerLoader } }: Context) {
+    return await ownerLoader.load(root.ownerId)
   }
 
   @FieldResolver((_return) => Number, { nullable: true })
@@ -71,11 +71,12 @@ export class FarmResolver {
     @Arg("cursor", { nullable: true }) cursor?: string,
   ): Promise<PaginatedFarms | null> {
     try {
-      const totalCount = await Farm.count();
+      const totalCount = await Farm.count({ isActive: true });
       const realLimit = Math.min(10, limit);
 
       const findOptions: { [key: string]: any } = {
         order: {
+          isActive: true,
           createdAt: "DESC",
         },
         take: realLimit,
@@ -85,6 +86,7 @@ export class FarmResolver {
 
       if (cursor) {
         findOptions.where = {
+          isActive: true,
           createdAt: LessThan(cursor),
         };
 

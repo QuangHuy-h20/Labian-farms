@@ -1,5 +1,5 @@
-query ToursByFarm($farmId: ID!) {
-  toursByFarm(farmId: $farmId) {
+query ToursByFarm($farmId: ID, $slug: String) {
+  toursByFarm(farmId: $farmId, slug: $slug) {
     ...tourInfo
   }
 }

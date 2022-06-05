@@ -206,48 +206,7 @@ export class UserResolver {
     }
   }
 
-  @Mutation(_return => Boolean, { description: "Confirm email" })
-  async confirmEmail(@Arg("email") email: string) {
-    try {
 
-      const existingUser = await User.findOne({ email })
-      if (!existingUser) return false
-      await TokenModel.findOneAndDelete({ userId: `${existingUser.id}` })
-
-      const activeToken = uuidv4();
-      const hashedToken = await argon2.hash(activeToken)
-
-      await new TokenModel({ userId: `${existingUser.id}`, token: hashedToken }).save();
-
-      let html = `<p>Ấn vào đường dẫn bên dưới để kích hoạt email của bạn.</p><a href="http://localhost:3000/confirm-email?token=${activeToken}&userId=${existingUser.id}}">Nhấn vào đây để kích hoạt email.</a> `
-      await sendEmail(email, html)
-      return true
-    } catch (error) {
-      return false
-    }
-  }
-
-  @Mutation(_return => UserMutationResponse, { description: "Active email" })
-  async activeEmail(@Arg("token") token: string, @Arg("userId") userId: string): Promise<UserMutationResponse> {
-    try {
-      const activeEmailTokenRecord = await TokenModel.findOne({ userId });
-      if (!activeEmailTokenRecord) return failureResponse(404, false, "Token không hợp lệ hoặc đã hết hạn.")
-
-      const activeEmailTokenValid = argon2.verify(activeEmailTokenRecord.token, token);
-      if (!activeEmailTokenValid) return failureResponse(404, false, "Token không hợp lệ hoặc đã hết hạn.")
-
-      const userIdNum = parseInt(userId);
-      const user = await User.findOne(userIdNum);
-
-      if (!user) return failureResponse(404, false, "Thông tin người dùng không còn hiệu lực.")
-      await activeEmailTokenRecord.deleteOne();
-      await User.update({ id: userIdNum }, { isActiveEmail: true })
-
-      return successResponse(200, true, "Kích hoạt email thành công.")
-    } catch (error) {
-      return failureResponse(500, false, `Internal server error ${error.message}`)
-    }
-  }
 
   @Mutation((_return) => UserMutationResponse, { description: "Login" })
   async login(@Arg("loginInput") loginInput: LoginInput, @Ctx() { req }: Context): Promise<UserMutationResponse> {
@@ -364,6 +323,49 @@ export class UserResolver {
       existingUser.save()
 
       return successResponse(200, true, "Mật khẩu đã được cập nhật thành công.", existingUser)
+    } catch (error) {
+      return failureResponse(500, false, `Internal server error ${error.message}`)
+    }
+  }
+
+  @Mutation(_return => Boolean, { description: "Confirm email" })
+  async confirmEmail(@Arg("email") email: string) {
+    try {
+
+      const existingUser = await User.findOne({ email })
+      if (!existingUser) return false
+      await TokenModel.findOneAndDelete({ userId: `${existingUser.id}` })
+
+      const activeToken = uuidv4();
+      const hashedToken = await argon2.hash(activeToken)
+
+      await new TokenModel({ userId: `${existingUser.id}`, token: hashedToken }).save();
+
+      let html = `<p>Ấn vào đường dẫn bên dưới để kích hoạt email của bạn.</p><a href="http://localhost:3001/confirm-email?token=${activeToken}&userId=${existingUser.id}">Nhấn vào đây để kích hoạt email.</a> `
+      await sendEmail(email, html)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Mutation(_return => UserMutationResponse, { description: "Active email" })
+  async activeEmail(@Arg("token") token: string, @Arg("userId") userId: string): Promise<UserMutationResponse> {
+    try {
+      const activeEmailTokenRecord = await TokenModel.findOne({ userId });
+      if (!activeEmailTokenRecord) return failureResponse(404, false, "Token không hợp lệ hoặc đã hết hạn.")
+
+      const activeEmailTokenValid = argon2.verify(activeEmailTokenRecord.token, token);
+      if (!activeEmailTokenValid) return failureResponse(404, false, "Token không hợp lệ hoặc đã hết hạn.")
+
+      const userIdNum = parseInt(userId);
+      const user = await User.findOne(userIdNum);
+
+      if (!user) return failureResponse(404, false, "Thông tin người dùng không còn hiệu lực.")
+      await activeEmailTokenRecord.deleteOne();
+      await User.update({ id: userIdNum }, { isActiveEmail: true })
+
+      return { code: 200, success: true, message: "Kích hoạt email thành công.", user }
     } catch (error) {
       return failureResponse(500, false, `Internal server error ${error.message}`)
     }

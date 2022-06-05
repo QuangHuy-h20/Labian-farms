@@ -13,7 +13,7 @@ interface TourCardProps {
 
 const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   return (
-    <div className="flex p-3 justify-between w-full bg-white border border-gray-300 rounded-md">
+    <div className="flex p-3 justify-between w-full bg-white border my-4 border-gray-300 rounded-md">
       <Link className="flex flex-grow" href={`/tours/${tour.slug}`}>
         <Image
           className="rounded-md"
@@ -30,12 +30,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
             {tour.farm.address}
           </h3>
           <p className="text-gray-400 mb-4 line-clamp-3">{tour.description}</p>
-          <Link
-            className="font-semibold text-emerald-500 underline"
-            href={`/tours/${tour.slug}`}
-          >
-            Xem chi tiết
-          </Link>
+          
         </div>
       </Link>
       <div className="flex flex-col justify-between">

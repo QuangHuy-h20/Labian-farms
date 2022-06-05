@@ -9,11 +9,11 @@ export class CreateTourInput {
   @Field()
   description: string;
 
-  @Field()
-  startDate: Date;
+  @Field({ nullable: true })
+  startDate?: Date;
 
-  @Field()
-  endDate: Date;
+  @Field({ nullable: true })
+  endDate?: Date;
 
   @Field()
   slot: number;
@@ -26,5 +26,5 @@ export class CreateTourInput {
 export class UpdateTourInput extends CreateTourInput{
 
   @Field()
-  id: string
+  id: number
 }

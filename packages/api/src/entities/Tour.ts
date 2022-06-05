@@ -1,9 +1,9 @@
 import { Field, ObjectType } from "type-graphql";
 import {
-    Column,
-    Entity,
-    ManyToOne,
-    OneToMany
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany
 } from "typeorm";
 import { ApplyTour } from "./ApplyTour";
 import { CoreEntity } from "./CoreEntity";
@@ -28,12 +28,12 @@ export class Tour extends CoreEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Field()
-  @Column({ default: new Date() })
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: new Date() })
   startDate?: Date;
 
-  @Field()
-  @Column({ default: new Date() })
+  @Field({ nullable: true })
+  @Column({ nullable: true, default: new Date() })
   endDate?: Date;
 
   @Field({ nullable: true })
@@ -61,11 +61,15 @@ export class Tour extends CoreEntity {
   slot: number;
 
   @Field()
-	@Column({ default: 0 })
-	numberOfVisitor!: number
+  @Column({ default: 0 })
+  numberOfVisitor!: number
 
   @Field()
   applyTourStatus!: number
+
+  @Field()
+  @Column({ default: false })
+  isActive: boolean;
 
   @Field()
   @Column({ type: "enum", enum: TourStatus, default: TourStatus.OPEN })

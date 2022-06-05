@@ -1,0 +1,5 @@
+mutation ActiveEmail($token: String!, $userId: String!) {
+  activeEmail(token: $token, userId: $userId) {
+    ...userMutationResponse
+  }
+}

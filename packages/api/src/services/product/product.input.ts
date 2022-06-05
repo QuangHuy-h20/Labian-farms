@@ -27,7 +27,7 @@ export class CreateProductInput {
 @InputType()
 export class UpdateProductInput extends CreateProductInput {
   @Field()
-  id: string;
+  id: number;
 }
 
 @InputType()

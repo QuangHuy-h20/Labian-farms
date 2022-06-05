@@ -3,10 +3,8 @@ import Table from "@components/ui/table";
 import { Farm } from "@generated/graphql";
 import { formatDate } from "@utils/format-date";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 const FarmList = ({ farms }) => {
-  const router = useRouter();
   const TableTitle: Object[] = [
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên nông trại" },
@@ -37,16 +35,16 @@ const FarmList = ({ farms }) => {
       <td>{formatDate(item.createdAt)}</td>
       <td>
         {item.isActive ? (
-          <span className="text-emerald-500">Đã được duyệt</span>
+          <span className="text-emerald-500">Đã duyệt</span>
         ) : (
-          <span className="text-red-500">Chưa được duyệt</span>
+          <span className="text-red-500">Chưa duyệt</span>
         )}
       </td>
       <td>
         <ActionButtons
           id={item.id}
-          approveButton={true}
-          detailsUrl={`/${item.slug}`}
+          approveFarmButton={true}
+          detailsUrl={`localhost:3000/${item.slug}`}
           isFarmActive={item.isActive}
         />
       </td>

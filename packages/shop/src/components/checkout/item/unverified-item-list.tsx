@@ -1,55 +1,55 @@
-import { useCart } from '@/store/quick-cart/cart.context';
-import { useTranslation } from 'next-i18next';
-import ItemCard from './item-card';
-import EmptyCartIcon from '@/components/icons/empty-cart';
-import usePrice from '@/lib/use-price';
-import { ItemInfoRow } from './item-info-row';
-import { CheckAvailabilityAction } from '@/components/checkout/check-availability-action';
+import { useCart } from "@store/quick-cart/cart.context";
+import usePrice from "@lib/use-price";
+import { ItemInfoRow } from "./item-info-row";
+import Button from "@components/ui/button";
+import { moneyFormatter } from "@utils/helper";
+import { useMeQuery } from "@generated/graphql";
 
 const UnverifiedItemList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
-  const { t } = useTranslation('common');
-  const { items, total, isEmpty } = useCart();
-  console.log('isEmpty:', isEmpty);
-  const { price: subtotal } = usePrice(
-    items && {
-      amount: total,
-    }
-  );
+  const { total } = useCart();
+  const { data } = useMeQuery();
+  const { address, phone, email, fullName } = data?.me ?? {};
+  const deliveryFee = 10000;
   return (
     <div className="w-full">
       {!hideTitle && (
         <div className="flex flex-col items-center mb-4 space-x-4 rtl:space-x-reverse">
-          <span className="text-base font-bold text-heading">
-            {t('text-your-order')}
+          <span className="text-base font-bold text-gray-400">
+            Thông tin khách hàng
           </span>
         </div>
       )}
-      <div className="flex flex-col py-3 border-b border-border-200">
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center h-full mb-4">
-            <EmptyCartIcon width={140} height={176} />
-            <h4 className="mt-6 text-base font-semibold">
-              {t('text-no-products')}
-            </h4>
-          </div>
-        ) : (
-          items?.map((item) => <ItemCard item={item} key={item.id} />)
-        )}
+
+      <div className="mt-4 space-y-2">
+        <ItemInfoRow title="Tên khách hàng" value={fullName ?? email} />
       </div>
       <div className="mt-4 space-y-2">
-        <ItemInfoRow title={t('text-sub-total')} value={subtotal} />
-        <ItemInfoRow
-          title={t('text-tax')}
-          value={t('text-calculated-checkout')}
-        />
-        <ItemInfoRow
-          title={t('text-estimated-shipping')}
-          value={t('text-calculated-checkout')}
-        />
+        <ItemInfoRow title="Số điện thoại" value={phone} />
       </div>
-      <CheckAvailabilityAction>
-        {t('text-check-availability')}
-      </CheckAvailabilityAction>
+      <div className="mt-4 space-y-2">
+        <ItemInfoRow title="Địa chỉ" value={address} />
+      </div>
+
+      <div className="mt-4 space-y-2 border-t pt-3">
+        <ItemInfoRow
+          title="Phí vận chuyển"
+          value={moneyFormatter(deliveryFee)}
+        />
+        <div className="flex justify-between pt-3 border-t-4 border-double border-border-200">
+          <p className="text-base font-semibold text-heading">Tổng tiền</p>
+          <span className="text-base font-semibold text-heading">
+            {moneyFormatter(total + deliveryFee)}
+          </span>
+        </div>
+      </div>
+      <div className="mt-8">
+        <Button size="large" disabled>
+          Thanh toán
+        </Button>
+      </div>
+      <div className="mt-4 p-3 border rounded-md font-medium text-gray-500">
+        <p>Hiện tại chức năng thanh toán đang trong quá trình phát triển, quý khách vui lòng thông cảm. Để đặt hàng, quý khách vui lòng liên hệ số điện thoại: <b className="underline">0969696969</b>. Xin cảm ơn.</p>
+      </div>
     </div>
   );
 };

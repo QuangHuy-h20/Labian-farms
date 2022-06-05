@@ -67,7 +67,7 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
                 disabled={deleteBtnLoading}
                 variant="normal"
                 className={cn(
-                  "w-full py-2 px-4 bg-red-400 focus:outline-none hover:bg-red-500 focus:bg-red-500 text-white transition ease-in duration-200 text-center text-base font-semibold rounded shadow-md",
+                  "w-full py-2 px-4 bg-red-400 focus:outline-none hover:bg-red-400 focus:bg-red-400 text-white transition ease-in duration-200 text-center text-base font-semibold rounded shadow-md",
                   deleteBtnClassName
                 )}
               >

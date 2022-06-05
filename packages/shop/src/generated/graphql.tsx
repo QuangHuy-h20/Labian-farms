@@ -114,10 +114,10 @@ export type CreateRoleInput = {
 
 export type CreateTourInput = {
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
   name: Scalars['String'];
   slot: Scalars['Float'];
-  startDate: Scalars['DateTime'];
+  startDate?: InputMaybe<Scalars['DateTime']>;
   status: TourStatus;
 };
 
@@ -184,6 +184,7 @@ export type Mutation = {
   activeUser: Scalars['Boolean'];
   applyTour: TourMutationResponse;
   approveFarm: Scalars['Boolean'];
+  approveTour: Scalars['Boolean'];
   banUser: Scalars['Boolean'];
   /** Change user password */
   changePassword: UserMutationResponse;
@@ -208,6 +209,7 @@ export type Mutation = {
   /** Delete tour */
   deleteTour: Scalars['Boolean'];
   disApproveFarm: Scalars['Boolean'];
+  disApproveTour: Scalars['Boolean'];
   /** Register for farmer */
   farmerRegister: UserMutationResponse;
   /** Forgot password */
@@ -259,6 +261,11 @@ export type MutationApplyTourArgs = {
 
 
 export type MutationApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationApproveTourArgs = {
   id: Scalars['ID'];
 };
 
@@ -329,6 +336,11 @@ export type MutationDeleteTourArgs = {
 
 
 export type MutationDisApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDisApproveTourArgs = {
   id: Scalars['ID'];
 };
 
@@ -598,7 +610,6 @@ export type QueryProductsArgs = {
   categoryId?: InputMaybe<Scalars['String']>;
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  text?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -624,7 +635,8 @@ export type QueryTourArgs = {
 
 
 export type QueryToursByFarmArgs = {
-  farmId: Scalars['ID'];
+  farmId?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -667,8 +679,9 @@ export type Tour = {
   __typename?: 'Tour';
   applyTourStatus: Scalars['Float'];
   createdAt: Scalars['DateTime'];
+  customerAppliedTour?: Maybe<Array<User>>;
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
+  endDate?: Maybe<Scalars['DateTime']>;
   farm: Farm;
   farmId: Scalars['Float'];
   id: Scalars['ID'];
@@ -677,11 +690,12 @@ export type Tour = {
   image3?: Maybe<Scalars['String']>;
   image4?: Maybe<Scalars['String']>;
   image5?: Maybe<Scalars['String']>;
+  isActive: Scalars['Boolean'];
   name: Scalars['String'];
   numberOfVisitor: Scalars['Float'];
   slot: Scalars['Float'];
   slug: Scalars['String'];
-  startDate: Scalars['DateTime'];
+  startDate?: Maybe<Scalars['DateTime']>;
   status: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -717,7 +731,7 @@ export type UpdateFarmInput = {
 export type UpdateProductInput = {
   categoryId: Scalars['String'];
   description: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['Float'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
@@ -727,11 +741,11 @@ export type UpdateProductInput = {
 
 export type UpdateTourInput = {
   description: Scalars['String'];
-  endDate: Scalars['DateTime'];
-  id: Scalars['String'];
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['Float'];
   name: Scalars['String'];
   slot: Scalars['Float'];
-  startDate: Scalars['DateTime'];
+  startDate?: InputMaybe<Scalars['DateTime']>;
   status: TourStatus;
 };
 
@@ -793,9 +807,9 @@ export type ProductInfoFragment = { __typename?: 'Product', id: string, name: st
 
 export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null | undefined, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null | undefined, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string, slug: string } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
 
-export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } };
+export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } };
 
-export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null | undefined, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
+export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null | undefined, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null | undefined, fullName?: string | null | undefined, dateOfBirth?: any | null | undefined, gender?: string | null | undefined, address?: string | null | undefined, avatar?: string | null | undefined, roleId: string, isActiveEmail: boolean };
 
@@ -807,7 +821,7 @@ export type ApplyTourMutationVariables = Exact<{
 }>;
 
 
-export type ApplyTourMutation = { __typename?: 'Mutation', applyTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null | undefined, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
+export type ApplyTourMutation = { __typename?: 'Mutation', applyTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null | undefined, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined } };
 
 export type ChangePasswordMutationVariables = Exact<{
   changePasswordInput: ChangePasswordInput;
@@ -939,7 +953,7 @@ export type TourQueryVariables = Exact<{
 }>;
 
 
-export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined };
+export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } } | null | undefined };
 
 export type TourIdsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -954,7 +968,7 @@ export type ToursByFarmQueryVariables = Exact<{
 }>;
 
 
-export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> | null | undefined };
+export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> | null | undefined };
 
 export type ToursPaginatedQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -962,12 +976,12 @@ export type ToursPaginatedQueryVariables = Exact<{
 }>;
 
 
-export type ToursPaginatedQuery = { __typename?: 'Query', toursPaginated?: { __typename?: 'PaginatedTours', totalCount: number, hasMore: boolean, cursor: any, paginatedTours: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> } | null | undefined };
+export type ToursPaginatedQuery = { __typename?: 'Query', toursPaginated?: { __typename?: 'PaginatedTours', totalCount: number, hasMore: boolean, cursor: any, paginatedTours: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> } | null | undefined };
 
 export type ToursQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate: any, endDate: any, status: string, slot: number, numberOfVisitor: number, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> | null | undefined };
+export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, updatedAt: any, name: string, description: string, startDate?: any | null | undefined, endDate?: any | null | undefined, status: string, slot: number, numberOfVisitor: number, isActive: boolean, applyTourStatus: number, image1?: string | null | undefined, farmId: number, farm: { __typename?: 'Farm', id: string, name: string, address: string, owner: { __typename?: 'User', phone: string } } }> | null | undefined };
 
 export const FarmMutationStatusFragmentDoc = gql`
     fragment farmMutationStatus on FarmMutationResponse {
@@ -1081,6 +1095,7 @@ export const TourInfoFragmentDoc = gql`
   status
   slot
   numberOfVisitor
+  isActive
   applyTourStatus
   image1
   farmId

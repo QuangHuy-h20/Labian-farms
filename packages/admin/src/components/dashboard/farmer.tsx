@@ -43,16 +43,16 @@ const FarmerDashboard = () => {
       </h3>
       <div className="flex items-center justify-center mt-14">
         <p className="text-2xl 3xl:text-xl text-gray-500 text-center">
-          Mở nông trại bán hàng cùng với
+          Mở nông trại bán hàng cùng với 
           <span className="text-emerald-500 italic">Labian Farms</span> nào!
         </p>
+      </div>
         <Link
-          className="flex items-center py-4 px-3 justify-center flex-shrink-0 font-semibold leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow bg-emerald-500 text-white border border-transparent hover:bg-emerald-500 ml-6"
+          className="flex mt-4 items-center py-4 px-3 justify-center flex-shrink-0 font-semibold leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow bg-emerald-500 text-white border border-transparent hover:bg-emerald-500 ml-6"
           href="farms/create"
         >
           Tạo nông trại
         </Link>
-      </div>
     </>
   );
 

@@ -27,7 +27,6 @@ import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { toNonAccent, toSlug } from "../../utils/common";
 import { PaginatedProducts } from "../../types/Paginated";
 import { getConnection, LessThan } from "typeorm";
-import Fuse from 'fuse.js';
 
 @Resolver((_of) => Product)
 export class ProductResolver {
@@ -69,7 +68,6 @@ export class ProductResolver {
     @Arg("limit", (_type) => Int) limit: number,
     @Arg("cursor", { nullable: true }) cursor?: string,
     @Arg("categoryId", (_type) => String, { nullable: true }) categoryId?: string | null,
-    @Arg("text", (_type) => String, { nullable: true }) text?: string | null
 
   ): Promise<PaginatedProducts | null> {
     try {
@@ -106,13 +104,6 @@ export class ProductResolver {
           ? findOptions
           : { ...findOptions, where: { categoryId } }
       );
-
-      const fuse = new Fuse(products);
-
-      if (text?.replace(/%/g, '')) {
-        products = fuse.search(text)?.map(({ item }) => item)
-        console.log(products);
-      }
 
       return {
         totalCount,
@@ -224,6 +215,7 @@ export class ProductResolver {
       const unAccentName = toNonAccent(name);
       const folder = `products/${getFarmSlug}`;
 
+      let response: any
       await multipleUploads(files, folder, productSlug).then(async (value) => {
         list = value as string[];
 
@@ -238,9 +230,10 @@ export class ProductResolver {
           image5: list[4] !== null ? list[4] : undefined,
           farmId: existingFarm.id,
         });
+        response = newProduct
         await newProduct.save();
       });
-      return successResponse(200, true, "Sản phẩm đã được tạo thành công.");
+      return { code: 200, success: true, message: "Tạo sản phẩm thành công", product: response }
     } catch (error) {
       return failureResponse(
         500,

@@ -1,13 +1,12 @@
-import Coupon from '@/components/checkout/coupon';
-import usePrice from '@/lib/use-price';
-import EmptyCartIcon from '@/components/icons/empty-cart';
-import { CloseIcon } from '@/components/icons/close-icon';
-import { useTranslation } from 'next-i18next';
-import { useCart } from '@/store/quick-cart/cart.context';
+import Coupon from '@components/checkout/coupon';
+import usePrice from '@lib/use-price';
+import EmptyCartIcon from '@components/icons/empty-cart';
+import { CloseIcon } from '@components/icons/close-icon';
+import { useCart } from '@store/quick-cart/cart.context';
 import {
   calculatePaidTotal,
   calculateTotal,
-} from '@/store/quick-cart/cart.utils';
+} from '@store/quick-cart/cart.utils';
 import { useAtom } from 'jotai';
 import {
   couponAtom,
@@ -15,18 +14,17 @@ import {
   payableAmountAtom,
   verifiedResponseAtom,
   walletAtom,
-} from '@/store/checkout';
-import ItemCard from '@/components/checkout/item/item-card';
-import { ItemInfoRow } from '@/components/checkout/item/item-info-row';
-import PaymentGrid from '@/components/checkout/payment/payment-grid';
-import { PlaceOrderAction } from '@/components/checkout/place-order-action';
-import Wallet from '@/components/checkout/wallet/wallet';
+} from '@store/checkout';
+import ItemCard from '@components/checkout/item/item-card';
+import { ItemInfoRow } from '@components/checkout/item/item-info-row';
+import PaymentGrid from '@components/checkout/payment/payment-grid';
+import { PlaceOrderAction } from '@components/checkout/place-order-action';
+import Wallet from '@components/checkout/wallet/wallet';
 
 interface Props {
   className?: string;
 }
 const VerifiedItemList: React.FC<Props> = ({ className }) => {
-  const { t } = useTranslation('common');
   const { items, isEmpty: isEmptyCart } = useCart();
   const [verifiedResponse] = useAtom(verifiedResponseAtom);
   const [coupon, setCoupon] = useAtom(couponAtom);

@@ -4,7 +4,13 @@ import TourList from "@components/tour/tour-list";
 import ErrorMessage from "@components/ui/error-message";
 import LinkButton from "@components/ui/link-button";
 import PageLoader from "@components/ui/page-loader";
-import { useFarmQuery, useToursByFarmQuery } from "@generated/graphql";
+import {
+  ToursDocument,
+  useFarmQuery,
+  useToursByFarmQuery,
+} from "@generated/graphql";
+import { addApolloState, initializeApollo } from "@lib/apolloClient";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -17,13 +23,7 @@ const Tours = () => {
       slug: farm as string,
     },
   });
-  const farmId = farmData?.farm?.id;
-  const { data, loading, error } = useToursByFarmQuery({
-    variables: { farmId },
-  });
-
-  if (loading || farmLoading) return <PageLoader />;
-  if (error) return <ErrorMessage message={error.message} />;
+  const farmId = farmData?.farm?.id!;
 
   return (
     <>
@@ -50,9 +50,23 @@ const Tours = () => {
         </div>
       </Card>
 
-      <TourList tour={data?.toursByFarm} />
+      <TourList farmId={farmId} />
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const apolloClient = initializeApollo({ headers: context.req.headers });
+
+  await apolloClient.query({
+    query: ToursDocument,
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
 };
 
 Tours.Layout = FarmLayout;

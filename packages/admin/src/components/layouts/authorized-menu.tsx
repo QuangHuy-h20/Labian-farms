@@ -38,7 +38,7 @@ export default function AuthorizedMenu() {
              text-white text-sm rounded-t px-4 py-3"
             >
               <span className="font-semibold capitalize">
-                {data?.me?.email?.split("@")}
+                {data?.me?.email?.split('@gmail.com')}
               </span>
               <span className="text-xs">{data?.me?.email}</span>
             </li>

@@ -85,12 +85,9 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
     formState: { errors },
   } = methods;
 
-  console.log(`${router.query.farm}${ROUTES.PRODUCTS}`);
-  
   const [createProduct, { loading: creating }] = useCreateProductMutation({
     onCompleted: (data) => {
       if (data.createProduct.success) {
-        toast.success(data.createProduct.message);
         router.back();
       } else toast.error(data.createProduct.message);
     },
@@ -112,7 +109,6 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
   const [updateProduct, { loading: updating }] = useUpdateProductMutation({
     onCompleted: (data) => {
       if (data.updateProduct.success) {
-        
         toast.success(data.updateProduct.message);
         router.back();
       } else toast.error(data.updateProduct.message);
@@ -171,6 +167,21 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
           farmId,
           createProductInput: inputValues,
           files: fileToUpload,
+        },
+
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              productsByFarm(existing) {
+                if (data?.createProduct?.success) {
+                  const newProductsRef = cache.identify(
+                    data?.createProduct?.product
+                  );
+                  return existing.concat([{ __ref: newProductsRef }]);
+                }
+              },
+            },
+          });
         },
         onCompleted: (data) => {
           if (data.createProduct.success)

@@ -1,7 +1,5 @@
-import React from "react";
 import { IosArrowDown } from "@components/icons/ios-arrow-down";
 import { IosArrowUp } from "@components/icons/ios-arrow-up";
-import { useTranslation } from "next-i18next";
 
 const StickerCard = ({
   titleTransKey,
@@ -15,16 +13,15 @@ const StickerCard = ({
   link,
   linkText,
 }: any) => {
-  const { t } = useTranslation("widgets");
   return (
     <div className="flex flex-col w-full h-full p-7 rounded bg-white">
       <div className="w-full flex justify-between mb-auto pb-8">
         <div className="w-full flex flex-col">
           <span className="text-base text-gray-600 font-semibold mb-1">
-            {t(titleTransKey)}
+            {titleTransKey}
           </span>
           <span className="text-xs text-gray-400 font-semibold">
-            {t(subtitleTransKey)}
+            {subtitleTransKey}
           </span>
         </div>
 

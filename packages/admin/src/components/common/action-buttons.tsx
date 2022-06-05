@@ -13,9 +13,11 @@ type Props = {
   deleteModalView?: string | any;
   editUrl?: string;
   detailsUrl?: string;
-  approveButton?: boolean;
+  approveFarmButton?: boolean;
+  approveTourButton?: boolean;
   isUserActive?: boolean;
   isFarmActive?: boolean;
+  isTourActive?: boolean;
   userStatus?: boolean;
 };
 
@@ -24,9 +26,11 @@ const ActionButtons = ({
   status,
   deleteModalView,
   editUrl,
+  isTourActive,
   isFarmActive,
   detailsUrl,
-  approveButton = false,
+  approveFarmButton = false,
+  approveTourButton = false,
   userStatus = false,
   isUserActive = false,
 }: Props) => {
@@ -43,6 +47,14 @@ const ActionButtons = ({
       openModal("SHOP_APPROVE_VIEW", id);
     } else {
       openModal("SHOP_DISAPPROVE_VIEW", id);
+    }
+  }
+
+  function handleTourStatus(status: boolean) {
+    if (status === true) {
+      openModal("TOUR_APPROVE_VIEW", id);
+    } else {
+      openModal("TOUR_DISAPPROVE_VIEW", id);
     }
   }
   return (
@@ -78,7 +90,7 @@ const ActionButtons = ({
           )}
         </>
       )}
-      {approveButton &&
+      {approveFarmButton &&
         (!isFarmActive ? (
           <button
             onClick={() => handleFarmStatus(true)}
@@ -96,6 +108,26 @@ const ActionButtons = ({
             <CloseFillIcon width={20} />
           </button>
         ))}
+
+      {approveTourButton &&
+        (!isTourActive ? (
+          <button
+            onClick={() => handleTourStatus(true)}
+            className="text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+            title="Duyệt"
+          >
+            <CheckMarkCircle width={20} />
+          </button>
+        ) : (
+          <button
+            onClick={() => handleTourStatus(false)}
+            className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
+            title="Bỏ duyệt"
+          >
+            <CloseFillIcon width={20} />
+          </button>
+        ))}
+
       {editUrl && (
         <Link
           href={editUrl}

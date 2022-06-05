@@ -10,6 +10,7 @@ fragment tourInfo on Tour {
   status
   slot
   numberOfVisitor
+  isActive
   applyTourStatus
   image1
   farmId

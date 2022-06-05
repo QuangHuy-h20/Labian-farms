@@ -2,7 +2,7 @@
 import { CreateTourInput} from "@generated/graphql";
 
 
-export function getTourDefaultValues(tour: CreateTourInput) {
+export function getTourDefaultValues(tour: any) {
 	if (!tour) {
 		return {
 			name: '',

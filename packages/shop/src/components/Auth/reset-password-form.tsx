@@ -55,15 +55,11 @@ const ResetPassword = () => {
       
       if (resetPasswordErrors) resetPasswordErrors.map(({ field, message }) => { setError(field as FieldErrorType, { message }) })
       
-
       else if (response?.data?.resetPassword?.user) {
         closeModal()
         router.push("/")
         toast.success(response.data.resetPassword.message)
-      }
-
-      console.log(response?.data?.resetPassword?.user);
-      
+      }      
     }
   }
 

@@ -8,6 +8,8 @@ fragment tourInfo on Tour {
   endDate
   status
   slot
+  numberOfVisitor
+  isActive
   image1
   farmId
   farm {

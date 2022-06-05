@@ -12,7 +12,13 @@ import Link from "@components/ui/link";
 import LinkButton from "@components/ui/link-button";
 import PageLoader from "@components/ui/page-loader";
 import ReadMore from "@components/ui/read-more";
-import { useFarmQuery, useToursByFarmQuery } from "@generated/graphql";
+import {
+  FarmDocument,
+  FarmQuery,
+  useFarmQuery,
+  useToursByFarmQuery,
+} from "@generated/graphql";
+import { addApolloState, initializeApollo } from "@lib/apolloClient";
 import { formatDate } from "@utils/format-date";
 import { formatPrice, moneyFormatter } from "@utils/use-price";
 import Image from "next/image";
@@ -32,6 +38,7 @@ const Farm = () => {
     variables: {
       farmId: data?.farm?.id,
     },
+    notifyOnNetworkStatusChange: true,
   });
   if (loading || tourLoading) return <PageLoader />;
   if (error) return <ErrorMessage message={error.message} />;
@@ -220,5 +227,21 @@ const Farm = () => {
 };
 
 Farm.Layout = FarmLayout;
+
+export const getServerSideProps = async ({ params }: any) => {
+  const apolloClient = initializeApollo();
+  const { data } = await apolloClient.query({
+    query: FarmDocument,
+    variables: { slug: params.farm },
+  });
+  if (!data?.farm) {
+    return {
+      notFound: true,
+    };
+  }
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+};
 
 export default Farm;

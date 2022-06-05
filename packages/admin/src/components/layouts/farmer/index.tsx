@@ -1,5 +1,4 @@
 import Navbar from "@components/layouts/navbar";
-// import OwnerInformation from "@components/user/user-details";
 import MobileNavigation from "@components/layouts/mobile-navigation";
 import FarmerInformation from "@components/user/user-detail";
 

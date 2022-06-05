@@ -7,9 +7,11 @@ import {
 } from "@components/ui/modal/modal.context";
 import { useApproveFarmMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
+import { useRouter } from "next/router";
 
 const ApproveFarm = () => {
-  const [disApproveFarmById, { loading }] = useApproveFarmMutation({
+  const router = useRouter();
+  const [approveFarmById, { loading }] = useApproveFarmMutation({
     onCompleted: () => {
       closeModal();
     },
@@ -22,8 +24,11 @@ const ApproveFarm = () => {
   const { data: modalData } = useModalState();
   const { closeModal } = useModalAction();
   async function handleDelete() {
-    disApproveFarmById({
+    approveFarmById({
       variables: { id: modalData as string },
+      onCompleted: () => {
+        router.reload();
+      },
     });
   }
   return (
@@ -33,7 +38,9 @@ const ApproveFarm = () => {
       deleteBtnLoading={loading}
       deleteBtnText="Chấp thuận"
       cancelBtnText="Quay lại"
-      icon={<CheckMarkCircle className="mt-4 w-10 h-10 m-auto text-emerald-500" />}
+      icon={
+        <CheckMarkCircle className="mt-4 w-10 h-10 m-auto text-emerald-500" />
+      }
       deleteBtnClassName="!bg-emerald-500 focus:outline-none hover:!bg-emerald-600 focus:!bg-emerald-600"
       cancelBtnClassName="!bg-red-600 focus:outline-none hover:!bg-red-700 focus:!bg-red-700"
       title="Cho phép nông trại bán hàng?"

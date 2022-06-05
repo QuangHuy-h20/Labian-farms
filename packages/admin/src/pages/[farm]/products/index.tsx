@@ -56,7 +56,7 @@ function ProductsPage() {
         </div>
       </Card>
 
-      <ProductList products={data?.productsByFarm} />
+      <ProductList products={data?.productsByFarm!} />
     </>
   );
 }

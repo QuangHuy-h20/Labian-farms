@@ -20,20 +20,17 @@ const TourPage = () => {
     },
     notifyOnNetworkStatusChange: true,
   });
-
-  console.log(data?.toursPaginated?.paginatedTours);
   
   const loadingMoreTours = networkStatus === NetworkStatus.fetchMore;
 
   const loadMoreTours = () => {
     fetchMore({
       variables: {
-        cursor: data?.toursPaginated.cursor,
+        cursor: data?.toursPaginated?.cursor,
       },
     });
   };
 
-  if (loading) return <PageLoader />;
 
   if (!loading && !data?.toursPaginated?.paginatedTours?.length) {
     return (

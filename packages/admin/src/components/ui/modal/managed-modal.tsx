@@ -46,6 +46,13 @@ const ApproveShopView = dynamic(
 const DisApproveShopView = dynamic(
   () => import("@components/farm/disapprove-shop-view")
 );
+
+const ApproveTourView = dynamic(
+  () => import("@components/tour/approve-tour-view")
+);
+const DisApproveTourView = dynamic(
+  () => import("@components/tour/disapprove-tour-view")
+);
 // const RemoveStaffView = dynamic(
 //   () => import("@components/shop/staff-delete-view")
 // );
@@ -105,6 +112,10 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <ApproveShopView />;
     case "SHOP_DISAPPROVE_VIEW":
       return <DisApproveShopView />;
+    case "TOUR_APPROVE_VIEW":
+      return <ApproveTourView />;
+    case "TOUR_DISAPPROVE_VIEW":
+      return <DisApproveTourView />;
     // case "DELETE_STAFF":
     //   return <RemoveStaffView />;
     // case "UPDATE_REFUND":

@@ -12,7 +12,6 @@ const FarmLayout: React.FC = ({ children }: any) => {
   const { data: farmData } = useFarmByFarmerQuery({
     variables: { ownerId: data?.me?.id },
   });
-
   const SidebarItemMap = () => (
     <Fragment>
       {siteSettings.sidebarLinks.farm.map(({ href, label, icon }) => {
@@ -39,7 +38,7 @@ const FarmLayout: React.FC = ({ children }: any) => {
       <div className="flex flex-1 pt-20">
         <aside className="shadow w-72 xl:w-76 hidden lg:block overflow-y-auto bg-white px-4 fixed start-0 bottom-0 h-full pt-24">
           <div className="flex flex-col space-y-6 py-3">
-            {!farmData?.farmByFarmer ? (
+            {!farmData?.farmByFarmer! ? (
               <div className="flex w-full items-center text-base text-gray-500 focus:text-emerald-500 hover:text-emerald-500">
                 <div className="w-5 h-5">
                   <DashboardIcon />

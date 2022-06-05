@@ -29,8 +29,6 @@ enum ApplyTourStatusValue {
 }
 
 const TourPage = () => {
-  const [applyTour] = useApplyTourMutation();
-
   const { data: meData } = useMeQuery();
   const {
     query: { slug },
@@ -40,6 +38,7 @@ const TourPage = () => {
       slug: slug as string,
     },
   });
+  const [applyTour] = useApplyTourMutation();
 
   const {
     id,
@@ -83,7 +82,7 @@ const TourPage = () => {
         tourId: id!,
       },
       onCompleted: () => {
-        toast.success("Huỷ đăng ký tour thành cồng!");
+        toast.success("Huỷ đăng ký tour thành công!");
       },
       onError: () => {
         toast.error("Đã có lỗi xảy ra, bạn vui lòng thử lại sau nhé.");
@@ -108,10 +107,16 @@ const TourPage = () => {
                   />
                 </div>
 
-                <h1 className="text-emerald-400">{applyTourStatus! === ApplyTourStatusValue!.Apply ? "Đã tham gia" : ""}</h1>
+                <h1 className="text-emerald-400">
+                  {applyTourStatus! === ApplyTourStatusValue!.Apply
+                    ? "Đã tham gia"
+                    : ""}
+                </h1>
                 <h3 className="mb-4 text-lg font-semibold text-center text-gray-600">
-                  
-                  {name!} <p className="text-emerald-400">{status! === "open" ? "Đang mở" : "Đã đóng"}</p>
+                  {name!}{" "}
+                  <p className="text-emerald-400">
+                    {status! === "open" ? "Đang mở" : "Đã đóng"}
+                  </p>
                 </h3>
                 <div className="flex mb-4">
                   <div className="w-6 h-6 mr-2">
@@ -128,13 +133,13 @@ const TourPage = () => {
                 </div>
 
                 {meData?.me ? (
-                  numberOfVisitor! === slot! ? (
+                  numberOfVisitor! === slot! &&
+                  applyTourStatus! === ApplyTourStatusValue!.UnApply ? (
                     <Button
-                     
                       disabled={numberOfVisitor! === slot! ? true : false}
                       size="large"
                     >
-                     Đã hết lượt đăng ký
+                      Đã hết lượt đăng ký
                     </Button>
                   ) : (
                     <Button
@@ -143,7 +148,6 @@ const TourPage = () => {
                           ? "outline"
                           : "normal"
                       }
-                     
                       size="large"
                       onClick={
                         applyTourStatus! === ApplyTourStatusValue!.Apply

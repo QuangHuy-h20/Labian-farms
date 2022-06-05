@@ -5,6 +5,7 @@ import { DatePicker } from "@components/ui/date-picker";
 import Description from "@components/ui/description";
 import Input from "@components/ui/input";
 import Label from "@components/ui/label";
+import PageLoader from "@components/ui/page-loader";
 import Radio from "@components/ui/radio/radio";
 import TextArea from "@components/ui/text-area";
 import {
@@ -15,6 +16,8 @@ import {
   UpdateTourInput,
   useUpdateTourMutation,
   Tour,
+  ToursQuery,
+  ToursDocument,
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getErrorMessage } from "@utils/form-error";
@@ -56,9 +59,7 @@ const schema = yup.object().shape({
   status: yup.string().oneOf([t.Open, t.Closed]).default(t.Open),
 });
 
-export default function CreateOrUpdateTourForm({
-  initialValues,
-}: any) {
+export default function CreateOrUpdateTourForm({ initialValues }: any) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File>([] as any);
@@ -90,10 +91,6 @@ export default function CreateOrUpdateTourForm({
   } = methods;
 
   const [createTour, { loading: creating }] = useCreateTourMutation({
-    onCompleted: () => {
-      toast.success("Tạo tour tham quan thành công");
-      router.push(`${farm}${ROUTES.TOURS}`);
-    },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
       if (serverErrors?.validation.length) {
@@ -155,8 +152,6 @@ export default function CreateOrUpdateTourForm({
   ) => {
     const inputValues = getTourInputValues(values, initialValues);
 
-    console.log(values);
-
     if (initialValues) {
       updateTour({
         variables: {
@@ -171,14 +166,31 @@ export default function CreateOrUpdateTourForm({
           createTourInput: inputValues,
           files: fileToUpload,
         },
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              toursByFarm(existing) {
+                if (data?.createTour?.success) {
+                  const newToursRef = cache.identify(data?.createTour?.tour);
+                  return existing.concat([{ __ref: newToursRef }]);
+                }
+              },
+            },
+          });
+        },
         onCompleted: (data) => {
-          if (data.createTour.success)
+          if (data.createTour.success) {
             toast.success("Tạo tour tham quan thành công");
+            router.back();
+          }
         },
         onError: () => toast.error("Đã có lỗi xảy ra, vui lòng thử lại."),
       });
     }
   };
+
+  if (farmLoading) return <PageLoader />;
+
   return (
     <>
       {errorMessage ? (
@@ -263,7 +275,11 @@ export default function CreateOrUpdateTourForm({
               />
               <Label>Ngày bắt đầu</Label>
               <Controller
-                defaultValue={initialValues ? initialValues?.startDate : ""}
+                defaultValue={
+                  initialValues?.startDate
+                    ? new Date(initialValues?.startDate).toISOString()
+                    : ""
+                }
                 control={control}
                 name="startDate"
                 rules={{ required: true }}
@@ -275,9 +291,9 @@ export default function CreateOrUpdateTourForm({
                     <DatePicker
                       dateFormat="dd/MM/yyyy"
                       placeholderText={
-                        initialValues
+                        initialValues?.startDate
                           ? formatDate(initialValues?.startDate)
-                          : "Chọn ngày bắt đầu tour"
+                          : "Nhập ngày bắt đầu tour"
                       }
                       onChange={(date) => onChange(date)}
                       onBlur={onBlur}
@@ -296,7 +312,11 @@ export default function CreateOrUpdateTourForm({
               />
               <Label>Ngày kết thúc</Label>
               <Controller
-                defaultValue={initialValues ? initialValues?.endDate : ""}
+                defaultValue={
+                  initialValues?.endDate
+                    ? new Date(initialValues?.endDate).toISOString()
+                    : ""
+                }
                 control={control}
                 name="endDate"
                 rules={{ required: true }}
@@ -308,9 +328,9 @@ export default function CreateOrUpdateTourForm({
                     <DatePicker
                       dateFormat="dd/MM/yyyy"
                       placeholderText={
-                        initialValues
+                        initialValues?.endDate
                           ? formatDate(initialValues?.endDate)
-                          : "Chọn ngày kết thúc tour"
+                          : "Nhập ngày kết thúc tour"
                       }
                       onChange={(date) => onChange(date)}
                       onBlur={onBlur}

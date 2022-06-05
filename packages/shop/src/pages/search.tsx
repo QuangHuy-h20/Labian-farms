@@ -28,7 +28,7 @@ const SearchPage = () => {
     return <NotFound text="Không tìm thấy sản phẩm bạn cần tìm." />;
 
   return (
-    <div className="bg-white p-16">
+    <div className="bg-white p-16 mt-8">
       <div className="flex items-center text-2xl mb-10">
         <h2 className=" text-gray-500 mr-2">
           Có {data?.search?.length} kết quả cho từ khoá

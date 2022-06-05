@@ -15,8 +15,6 @@ export const useCheckAuth = () => {
   const { farm } = router.query
 
   const farmActive = farmData?.farmByFarmer?.isActive
-  console.log(farmActive);
-  console.log(router.route);
 
 
 
