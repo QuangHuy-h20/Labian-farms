@@ -61,6 +61,10 @@ export class Product extends CoreEntity {
   image5: string;
 
   @Field()
+  @Column({ default: false })
+  isActive: boolean;
+
+  @Field()
   @Column()
   categoryId!: string;
 

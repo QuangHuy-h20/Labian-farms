@@ -157,7 +157,7 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
     if (initialValues) {
       updateProduct({
         variables: {
-          updateProductInput: { ...inputValues, id: initialValues.id },
+          updateProductInput: { ...inputValues, id: parseInt(initialValues.id) },
           files: fileToUpload,
         },
       });

@@ -27,6 +27,7 @@ import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { toNonAccent, toSlug } from "../../utils/common";
 import { PaginatedProducts } from "../../types/Paginated";
 import { getConnection, LessThan } from "typeorm";
+import { checkAuth } from "../../middleware/checkAuth";
 
 @Resolver((_of) => Product)
 export class ProductResolver {
@@ -73,12 +74,13 @@ export class ProductResolver {
     try {
       const totalCount = categoryId
         ? await Product.count({
-          where: { categoryId },
+          where: { categoryId, isActive: true },
         })
         : await Product.count();
       const realLimit = Math.min(10, limit);
 
       const findOptions: { [key: string]: any } = {
+        where: { isActive: true },
         order: {
           createdAt: "DESC",
         },
@@ -89,10 +91,11 @@ export class ProductResolver {
 
       if (cursor) {
         findOptions.where = {
-          categoryId: categoryId ? categoryId : undefined,
+          categoryId: categoryId ?? undefined,
           createdAt: LessThan(cursor),
         };
         lastProduct = await Product.find({
+          where: { categoryId, isActive: true },
           order: {
             createdAt: "ASC",
           },
@@ -187,6 +190,48 @@ export class ProductResolver {
   }
 
   //----------------------- Mutation -----------------------
+
+  @Mutation(_return => ProductMutationResponse)
+  @UseMiddleware(checkAuth)
+  async approveProduct(@Arg("id", _type => ID) id: number): Promise<ProductMutationResponse> {
+    try {
+      const existingProduct = await Product.findOne({ id })
+      if (!existingProduct) return failureResponse(400, false, "Sản phẩm không tồn tại.")
+
+      existingProduct.isActive = true
+      existingProduct.save()
+      return {
+        code: 200,
+        message: "Thông in đã được cập nhật",
+        success: true,
+        product: existingProduct
+      }
+    } catch (error) {
+      return failureResponse(500, false, `Internal Server Error ${error.message}`)
+    }
+  }
+
+  @Mutation(_return => ProductMutationResponse)
+  @UseMiddleware(checkAuth)
+  async disApproveProduct(@Arg("id", _type => ID) id: number): Promise<ProductMutationResponse> {
+    try {
+      const existingProduct = await Product.findOne({ id })
+      if (!existingProduct) return failureResponse(400, false, "Sản phẩm không tồn tại.")
+
+      existingProduct.isActive = false
+      existingProduct.save()
+
+      return {
+        code: 200,
+        message: "Thông in đã được cập nhật",
+        success: true,
+        product: existingProduct
+      }
+    } catch (error) {
+      return failureResponse(500, false, `Internal Server Error ${error.message}`)
+    }
+  }
+
   @Mutation((_return) => ProductMutationResponse, {
     description: "Create new product",
   })
@@ -281,6 +326,9 @@ export class ProductResolver {
       const slug = toSlug(name);
       const unAccentName = toNonAccent(name);
 
+
+      let productInfoAfterUpdate: any
+
       await multipleUploads(files, folder, slug).then(async (value) => {
         list = value as string[];
 
@@ -303,16 +351,17 @@ export class ProductResolver {
         existingProduct.stock = stock;
         existingProduct.unit = unit;
 
-
+        productInfoAfterUpdate = existingProduct
         await existingProduct.save();
       });
 
 
-      return successResponse(
-        200,
-        true,
-        "Cập nhật thông tin sản phẩm thành công."
-      );
+      return {
+        code: 200,
+        success: true,
+        message: "Cập nhật thông tin sản phẩm thành công.",
+        product: productInfoAfterUpdate
+      }
     } catch (error) {
       return failureResponse(
         500,

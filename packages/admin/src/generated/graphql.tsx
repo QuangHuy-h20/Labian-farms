@@ -184,6 +184,7 @@ export type Mutation = {
   activeUser: Scalars['Boolean'];
   applyTour: TourMutationResponse;
   approveFarm: Scalars['Boolean'];
+  approveProduct: ProductMutationResponse;
   approveTour: Scalars['Boolean'];
   banUser: Scalars['Boolean'];
   /** Change user password */
@@ -209,6 +210,7 @@ export type Mutation = {
   /** Delete tour */
   deleteTour: Scalars['Boolean'];
   disApproveFarm: Scalars['Boolean'];
+  disApproveProduct: ProductMutationResponse;
   disApproveTour: Scalars['Boolean'];
   /** Register for farmer */
   farmerRegister: UserMutationResponse;
@@ -261,6 +263,11 @@ export type MutationApplyTourArgs = {
 
 
 export type MutationApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationApproveProductArgs = {
   id: Scalars['ID'];
 };
 
@@ -336,6 +343,11 @@ export type MutationDeleteTourArgs = {
 
 
 export type MutationDisApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDisApproveProductArgs = {
   id: Scalars['ID'];
 };
 
@@ -502,6 +514,7 @@ export type Product = {
   image3?: Maybe<Scalars['String']>;
   image4?: Maybe<Scalars['String']>;
   image5?: Maybe<Scalars['String']>;
+  isActive: Scalars['Boolean'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];

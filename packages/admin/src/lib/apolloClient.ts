@@ -59,6 +59,7 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
   const links = from([
     errorLink,
     uploadLink as unknown as ApolloLink,
+    
   ]);
 
   return new ApolloClient({
