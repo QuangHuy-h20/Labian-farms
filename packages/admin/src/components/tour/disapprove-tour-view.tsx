@@ -36,11 +36,11 @@ const DisApproveTour = () => {
       onCancel={closeModal}
       onDelete={handleDelete}
       deleteBtnLoading={loading}
-      deleteBtnText="Chấp thuận"
+      deleteBtnText="Tiếp tục"
       cancelBtnText="Quay lại"
       icon={<CloseFillIcon className="mt-4 w-10 h-10 m-auto text-red-500" />}
       deleteBtnClassName="!bg-emerald-500 focus:outline-none hover:!bg-emerald-600 focus:!bg-emerald-600"
-      cancelBtnClassName="!bg-red-600 focus:outline-none hover:!bg-red-700 focus:!bg-red-700"
+      cancelBtnClassName="!bg-red-500 focus:outline-none hover:!bg-red-600 focus:!bg-red-600"
       title="Tạm dừng mở cửa tour?"
       description=""
     />

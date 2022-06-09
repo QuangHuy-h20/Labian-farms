@@ -450,4 +450,22 @@ export class UserResolver {
       return false
     }
   }
+
+  @Mutation(() => Boolean, { description: "Delete user" })
+  @UseMiddleware(checkAuth)
+  async deleteUser(@Arg("id", _type => ID) id: number): Promise<boolean> {
+    try {
+
+      const existingUser = await User.findOne({ id })
+      if (!existingUser) return false
+
+      const { avatar } = existingUser
+
+      if (avatar !== "") new Promise(_ => deleteFile(avatar?.split("/").pop() as string, "users"))
+      await User.delete({ id })
+      return true
+    } catch {
+      return false
+    }
+  }
 }

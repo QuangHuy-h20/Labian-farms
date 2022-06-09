@@ -5,7 +5,7 @@ import { FarmMutationResponse } from "./farm.mutation";
 import { CreateFarmInput, UpdateFarmInput } from "./farm.input";
 import { Context } from "../../types/Context";
 import { checkRole } from "../../middleware/checkRole";
-import { failureResponse, successResponse } from "../../utils/statusResponse";
+import { failureResponse } from "../../utils/statusResponse";
 import { toSlug } from "../../utils/common";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 import { deleteFile, singleUpload, multipleUploads } from "../../utils/s3";
@@ -124,33 +124,37 @@ export class FarmResolver {
 
   //----------------------- Mutation -----------------------
 
-  @Mutation(_return => Boolean)
+  @Mutation(_return => FarmMutationResponse)
   @UseMiddleware(checkAuth)
-  async approveFarm(@Arg("id", _type => ID) id: number): Promise<boolean> {
+  async approveFarm(@Arg("id", _type => ID) id: number): Promise<FarmMutationResponse> {
     try {
       const existingFarm = await Farm.findOne({ id })
-      if (!existingFarm) return false
+      if (!existingFarm) return failureResponse(404, false, "Nông trại không tồn tại.")
 
       existingFarm.isActive = true
       existingFarm.save()
-      return true
-    } catch {
-      return false
+      return {
+        code: 200, success: true, message: "Cập nhật trạng thái thành công.", farm: existingFarm
+      }
+    } catch (error) {
+      return failureResponse(500, false, `Internal Server Error ${error.message}`)
     }
   }
 
-  @Mutation(_return => Boolean)
+  @Mutation(_return => FarmMutationResponse)
   @UseMiddleware(checkAuth)
-  async disApproveFarm(@Arg("id", _type => ID) id: number): Promise<boolean> {
+  async disApproveFarm(@Arg("id", _type => ID) id: number): Promise<FarmMutationResponse> {
     try {
       const existingFarm = await Farm.findOne({ id })
-      if (!existingFarm) return false
+      if (!existingFarm) return failureResponse(404, false, "Nông trại không tồn tại.")
 
       existingFarm.isActive = false
       existingFarm.save()
-      return true
-    } catch {
-      return false
+      return {
+        code: 200, success: true, message: "Cập nhật trạng thái thành công.", farm: existingFarm
+      }
+    } catch (error) {
+      return failureResponse(500, false, `Internal Server Error ${error.message}`)
     }
   }
 
@@ -175,6 +179,7 @@ export class FarmResolver {
 
       const slug = toSlug(name)
       const folder = `farms/${slug}`
+      let farmResponse: any
 
       await multipleUploads(files, folder, slug).then(async value => {
         list = value as string[]
@@ -185,10 +190,13 @@ export class FarmResolver {
           coverImage: list[1] !== null ? list[1] : undefined,
           ownerId: req.session.userId,
         });
+        farmResponse = newFarm
         await newFarm.save();
       })
 
-      return successResponse(200, true, "Nông trại đã được tạo thành công.")
+      return {
+        code: 200, success: true, message: "Nông trại đã được tạo thành công.", farm: farmResponse
+      }
     } catch (error) {
       return failureResponse(500, false, `Internal Server Error ${error.message}`)
     }
@@ -305,8 +313,10 @@ export class FarmResolver {
       const farmFolder = `farms/${existingFarm.slug}`;
       const productFolder = `products/${existingFarm.slug}`;
 
+      new Promise((_) => deleteFile(productFolder));
+      new Promise((_) => deleteFile(farmFolder));
+
       await Farm.delete({ id });
-      await Promise.all([() => deleteFile(farmFolder), () => deleteFile(productFolder)])
 
       return true
     } catch {

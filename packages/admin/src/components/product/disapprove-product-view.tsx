@@ -5,13 +5,13 @@ import {
   useModalAction,
   useModalState,
 } from "@components/ui/modal/modal.context";
-import { useDisApproveFarmMutation } from "@generated/graphql";
+import { useDisApproveProductMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
 import { useRouter } from "next/router";
 
-const DisApproveFarm = () => {
+const DisApproveProduct = () => {
   const router = useRouter();
-  const [disApproveFarmById, { loading }] = useDisApproveFarmMutation({
+  const [disApproveProduct, { loading }] = useDisApproveProductMutation({
     onCompleted: () => {
       closeModal();
     },
@@ -24,10 +24,10 @@ const DisApproveFarm = () => {
   const { data: modalData } = useModalState();
   const { closeModal } = useModalAction();
   async function handleDelete() {
-    disApproveFarmById({
+    disApproveProduct({
       variables: { id: modalData as string },
       onCompleted: () => {
-        // router.reload();
+        router.reload();
       },
     });
   }
@@ -36,15 +36,15 @@ const DisApproveFarm = () => {
       onCancel={closeModal}
       onDelete={handleDelete}
       deleteBtnLoading={loading}
-      deleteBtnText="Chấp thuận"
+      deleteBtnText="Tiếp tục"
       cancelBtnText="Quay lại"
       icon={<CloseFillIcon className="mt-4 w-10 h-10 m-auto text-red-500" />}
       deleteBtnClassName="!bg-emerald-500 focus:outline-none hover:!bg-emerald-600 focus:!bg-emerald-600"
-      cancelBtnClassName="!bg-red-600 focus:outline-none hover:!bg-red-700 focus:!bg-red-700"
-      title="Chặn quyền của nông trại này?"
+      cancelBtnClassName="!bg-red-500 focus:outline-none hover:!bg-red-600 focus:!bg-red-600"
+      title="Gỡ sản phẩm khỏi gian trưng bày?"
       description=""
     />
   );
 };
 
-export default DisApproveFarm;
+export default DisApproveProduct;

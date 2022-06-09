@@ -27,7 +27,7 @@ const ApproveFarm = () => {
     approveFarmById({
       variables: { id: modalData as string },
       onCompleted: () => {
-        router.reload();
+        // router.reload();
       },
     });
   }

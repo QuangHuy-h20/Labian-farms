@@ -76,7 +76,7 @@ export class ProductResolver {
         ? await Product.count({
           where: { categoryId, isActive: true },
         })
-        : await Product.count();
+        : await Product.count({ isActive: true });
       const realLimit = Math.min(10, limit);
 
       const findOptions: { [key: string]: any } = {
@@ -91,6 +91,7 @@ export class ProductResolver {
 
       if (cursor) {
         findOptions.where = {
+          isActive: true,
           categoryId: categoryId ?? undefined,
           createdAt: LessThan(cursor),
         };
@@ -105,7 +106,7 @@ export class ProductResolver {
       let products = await Product.find(
         categoryId === undefined
           ? findOptions
-          : { ...findOptions, where: { categoryId } }
+          : { ...findOptions, where: { categoryId, isActive: true } }
       );
 
       return {
@@ -127,10 +128,12 @@ export class ProductResolver {
     description: "Get all products by category",
   })
   async productsByFarm(
-    @Arg("farmId", (_type) => ID) farmId: number
+    @Arg("farmId", (_type) => ID, { nullable: true }) farmId: number,
+    @Arg("slug", _type => String, { nullable: true }) slug: string,
   ): Promise<Product[] | null> {
     try {
-      return await Product.find({ farmId });
+      if (farmId) return await Product.find({ farmId });
+      else return await Product.find({ slug });
     } catch (error) {
       return null;
     }
@@ -326,9 +329,6 @@ export class ProductResolver {
       const slug = toSlug(name);
       const unAccentName = toNonAccent(name);
 
-
-      let productInfoAfterUpdate: any
-
       await multipleUploads(files, folder, slug).then(async (value) => {
         list = value as string[];
 
@@ -339,7 +339,7 @@ export class ProductResolver {
         if (newImage && newImage !== existingImage1) {
           new Promise((_) => deleteFile(folder, existingImage1.split("/").pop() as string));
           existingProduct.image1 = newImage
-        }
+        } else existingProduct.image1 = existingImage1
 
         existingProduct.name = name
         existingProduct.slug = slug;
@@ -351,7 +351,6 @@ export class ProductResolver {
         existingProduct.stock = stock;
         existingProduct.unit = unit;
 
-        productInfoAfterUpdate = existingProduct
         await existingProduct.save();
       });
 
@@ -360,7 +359,7 @@ export class ProductResolver {
         code: 200,
         success: true,
         message: "Cập nhật thông tin sản phẩm thành công.",
-        product: productInfoAfterUpdate
+        product: existingProduct
       }
     } catch (error) {
       return failureResponse(
@@ -375,27 +374,38 @@ export class ProductResolver {
   @Mutation((_return) => ProductMutationResponse, {
     description: "Delete product",
   })
-  @UseMiddleware(checkRole)
+  // @UseMiddleware([checkAuth, checkRole])
   async deleteProduct(
     @Arg("id", (_type) => ID) id: number,
     @Ctx() { req }: Context
   ): Promise<ProductMutationResponse> {
     try {
+
       const existingProduct = await Product.findOne(id);
       if (!existingProduct) return failureResponse(404, false, "Không tìm thấy sản phẩm.");
 
       const existingFarm = await Farm.findOne({ id: existingProduct.farmId });
-      if (!existingFarm) return failureResponse(404, false, "Không tìm thấy trang trại.");
-
-      if (req.session.userId !== existingFarm?.ownerId) return failureResponse(401, false, "Không có quyền truy cập.");
+      if (!existingFarm) return failureResponse(404, false, "Không tìm thấy nông trại.");
 
       const folder = `products/${existingFarm.slug}`;
 
-      await Product.delete({ id });
+      if (req.session.roleId === 'executive-admin') {
+        if (existingProduct.isActive) return failureResponse(400, false, "Sản phẩm vẫn còn trên gian hàng trưng bày. Dỡ sản phẩm và thử lại.");
 
-      new Promise((_) => deleteFile(folder, existingProduct.image1.split("/").pop() as string));
+        else {
+          new Promise((_) => deleteFile(folder, existingProduct.image1.split("/").pop() as string));
+          await Product.delete({ id });
+          return successResponse(200, true, "Xoá sản phẩm thành công.");
+        }
+      }
+      if (req.session.userId !== existingFarm?.ownerId) return failureResponse(401, false, "Không có quyền truy cập.");
+      else if (existingProduct.isActive) return failureResponse(400, false, "Sản phẩm vẫn còn trên gian hàng trưng bày. Vui lòng liên hệ quản lý để tiến hành xử lý.");
+      else {
+        new Promise((_) => deleteFile(folder, existingProduct.image1.split("/").pop() as string));
+        await Product.delete({ id });
+        return successResponse(200, true, "Xoá sản phẩm thành công.");
+      }
 
-      return successResponse(200, true, "Xoá sản phẩm thành công.");
     } catch (error) {
       return failureResponse(
         500,

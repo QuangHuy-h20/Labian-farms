@@ -3,7 +3,6 @@ import BackButton from "@components/ui/back-button";
 import { useModalAction } from "@components/modal/modal.context";
 import Truncate from "@components/ui/truncate";
 import { ROUTES } from "@lib/routes";
-import usePrice from "@lib/use-price";
 import { stickyShortDetailsAtom } from "@store/sticky-short-details-atom";
 import classNames from "classnames";
 import { useAtom } from "jotai";
@@ -11,8 +10,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Element, scroller } from "react-scroll";
 import { Waypoint } from "react-waypoint";
-import { useAttributes } from "./attributes.context";
 import { calDiscount, moneyFormatter } from "@utils/helper";
+import { productPlaceholder } from "@lib/placeholders";
 
 type Props = {
   product: any;
@@ -26,7 +25,6 @@ const Details: React.FC<Props> = ({
 }) => {
   const {
     name,
-    image1, //could only had image we need to think it also
     description,
     unit,
     price: salePrice,
@@ -78,7 +76,7 @@ const Details: React.FC<Props> = ({
 
           <div className="h-full product-gallery">
             <Image
-              src={image1!}
+              src={product?.image1 ?? productPlaceholder}
               layout="responsive"
               objectFit="contain"
               width={200}

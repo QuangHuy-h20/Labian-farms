@@ -6,7 +6,7 @@ import { TourMutationResponse } from "./tour.mutation";
 import { checkRole } from "../../middleware/checkRole";
 import { CreateTourInput, UpdateTourInput } from "./tour.input";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { failureResponse } from "../../utils/statusResponse";
+import { failureResponse, successResponse } from "../../utils/statusResponse";
 import { toSlug } from "../../utils/common";
 import { multipleUploads, deleteFile } from "../../utils/s3";
 import { ApplyTourStatus } from "../../types/ApplyTourStatus";
@@ -148,33 +148,34 @@ export class TourResolver {
 
 	//----------------------- Mutation -----------------------
 
-	@Mutation(_return => Boolean)
+	@Mutation(_return => TourMutationResponse)
 	@UseMiddleware(checkAuth)
-	async approveTour(@Arg("id", _type => ID) id: number): Promise<boolean> {
+	async approveTour(@Arg("id", _type => ID) id: number): Promise<TourMutationResponse> {
 		try {
 			const existingTour = await Tour.findOne({ id })
-			if (!existingTour) return false
+			if (!existingTour) return failureResponse(404, false, "Nông trại không tồn tại.")
 
 			existingTour.isActive = true
-			existingTour.save()
-			return true
-		} catch {
-			return false
+			await existingTour.save()
+			return { code: 200, success: true, message: "Cập nhật trạng thái thành công.", tour: existingTour }
+		} catch (error) {
+			return failureResponse(500, false, `Internal Server Error ${error.message}`)
 		}
 	}
 
-	@Mutation(_return => Boolean)
+	@Mutation(_return => TourMutationResponse)
 	@UseMiddleware(checkAuth)
-	async disApproveTour(@Arg("id", _type => ID) id: number): Promise<boolean> {
+	async disApproveTour(@Arg("id", _type => ID) id: number): Promise<TourMutationResponse> {
 		try {
 			const existingTour = await Tour.findOne({ id })
-			if (!existingTour) return false
+			if (!existingTour) return failureResponse(404, false, "Nông trại không tồn tại.")
 
 			existingTour.isActive = false
-			existingTour.save()
-			return true
-		} catch {
-			return false
+			await existingTour.save()
+
+			return { code: 200, success: true, message: "Cập nhật trạng thái thành công.", tour: existingTour }
+		} catch (error) {
+			return failureResponse(500, false, `Internal Server Error ${error.message}`)
 		}
 	}
 
@@ -278,33 +279,51 @@ export class TourResolver {
 
 
 
-	@Mutation((_return) => Boolean, {
+	@Mutation((_return) => TourMutationResponse, {
 		description: "Delete tour",
 	})
-	@UseMiddleware(checkRole)
+	// @UseMiddleware(checkRole)
 	async deleteTour(
 		@Arg("id", (_type) => ID) id: number,
+		@Arg("farmId", (_type) => ID) farmId: number,
 		@Ctx() { req }: Context
-	): Promise<Boolean> {
+	): Promise<TourMutationResponse> {
 		try {
-			const existingFarm = await Farm.findOne({ ownerId: req.session.userId });
+			const existingFarm = await Farm.findOne({ id: farmId });
 
-			if (!existingFarm) return false
+			if (!existingFarm) return failureResponse(404, false, "Không tìm thấy nông trại.");
 
 
 			const existingTour = await Tour.findOne(id);
 
-			if (!existingTour) return false
+			if (!existingTour) return failureResponse(404, false, "Không tìm thấy tour.");
 
 			const folder = `farms/${existingFarm.slug}/tour/${existingTour.slug}`
 
+			if (req.session.roleId === 'executive-admin') {
+				if (existingTour.isActive) return failureResponse(400, false, "Tour tham quan vẫn còn đang hoạt động. Đóng tour và thử lại.");
+				await ApplyTour.delete({ tourId: id })
+				await Tour.delete({ id });
+				new Promise((_) => deleteFile(folder, existingTour.image1.split("/").pop() as string));
+				return successResponse(200, true, "Xoá tour tham quan thành công.");
+			}
 
-			await Tour.delete({ id });
-			new Promise((_) => deleteFile(folder, existingTour.image1.split("/").pop() as string));
+			if (existingTour.isActive) return failureResponse(400, false, "Tour tham quan vẫn còn đang hoạt động. Vui lòng liên hệ quản lý để tiến hành xử lý.");
 
-			return true
-		} catch {
-			return false
+			else {
+				await ApplyTour.delete({ tourId: id })
+				await Tour.delete({ id });
+				new Promise((_) => deleteFile(folder, existingTour.image1.split("/").pop() as string));
+				return successResponse(200, true, "Xoá tour tham quan thành công.");
+			}
+
+
+		} catch (error) {
+			return failureResponse(
+				500,
+				false,
+				`Internal server error ${error.message}`
+			);
 		}
 	}
 

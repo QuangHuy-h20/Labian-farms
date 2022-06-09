@@ -6,7 +6,7 @@ import TextArea from "@components/ui/text-area";
 import {
   UpdateFarmInput,
   useCreateFarmMutation,
-  useUpdateFarmMutation
+  useUpdateFarmMutation,
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ROUTES } from "@utils/routes";
@@ -17,8 +17,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 // import { farmValidationSchema } from "./farm-validation-schema";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-
-
 
 const schema: yup.SchemaOf<UpdateFarmInput> = yup.object().shape({
   name: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
@@ -31,7 +29,7 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
   const [createFarm, { loading: creating }] = useCreateFarmMutation({
     onCompleted: (data) => {
       if (data.createFarm.success) {
-        toast.success(data.createFarm.message)
+        toast.success(data.createFarm.message);
         router.push(ROUTES.DASHBOARD);
       } else toast.error(data.createFarm.message);
     },
@@ -89,6 +87,12 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
         variables: {
           updateFarmInput: { ...values },
           files: fileToUpload,
+        },
+        onCompleted(data) {
+          const { name, slug } = data?.updateFarm?.farm ?? {};
+          if (name !== initialValues.name) {
+            router.push(`/${slug}`);
+          }
         },
       });
     } else {

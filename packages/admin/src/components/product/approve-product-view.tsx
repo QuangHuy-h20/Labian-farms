@@ -1,17 +1,17 @@
 import ConfirmationCard from "@components/common/confirmation-card";
 import { CheckMarkCircle } from "@components/icons/checkmark-circle";
-import { CloseFillIcon } from "@components/icons/close-fill";
+import { CloseIcon } from "@components/icons/close-icon";
 import {
   useModalAction,
   useModalState,
 } from "@components/ui/modal/modal.context";
-import { useDisApproveFarmMutation } from "@generated/graphql";
+import { useApproveProductMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
 import { useRouter } from "next/router";
 
-const DisApproveFarm = () => {
+const ApproveProduct = () => {
   const router = useRouter();
-  const [disApproveFarmById, { loading }] = useDisApproveFarmMutation({
+  const [approveProduct, { loading }] = useApproveProductMutation({
     onCompleted: () => {
       closeModal();
     },
@@ -24,10 +24,10 @@ const DisApproveFarm = () => {
   const { data: modalData } = useModalState();
   const { closeModal } = useModalAction();
   async function handleDelete() {
-    disApproveFarmById({
+    approveProduct({
       variables: { id: modalData as string },
       onCompleted: () => {
-        // router.reload();
+        router.reload();
       },
     });
   }
@@ -36,15 +36,17 @@ const DisApproveFarm = () => {
       onCancel={closeModal}
       onDelete={handleDelete}
       deleteBtnLoading={loading}
-      deleteBtnText="Chấp thuận"
+      deleteBtnText="Tiếp tục"
       cancelBtnText="Quay lại"
-      icon={<CloseFillIcon className="mt-4 w-10 h-10 m-auto text-red-500" />}
+      icon={
+        <CheckMarkCircle className="mt-4 w-10 h-10 m-auto text-emerald-500" />
+      }
       deleteBtnClassName="!bg-emerald-500 focus:outline-none hover:!bg-emerald-600 focus:!bg-emerald-600"
       cancelBtnClassName="!bg-red-600 focus:outline-none hover:!bg-red-700 focus:!bg-red-700"
-      title="Chặn quyền của nông trại này?"
+      title="Cho phép trưng bày sản phẩm?"
       description=""
     />
   );
 };
 
-export default DisApproveFarm;
+export default ApproveProduct;

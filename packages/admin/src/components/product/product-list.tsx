@@ -12,6 +12,7 @@ type IProductList = {
 const ProductList = ({ products, permission }: IProductList) => {
   const router = useRouter();
   const TableTitle: Object[] = [
+    { key: "view", name: "" },
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên sản phẩm" },
     { key: "category", name: "Loại" },
@@ -26,6 +27,16 @@ const ProductList = ({ products, permission }: IProductList) => {
 
   const renderTableBody = (item: Product) => (
     <tr className="text-center border-b" key={item.id}>
+      <td>
+        {item.isActive ? (
+          <ActionButtons
+            id={item.id}
+            detailsUrl={`http://localhost:3000/products/${item.id}`}
+          />
+        ) : (
+          ""
+        )}
+      </td>
       <td>
         <Image className="rounded" src={item.image1} width={42} height={42} />
       </td>
@@ -48,7 +59,9 @@ const ProductList = ({ products, permission }: IProductList) => {
         ) : (
           <ActionButtons
             id={item.id}
-            detailsUrl={`http://localhost:3000/products/${item.id}`}
+            approveProductButton={true}
+            isProductActive={item?.isActive}
+            deleteModalView="DELETE_PRODUCT"
           />
         )}
       </td>

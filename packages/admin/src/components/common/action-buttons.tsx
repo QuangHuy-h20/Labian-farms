@@ -9,13 +9,17 @@ import { CloseFillIcon } from "@components/icons/close-fill";
 
 type Props = {
   id: string;
+  farmId?: string;
   status?: number;
   deleteModalView?: string | any;
   editUrl?: string;
   detailsUrl?: string;
+  permission?: boolean;
+  approveProductButton?: boolean;
   approveFarmButton?: boolean;
   approveTourButton?: boolean;
   isUserActive?: boolean;
+  isProductActive?: boolean;
   isFarmActive?: boolean;
   isTourActive?: boolean;
   userStatus?: boolean;
@@ -23,12 +27,16 @@ type Props = {
 
 const ActionButtons = ({
   id,
+  farmId,
   status,
   deleteModalView,
   editUrl,
+  permission = false,
   isTourActive,
+  isProductActive,
   isFarmActive,
   detailsUrl,
+  approveProductButton = false,
   approveFarmButton = false,
   approveTourButton = false,
   userStatus = false,
@@ -36,7 +44,7 @@ const ActionButtons = ({
 }: Props) => {
   const { openModal } = useModalAction();
   function handleDelete() {
-    openModal(deleteModalView, { id });
+    openModal(deleteModalView, { id, farmId });
   }
   function handleUserStatus() {
     openModal("BAN_CUSTOMER", { id, status });
@@ -47,6 +55,14 @@ const ActionButtons = ({
       openModal("SHOP_APPROVE_VIEW", id);
     } else {
       openModal("SHOP_DISAPPROVE_VIEW", id);
+    }
+  }
+
+  function handleProductStatus(status: boolean) {
+    if (status === true) {
+      openModal("PRODUCT_APPROVE_VIEW", id);
+    } else {
+      openModal("PRODUCT_DISAPPROVE_VIEW", id);
     }
   }
 
@@ -75,7 +91,7 @@ const ActionButtons = ({
             <button
               onClick={() => handleUserStatus()}
               className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
-              title="Chặn"
+              title="Disapprove"
             >
               <BanUser width={20} />
             </button>
@@ -83,7 +99,7 @@ const ActionButtons = ({
             <button
               onClick={() => handleUserStatus()}
               className="text-emerald-500 transition duration-200 hover:text-emerald-500 focus:outline-none"
-              title="Kích hoạt"
+              title="Approve"
             >
               <CheckMarkCircle width={20} />
             </button>
@@ -95,7 +111,7 @@ const ActionButtons = ({
           <button
             onClick={() => handleFarmStatus(true)}
             className="text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
-            title="Duyệt"
+            title="Approve"
           >
             <CheckMarkCircle width={20} />
           </button>
@@ -103,7 +119,7 @@ const ActionButtons = ({
           <button
             onClick={() => handleFarmStatus(false)}
             className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
-            title="Bỏ duyệt"
+            title="Disapprove"
           >
             <CloseFillIcon width={20} />
           </button>
@@ -114,7 +130,7 @@ const ActionButtons = ({
           <button
             onClick={() => handleTourStatus(true)}
             className="text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
-            title="Duyệt"
+            title="Approve"
           >
             <CheckMarkCircle width={20} />
           </button>
@@ -122,7 +138,26 @@ const ActionButtons = ({
           <button
             onClick={() => handleTourStatus(false)}
             className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
-            title="Bỏ duyệt"
+            title="Disapprove"
+          >
+            <CloseFillIcon width={20} />
+          </button>
+        ))}
+
+      {approveProductButton &&
+        (!isProductActive ? (
+          <button
+            onClick={() => handleProductStatus(true)}
+            className="text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+            title="Cập nhật trạng thái"
+          >
+            <CheckMarkCircle width={20} />
+          </button>
+        ) : (
+          <button
+            onClick={() => handleProductStatus(false)}
+            className="text-red-500 transition duration-200 hover:text-red-600 focus:outline-none"
+            title="Cập nhật trạng thái"
           >
             <CloseFillIcon width={20} />
           </button>

@@ -1,3 +1,5 @@
-mutation DeleteTour($id: ID!) {
-  deleteTour(id: $id)
+mutation DeleteTour($id: ID!, $farmId: ID!) {
+  deleteTour(id: $id, farmId: $farmId){
+    ...tourMutationResponse
+  }
 }

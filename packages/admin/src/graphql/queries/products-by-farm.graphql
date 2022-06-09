@@ -1,5 +1,5 @@
-query ProductsByFarm($farmId: ID!) {
-  productsByFarm(farmId: $farmId) {
+query ProductsByFarm($farmId: ID, $slug: String) {
+  productsByFarm(farmId: $farmId, slug: $slug) {
     ...productInfo
   }
 }

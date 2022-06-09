@@ -1,28 +1,21 @@
-import usePrice from '@/lib/use-price';
-import { ThumbsCarousel } from '@/components/ui/thumb-carousel';
-import { useTranslation } from 'next-i18next';
-import { getVariations } from '@/lib/get-variations';
-import { useMemo } from 'react';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
-import Truncate from '@/components/ui/truncate';
-import { scroller, Element } from 'react-scroll';
-import VariationPrice from './variation-price';
-import { ROUTES } from '@/lib/routes';
-import { Product } from '@/framework/types';
-import { useAtom } from 'jotai';
-import VariationGroups from './variation-groups';
-import { isVariationSelected } from '@/lib/is-variation-selected';
-import { Waypoint } from 'react-waypoint';
-import { stickyShortDetailsAtom } from '@/store/sticky-short-details-atom';
-import { useAttributes } from './attributes.context';
-import { AddToCartAlt } from '@/components/products/add-to-cart/add-to-cart-alt';
-import BadgeGroups from './badge-groups';
-import Link from '@/components/ui/link';
-import { displayImage } from '@/lib/display-product-preview-images';
+import usePrice from "@lib/use-price";
+import { ThumbsCarousel } from "@components/ui/thumb-carousel";
+import { getVariations } from "@lib/get-variations";
+import { useMemo } from "react";
+import isEqual from "lodash/isEqual";
+import isEmpty from "lodash/isEmpty";
+import Truncate from "@components/ui/truncate";
+import { scroller, Element } from "react-scroll";
+import { useAtom } from "jotai";
+import { isVariationSelected } from "@lib/is-variation-selected";
+import { Waypoint } from "react-waypoint";
+import { stickyShortDetailsAtom } from "@store/sticky-short-details-atom";
+import { useAttributes } from "./attributes.context";
+import { AddToCartAlt } from "@components/products/add-to-cart/add-to-cart-alt";
+import { displayImage } from "@lib/display-product-preview-images";
 
 type Props = {
-  product: Product;
+  product: any;
   backBtn?: boolean;
   isModal?: boolean;
 };
@@ -41,7 +34,6 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
     is_digital,
   } = product ?? {};
 
-  const { t } = useTranslation('common');
   const [_, setShowStickyShortDetails] = useAtom(stickyShortDetailsAtom);
 
   const { attributes } = useAttributes();
@@ -67,7 +59,7 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
   }
 
   const scrollDetails = () => {
-    scroller.scrollTo('details', {
+    scroller.scrollTo("details", {
       smooth: true,
       offset: -80,
     });
@@ -76,7 +68,7 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
   const onWaypointPositionChange = ({
     currentPosition,
   }: Waypoint.CallbackArgs) => {
-    if (!currentPosition || currentPosition === 'above') {
+    if (!currentPosition || currentPosition === "above") {
       setShowStickyShortDetails(true);
     }
   };
@@ -108,66 +100,24 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
                     {name}
                   </h1>
                 )}
-                {Boolean(is_digital) && (
-                  <span className="ltr:ml-5 rtl:mr-5 px-3 py-1.5 bg-accent-400 rounded text-xs font-normal text-white">
-                    {t('text-downloadable')}
-                  </span>
-                )}
               </div>
 
-              {author?.name && (
-                <div className="flex items-center mt-4 space-x-5 rtl:space-x-reverse md:mt-5">
-                  <p className="flex items-center text-sm font-normal text-body">
-                    {t('text-by-author')}
-                    <Link
-                      href={`${ROUTES.AUTHORS}/${author?.slug}`}
-                      className="text-sm font-bold transition-colors text-heading ltr:ml-2 rtl:mr-2 hover:text-accent"
-                    >
-                      {author?.name}
-                    </Link>
-                  </p>
-                </div>
-              )}
+              <span className="flex items-center mt-5 mb-7 space-x-4 rtl:space-x-reverse">
+                <ins className="text-2xl font-bold no-underline md:text-3xl text-heading">
+                  {price}
+                </ins>
+                {basePrice && (
+                  <del className="text-base font-normal md:text-base text-muted">
+                    {basePrice}
+                  </del>
+                )}
 
-              {hasVariations ? (
-                <>
-                  <div className="flex items-center mt-5 mb-7">
-                    <VariationPrice
-                      selectedVariation={selectedVariation}
-                      minPrice={product.min_price}
-                      maxPrice={product.max_price}
-                    />
-                    {isSelected && discount && (
-                      <span className="px-2 py-1 text-xs font-semibold leading-6 uppercase rounded-md ltr:ml-4 rtl:mr-4 bg-accent-200 text-accent">
-                        {discount} {t('text-off')}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <VariationGroups
-                      variations={variations}
-                      variant="outline"
-                    />
-                  </div>
-                </>
-              ) : (
-                <span className="flex items-center mt-5 mb-7 space-x-4 rtl:space-x-reverse">
-                  <ins className="text-2xl font-bold no-underline md:text-3xl text-heading">
-                    {price}
-                  </ins>
-                  {basePrice && (
-                    <del className="text-base font-normal md:text-base text-muted">
-                      {basePrice}
-                    </del>
-                  )}
-
-                  {discount && (
-                    <span className="px-2 py-1 text-xs font-semibold leading-6 uppercase rounded-md bg-accent-200 text-accent">
-                      {discount} {t('text-off')}
-                    </span>
-                  )}
-                </span>
-              )}
+                {discount && (
+                  <span className="px-2 py-1 text-xs font-semibold leading-6 uppercase rounded-md bg-accent-200 text-accent">
+                    {discount}
+                  </span>
+                )}
+              </span>
 
               {description && (
                 <div className="text-sm leading-7 text-body mt-7">
@@ -175,7 +125,7 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
                     character={150}
                     {...(!isModal && {
                       onClick: () => scrollDetails(),
-                      compressText: 'common:text-see-more',
+                      compressText: "Xem thêmd",
                     })}
                   >
                     {description}
@@ -195,101 +145,17 @@ const BookDetails: React.FC<Props> = ({ product, isModal = false }) => {
               </div>
             </div>
           </Waypoint>
-
-          <div className="grid w-full grid-cols-1 gap-5 mt-8 md:grid-cols-3">
-            {!!categories?.length && (
-              <BadgeGroups title={t('text-categories')}>
-                {categories.map((category: any) => (
-                  <Link
-                    href={`/${type?.slug}/search/?category=${category.slug}`}
-                    key={category.id}
-                    className="text-sm text-body ltr:pr-0.5 rtl:pl-0.5 bg-transparent transition-colors hover:text-accent focus:outline-none focus:bg-opacity-100 ltr:last:pr-0 rtl:last:pl-0 after:content-[','] last:after:content-['']"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </BadgeGroups>
-            )}
-
-            {!!tags?.length && (
-              <BadgeGroups title={t('text-tags')}>
-                {tags.map((tag: any) => (
-                  <Link
-                    href={`/${type?.slug}/search/?tags=${tag.slug}`}
-                    key={tag.id}
-                    className="text-sm text-body ltr:pr-0.5 rtl:pl-0.5 bg-transparent transition-colors hover:text-accent focus:outline-none focus:bg-opacity-100 ltr:last:pr-0 rtl:last:pl-0 after:content-[','] last:after:content-['']"
-                  >
-                    {tag.name}
-                  </Link>
-                ))}
-              </BadgeGroups>
-            )}
-
-            <div className="flex flex-col items-start w-full overflow-hidden">
-              <span className="pb-3 text-sm font-semibold capitalize text-heading">
-                {t('text-sku')}
-              </span>
-              {hasVariations ? (
-                <span
-                  className="w-full text-sm truncate text-body"
-                  title={selectedVariation.sku ?? 'sku'}
-                >
-                  {selectedVariation.sku}
-                </span>
-              ) : (
-                <span
-                  className="w-full text-sm truncate text-body"
-                  title={sku ?? 'sku'}
-                >
-                  {sku}
-                </span>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
       <Element name="details" className="pt-5 lg:pt-14">
         <h2 className="mb-4 text-xl font-bold tracking-tight lg:text-3xl text-heading md:mb-6">
-          {t('text-details')}
+          Chi tiết
         </h2>
         <p className="text-sm leading-relaxed text-body">{description}</p>
 
         <div className="flex flex-col space-y-3 mt-7">
-          {name && (
-            <p className="text-sm text-body">
-              <span className="font-semibold text-heading ltr:pr-1 rtl:pl-1">
-                {t('text-title')} :
-              </span>
-              {name}
-            </p>
-          )}
-          {author?.name && (
-            <p className="flex items-center text-sm text-body">
-              <span className="order-1 font-semibold text-heading ltr:pr-1 rtl:pl-1">
-                {t('text-author')} :
-              </span>
-              <Link
-                href={`${ROUTES.AUTHORS}/${author?.slug}`}
-                className="order-2 hover:text-accent"
-              >
-                {author?.name}
-              </Link>
-            </p>
-          )}
-          {manufacturer?.name && (
-            <p className="flex items-center text-sm text-body">
-              <span className="order-1 font-semibold text-heading ltr:pr-1 rtl:pl-1">
-                {t('text-publisher')} :
-              </span>
-              <Link
-                href={`${ROUTES.MANUFACTURERS}/${manufacturer?.slug}`}
-                className="order-2 hover:text-accent"
-              >
-                {manufacturer?.name}
-              </Link>
-            </p>
-          )}
+          {name && <p className="text-sm text-body">{name}</p>}
         </div>
       </Element>
     </article>

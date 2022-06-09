@@ -4,17 +4,25 @@ import {
   useModalAction,
   useModalState,
 } from "@components/ui/modal/modal.context";
-import { useDeleteProductMutation } from "@generated/graphql";
+import {
+  ProductsByFarmDocument,
+  ProductsByFarmQuery,
+  ProductsDocument,
+  ProductsQuery,
+  useDeleteProductMutation,
+  useMeQuery,
+  useProductsByFarmQuery,
+  useProductsQuery,
+} from "@generated/graphql";
+import { EXECUTIVE_ADMIN } from "@utils/constants";
 import { getErrorMessage } from "@utils/form-error";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 
 const ProductDeleteView = () => {
   const router = useRouter();
+  const { data: meData } = useMeQuery();
   const [deleteProductById, { loading }] = useDeleteProductMutation({
-    onCompleted: () => {
-      toast.success("Xoá sản phẩm thành công");
-    },
     onError: (error) => {
       toast.error(`${error}`);
     },
@@ -42,8 +50,14 @@ const ProductDeleteView = () => {
             });
           }
         },
-        onCompleted: () => {
-          router.reload();
+        onCompleted: (data) => {
+          const { success, message } = data.deleteProduct;
+          if (success) {
+            toast.success(message);
+            // router.reload();
+          } else {
+            toast.error(message);
+          }
         },
       });
       closeModal();

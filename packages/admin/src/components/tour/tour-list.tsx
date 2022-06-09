@@ -20,13 +20,17 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
     variables: { farmId },
   });
 
+  console.log(tours);
+
   if (loading) return <PageLoader />;
   if (error) return <ErrorMessage message={error.message} />;
 
   const TableTitle: Object[] = [
+    { key: "view", name: "" },
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên tour" },
-    { key: "address", name: "Địu chỉ" },
+    { key: "address", name: "Địa chỉ" },
+    { key: "numberOfVisitor", name: "Số nguời đã đăng ký" },
     { key: "slot", name: "Số lượng tham gia tối đa" },
     { key: "startDate", name: "Ngày bắt đầu" },
     { key: "endDate", name: "Ngày kết thúc" },
@@ -38,6 +42,17 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
   const renderTableBody = (item: Tour) => (
     <tr className="text-center border-b" key={item?.id!}>
       <td>
+        {item.isActive ? (
+          <ActionButtons
+            id={item?.id}
+            isTourActive={item?.isActive}
+            detailsUrl={`localhost:3000/tours/${item?.slug}`}
+          />
+        ) : (
+          ""
+        )}
+      </td>
+      <td>
         <Image
           className="rounded"
           src={item?.image1! ?? siteSettings.product.placeholder}
@@ -47,6 +62,7 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
       </td>
       <td>{item?.name}</td>
       <td>{item?.farm?.address}</td>
+      <td>{item?.customerAppliedTour?.length}</td>
       <td>{item?.slot}</td>
       <td>{new Date(item?.startDate).toLocaleDateString("vi-VN")}</td>
       <td>{new Date(item?.endDate).toLocaleDateString("vi-VN")}</td>
@@ -54,13 +70,15 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
         {permission ? (
           <ActionButtons
             id={item?.id}
+            farmId={item.farmId.toString()}
             approveTourButton={true}
-            detailsUrl={`localhost:3000/tours/${item?.slug}`}
+            deleteModalView="DELETE_TOUR"
             isTourActive={item?.isActive}
           />
         ) : (
           <ActionButtons
             id={item.id}
+            farmId={item.farmId.toString()}
             editUrl={`${router.asPath}/${item.id}/edit`}
             deleteModalView="DELETE_TOUR"
           />
@@ -76,7 +94,7 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
           limit="6"
           headData={TableTitle}
           renderHead={renderTableHead}
-          bodyData={data?.toursByFarm! ?? tours}
+          bodyData={tours ?? data?.toursByFarm!}
           renderBody={renderTableBody}
         />
       </div>

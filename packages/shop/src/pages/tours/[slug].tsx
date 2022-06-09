@@ -66,6 +66,15 @@ const TourPage = () => {
         applyTourStatusValue: ApplyTourStatus.Apply,
         tourId: id,
       },
+      update(cache, { data }) {
+        cache.writeQuery<TourQuery>({
+          query: TourDocument,
+          variables: { slug: data?.applyTour?.tour },
+          data: {
+            tour: data?.applyTour?.tour,
+          },
+        });
+      },
       onCompleted: () => {
         toast.success("Chúc mừng bạn đã đăng ký thành công!");
       },

@@ -1,0 +1,5 @@
+mutation ApproveProduct($id: ID!) {
+  approveProduct(id: $id){
+    ...productMutationResponse
+  }
+}

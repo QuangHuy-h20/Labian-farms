@@ -9,6 +9,10 @@ fragment tourInfo on Tour {
   status
   slot
   numberOfVisitor
+  customerAppliedTour{
+    email
+    phone
+  }
   isActive
   image1
   farmId

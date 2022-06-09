@@ -1,3 +1,5 @@
 mutation DisApproveTour($id: ID!) {
-  disApproveTour(id: $id)
+  disApproveTour(id: $id) {
+    ...tourMutationResponse
+  }
 }

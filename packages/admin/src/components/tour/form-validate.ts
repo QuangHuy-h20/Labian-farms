@@ -1,5 +1,5 @@
 
-import { CreateTourInput} from "@generated/graphql";
+import { CreateTourInput } from "@generated/graphql";
 
 
 export function getTourDefaultValues(tour: any) {

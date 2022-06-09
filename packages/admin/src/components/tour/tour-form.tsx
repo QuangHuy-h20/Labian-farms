@@ -18,6 +18,7 @@ import {
   Tour,
   ToursQuery,
   ToursDocument,
+  TourStatus,
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getErrorMessage } from "@utils/form-error";
@@ -109,7 +110,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
   const [updateTour, { loading: updating }] = useUpdateTourMutation({
     onCompleted: () => {
       toast.success("Cập nhật tour thành công");
-      router.push(ROUTES.TOURS);
+      router.back();
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -152,10 +153,12 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
   ) => {
     const inputValues = getTourInputValues(values, initialValues);
 
+    console.log(inputValues);
+
     if (initialValues) {
       updateTour({
         variables: {
-          updateTourInput: { ...inputValues, id: initialValues.id },
+          updateTourInput: { ...inputValues, id: parseInt(initialValues.id) },
           files: fileToUpload,
         },
       });
@@ -301,7 +304,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      selected={value as any}
+                      selected={new Date(value)}
                       className="border border-border-base"
                     />
                     <p className="text-left text-sm text-red-500 mt-1">
@@ -338,7 +341,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      selected={value as any}
+                      selected={new Date(value)}
                       className="border border-border-base"
                     />
                     <p className="text-left text-sm text-red-500 mt-1">
@@ -360,7 +363,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       type="radio"
                       disabled={initialValues ? false : true}
                       label={"Đóng tour"}
-                      value="CLOSED"
+                      value={t.Closed}
                     />
 
                     <Radio
@@ -369,7 +372,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       label={"Mở tour"}
                       id="open"
                       type="radio"
-                      value="OPEN"
+                      value={t.Open}
                     />
                   </div>
                 )}

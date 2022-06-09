@@ -5,6 +5,7 @@ import ErrorMessage from "@components/ui/error-message";
 import LinkButton from "@components/ui/link-button";
 import PageLoader from "@components/ui/page-loader";
 import {
+  ToursByFarmDocument,
   ToursDocument,
   useFarmQuery,
   useToursByFarmQuery,
@@ -60,8 +61,13 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const apolloClient = initializeApollo({ headers: context.req.headers });
 
+  console.log(context);
+  
   await apolloClient.query({
-    query: ToursDocument,
+    query: ToursByFarmDocument,
+    variables:{
+      slug: context.params.farm
+    }
   });
 
   return addApolloState(apolloClient, {

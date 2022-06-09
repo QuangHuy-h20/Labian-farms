@@ -5,13 +5,15 @@ import ErrorMessage from "@components/ui/error-message";
 import LinkButton from "@components/ui/link-button";
 import PageLoader from "@components/ui/page-loader";
 import {
-  ProductsDocument,
+  ProductsByFarmDocument,
   useFarmQuery,
   useProductsByFarmQuery,
 } from "@generated/graphql";
 import { addApolloState, initializeApollo } from "@lib/apolloClient";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
+
+let farm_id: any
 
 function ProductsPage() {
   const {
@@ -23,6 +25,8 @@ function ProductsPage() {
     },
   });
   const farmId = farmData?.farm?.id;
+
+  farm_id = farmId
 
   const { data, loading, error } = useProductsByFarmQuery({
     variables: {
@@ -67,9 +71,12 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const apolloClient = initializeApollo({ headers: context.req.headers });
-
+  
   await apolloClient.query({
-    query: ProductsDocument,
+    query: ProductsByFarmDocument,
+    variables:{
+      slug: context.params.farm
+    }
   });
 
   return addApolloState(apolloClient, {

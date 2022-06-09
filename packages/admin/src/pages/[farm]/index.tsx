@@ -185,40 +185,53 @@ const Farm = () => {
             Tour tham quan đang mở
           </span>
           <div className="flex flex-col mt-4">
-            {tourData?.toursByFarm.map((tour) => (
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <div className="mr-3">
-                    <Image
-                      className="rounded-lg"
-                      src={tour.image1}
-                      width={75}
-                      height={75}
-                      layout="fixed"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-500 mb-2">
-                      {tour.name}
-                    </span>
-                    <span className="text-sm text-gray-400 mb-1">
-                      {tour.description}
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      {tour.farm.address}
-                    </span>
-                  </div>
-                </div>
-                <Link
-                  target="_blank"
-                  href={`http://localhost:3000/tours/${tour.slug}`}
-                  className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
-                  title="Xem tour"
+            {tourData?.toursByFarm?.length > 0 ? (
+              tourData?.toursByFarm.map((tour) => (
+                <div
+                  key={tour.id}
+                  className="flex justify-between items-center"
                 >
-                  <Eye width={28} />
-                </Link>
-              </div>
-            ))}
+                  <div className="flex">
+                    <div className="mr-3">
+                      <Image
+                        className="rounded-lg"
+                        src={tour.image1}
+                        width={75}
+                        height={75}
+                        layout="fixed"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-500 mb-2">
+                        {tour.name}
+                      </span>
+                      <span className="text-sm text-gray-400 mb-1">
+                        {tour.description}
+                      </span>
+                      <span className="text-sm text-gray-400">
+                        {tour.farm.address}
+                      </span>
+                    </div>
+                  </div>
+                  {tour.isActive ? (
+                    <Link
+                      target="_blank"
+                      href={`http://localhost:3000/tours/${tour.slug}`}
+                      className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+                      title="Xem tour"
+                    >
+                      <Eye width={28} />
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ))
+            ) : (
+              <>
+                <div>Chưa có nông trại nào được mở</div>
+              </>
+            )}
           </div>
         </div>
       </div>
