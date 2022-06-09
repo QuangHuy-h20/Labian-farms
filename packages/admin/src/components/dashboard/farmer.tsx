@@ -65,10 +65,10 @@ const FarmerDashboard = () => {
       {data?.farmByFarmer && !data?.farmByFarmer?.isActive ? (
         <>
           <div className="w-full relative">
-            <Lottie options={defaultOptions} height={480} width={1024} />
+            <Lottie options={options} height={360} width={1024} />
           </div>
-          <h3 className="mt-5 sm:mt-10 text-xl italic md:text-5xl text-gray-400 font-medium text-center">
-            Cô chú/ anh chị vui lòng chờ tụi con/ tụi em xác thực thông tin nông
+          <h3 className="mt-5 sm:mt-10 text-xl italic md:text-3xl text-gray-400 font-medium text-center">
+            Cô chú/anh chị vui lòng chờ tụi con/tụi em xác thực thông tin nông
             trại mình đã tạo nhé!
           </h3>
         </>
@@ -77,7 +77,7 @@ const FarmerDashboard = () => {
           <div className="w-full relative">
             <Lottie options={defaultOptions} height={350} width={350} />
           </div>
-          <p className="text-3xl 3xl:text-xl text-gray-500 mt-8 text-center">
+          <p className="text-xl 3xl:text-xl text-gray-500 mt-8 text-center">
           <span className="text-emerald-500 italic ">Labian Farms</span> chúc cô chú/ anh chị ngày làm việc thật vui vẻ!
         </p>
         </>

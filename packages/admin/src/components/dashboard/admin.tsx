@@ -22,6 +22,7 @@ export default function Dashboard() {
 
   const { price: total_revenue } = usePrice({
     amount: 6969696969,
+    currencyCode:"VND"
   });
 
   if (userLoading || productLoading || farmLoading) return <PageLoader />;

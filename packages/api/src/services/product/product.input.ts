@@ -1,4 +1,4 @@
-import { Field, InputType } from "type-graphql";
+import { Field, ID, InputType } from "type-graphql";
 
 @InputType()
 export class CreateProductInput {
@@ -21,12 +21,12 @@ export class CreateProductInput {
   unit: string;
 
   @Field()
-  categoryId: string
+  categoryId: string;
 }
 
 @InputType()
 export class UpdateProductInput extends CreateProductInput {
-  @Field()
+  @Field((_type) => ID)
   id: number;
 }
 
@@ -34,7 +34,7 @@ export class UpdateProductInput extends CreateProductInput {
 export class SearchInput {
   @Field({ nullable: true })
   name?: string;
-  
+
   @Field({ nullable: true })
   unAccentName?: string;
 }

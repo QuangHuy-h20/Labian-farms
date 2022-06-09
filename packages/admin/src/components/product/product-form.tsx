@@ -6,6 +6,7 @@ import Input from "@components/ui/input";
 import TextArea from "@components/ui/text-area";
 import {
   Product,
+  ProductDocument,
   useCreateProductMutation,
   useFarmQuery,
   useUpdateProductMutation,
@@ -14,6 +15,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { getErrorMessage } from "@utils/form-error";
 import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -147,7 +149,22 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
     onFileChange(file);
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  // const myCustomFileGetter = async (event) => {
+  //   const files = []
+  //   const list = event.dataTransfer ? event.dataTransfer.files : event.target.files
+  //   for (let i = 0; i < list.length; i++) {
+  //     const file = list.item(i)
+  //     Object.defineProperty(file, 'myProp', { value: true })
+  //     files.push(file)
+  //   }
+  //   return files
+  // }
+
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    // getFilesFromEvent: event => myCustomFileGetter(event) 
+  });
 
   const onSubmit: SubmitHandler<ProductFormValues> = async (
     values: ProductFormValues

@@ -1,5 +1,5 @@
 import { TourStatus } from "../../entities/Tour";
-import { Field, InputType } from "type-graphql";
+import { Field, ID, InputType } from "type-graphql";
 
 @InputType()
 export class CreateTourInput {
@@ -25,6 +25,6 @@ export class CreateTourInput {
 @InputType()
 export class UpdateTourInput extends CreateTourInput{
 
-  @Field()
+  @Field((_type) => ID)
   id: number
 }

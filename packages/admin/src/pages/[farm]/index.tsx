@@ -64,7 +64,7 @@ const Farm = () => {
           <h1 className="text-xl font-semibold text-gray-600 mb-2">
             {data?.farm?.name}
           </h1>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-gray-500">
             <ReadMore character={70}>{data?.farm?.description!}</ReadMore>
           </p>
 
@@ -91,7 +91,7 @@ const Farm = () => {
             <a
               href={`http://localhost:3000/${data?.farm?.slug}`}
               target="_blank"
-              className="inline-flex items-center justify-center flex-shrink-0 leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow focus:ring-1 focus:ring-accent-700 !bg-gray-100 hover:!bg-accent !text-gray-600 hover:!text-white !font-normal px-5 py-0 h-12"
+              className="inline-flex items-center justify-center flex-shrink-0 leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow focus:ring-1 focus:ring-emerald-700 !bg-gray-100 hover:!bg-emerald-600 !text-gray-600 hover:!text-white !font-medium px-5 py-0 h-12"
             >
               Xem trang trại
             </a>
@@ -101,9 +101,9 @@ const Farm = () => {
       {/* Cover Photo */}
       <div className="order-1 xl:order-2 col-span-12 xl:col-span-8 3xl:col-span-9 h-full overflow-hidden relative rounded bg-white min-h-[400px]">
         <Image
-          src="/product-placeholder-borderless.svg"
+          src="/farm-banner.jpg"
           layout="fill"
-          objectFit="contain"
+          objectFit="cover"
         />
 
         <LinkButton
@@ -185,40 +185,41 @@ const Farm = () => {
             Tour tham quan đang mở
           </span>
           <div className="flex flex-col mt-4">
-            {tourData?.toursByFarm.map((tour) => (
-              <div className="flex justify-between items-center">
-                <div className="flex">
-                  <div className="mr-3">
-                    <Image
-                      className="rounded-lg"
-                      src={tour.image1}
-                      width={75}
-                      height={75}
-                      layout="fixed"
-                    />
+            {tourData?.toursByFarm?.length === 0 ? <div className="text-center text-gray-500">Chưa có tour tham quan nào được tạo</div>
+              : tourData?.toursByFarm.map((tour) => (
+                <div className="flex justify-between items-center">
+                  <div className="flex">
+                    <div className="mr-3">
+                      <Image
+                        className="rounded-lg"
+                        src={tour.image1}
+                        width={75}
+                        height={75}
+                        layout="fixed"
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-gray-500 mb-2">
+                        {tour.name}
+                      </span>
+                      <span className="text-sm text-gray-400 mb-1">
+                        {tour.description}
+                      </span>
+                      <span className="text-sm text-gray-400">
+                        {tour.farm.address}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-500 mb-2">
-                      {tour.name}
-                    </span>
-                    <span className="text-sm text-gray-400 mb-1">
-                      {tour.description}
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      {tour.farm.address}
-                    </span>
-                  </div>
+                  <Link
+                    target={true}
+                    href={`http://localhost:3000/tours/${tour.slug}`}
+                    className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+                    title="Xem tour"
+                  >
+                    <Eye width={28} />
+                  </Link>
                 </div>
-                <Link
-                  target="_blank"
-                  href={`http://localhost:3000/tours/${tour.slug}`}
-                  className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
-                  title="Xem tour"
-                >
-                  <Eye width={28} />
-                </Link>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-query Product($id: ID, $slug: String) {
+query Product($id: ID!, $slug: String) {
   product(id: $id, slug: $slug) {
    ...productInfo
   }

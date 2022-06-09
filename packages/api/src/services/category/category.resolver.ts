@@ -8,7 +8,10 @@ import { toSlug } from "../../utils/common";
 
 @Resolver()
 export class CategoryResolver {
-  @Query((_return) => [Category], { description: "Get all the categories.", nullable: true })
+  @Query((_return) => [Category], {
+    description: "Get all the categories.",
+    nullable: true,
+  })
   async categories() {
     try {
       return await Category.find();
@@ -17,7 +20,9 @@ export class CategoryResolver {
     }
   }
 
-  @Mutation(_return => CategoryMutationResponse, { description: "Create new category." })
+  @Mutation((_return) => CategoryMutationResponse, {
+    description: "Create new category.",
+  })
   @UseMiddleware(checkAuth)
   async createCategory(
     @Arg("createCategoryInput") createCategoryInput: CreateCategoryInput
@@ -27,17 +32,25 @@ export class CategoryResolver {
 
       const existingCategory = await Category.findOne({ where: [{ name }] });
 
-      if (existingCategory) return failureResponse(400, false, "Category has already existed.")
+      if (existingCategory)
+        return failureResponse(400, false, "Category has already existed.");
 
-      const id = toSlug(name)
+      const id = toSlug(name);
 
       const newCategory = Category.create({ ...createCategoryInput, id });
       await newCategory.save();
-      return { code: 200, success: true, message: "Category has been created successfully", category: newCategory }
-
-
+      return {
+        code: 200,
+        success: true,
+        message: "Category has been created successfully",
+        category: newCategory,
+      };
     } catch (error) {
-      return failureResponse(500, false, `Internal Server Error ${error.message}`)
+      return failureResponse(
+        500,
+        false,
+        `Internal Server Error ${error.message}`
+      );
     }
   }
 }

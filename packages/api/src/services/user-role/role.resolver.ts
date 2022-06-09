@@ -23,7 +23,7 @@ export class RoleResolver {
   }
 
   @Mutation((_return => RoleMutationResponse), { description: "Create new user role." })
-  // @UseMiddleware(checkAuth)
+  @UseMiddleware(checkAuth)
   async createRole(
     @Arg("createRoleInput") { roleName }: CreateRoleInput
   ): Promise<RoleMutationResponse> {

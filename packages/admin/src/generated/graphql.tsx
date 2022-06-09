@@ -731,7 +731,7 @@ export type UpdateFarmInput = {
 export type UpdateProductInput = {
   categoryId: Scalars['String'];
   description: Scalars['String'];
-  id: Scalars['Float'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
@@ -742,7 +742,7 @@ export type UpdateProductInput = {
 export type UpdateTourInput = {
   description: Scalars['String'];
   endDate?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['Float'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   slot: Scalars['Float'];
   startDate?: InputMaybe<Scalars['DateTime']>;
@@ -999,7 +999,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, dateOfBirth?: any | null, avatar?: string | null, roleId: string, isActiveEmail: boolean } | null };
 
 export type ProductQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['ID']>;
+  id: Scalars['ID'];
   slug?: InputMaybe<Scalars['String']>;
 }>;
 
@@ -2084,7 +2084,7 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const ProductDocument = gql`
-    query Product($id: ID, $slug: String) {
+    query Product($id: ID!, $slug: String) {
   product(id: $id, slug: $slug) {
     ...productInfo
   }
@@ -2108,7 +2108,7 @@ export const ProductDocument = gql`
  *   },
  * });
  */
-export function useProductQuery(baseOptions?: Apollo.QueryHookOptions<ProductQuery, ProductQueryVariables>) {
+export function useProductQuery(baseOptions: Apollo.QueryHookOptions<ProductQuery, ProductQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProductQuery, ProductQueryVariables>(ProductDocument, options);
       }
