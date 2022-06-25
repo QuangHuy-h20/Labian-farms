@@ -26,11 +26,8 @@ const Banner = ({ className }: BannerProps) => {
   return (
     <div className={cn("relative hidden lg:flex", className)}>
       <div className="relative w-full lg:h-screen-85 contrast-75 brightness-75 -z-1">
-        <Image
-          src="/banner.jpg"
-          layout="fill"
-          objectFit="cover"
-          priority
+        <img className="h-full w-full object-cover"
+          src="https://storage.googleapis.com/labian_farms/banner.jpg"
           alt="banner image"
         />
       </div>

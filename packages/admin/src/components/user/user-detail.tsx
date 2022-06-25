@@ -31,10 +31,10 @@ const FarmerInformation: React.FC = () => {
 
   return (
     <div className="h-full p-5 flex flex-col items-center">
-      <div className="w-32 h-32 relative rounded-full flex items-center justify-center overflow-hidden border border-gray-200">
-        <Image
+      <div className="w-44 h-44 relative rounded-full flex items-center justify-center overflow-hidden border border-gray-200">
+        <img
           src={avatar ? avatar : siteSettings?.avatar?.placeholder}
-          layout="fill"
+          className="rounded-full w-full h-full object-cover bg-cover"
         />
       </div>
       <h3 className="text-lg font-semibold text-gray-600 mt-4">

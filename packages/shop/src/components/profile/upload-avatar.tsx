@@ -1,21 +1,25 @@
-import { User } from '@assets/icons';
 import Button from '@components/ui/button';
+import Spinner from '@components/loader/spinner';
 import { useMeQuery, useUpdateAvatarMutation } from '@generated/graphql';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { ChangeEvent, useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone';
 
-const UploadAvatar = () => {
+interface IImageProps {
+	id: string;
+	avatar: string;
+}
+
+const UploadAvatar = ({ id, avatar }: IImageProps) => {
 
 	const [updateAvatar] = useUpdateAvatarMutation()
-
-	const { data: meData, loading: meLoading } = useMeQuery();
 
 	const [fileToUpload, setFileToUpload] = useState<File>([] as any);
 
 	const [isUpload, setIsUpload] = useState(false);
 
-	const [imageSrc, setImageSrc] = useState("");
+	const [imageSrc, setImageSrc] = useState(avatar ?? "");
 
 	const router = useRouter();
 
@@ -39,11 +43,14 @@ const UploadAvatar = () => {
 		onFileChange(file);
 	}, []);
 
+	const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
+
 	const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await updateAvatar({
 			variables: {
-				id: meData!.me!.id as string,
+				id,
 				file: fileToUpload,
 			},
 		});
@@ -52,33 +59,30 @@ const UploadAvatar = () => {
 
 	const handleCancel = () => {
 		setIsUpload(false);
-		setImageSrc(meData?.me?.avatar as string);
+		setImageSrc(avatar ?? '/avatar-placeholder.svg');
 	};
 
-	const { getRootProps, getInputProps } = useDropzone({ onDrop });
 	return (
 		<div className="bg-white flex flex-col items-center">
-			<div className="relative border rounded-full h-48 w-48 cursor-pointer">
-				<form onSubmit={handleSubmit} className="w-full h-full">
+			<div className="relative border rounded-full cursor-pointer">
+				<form onSubmit={handleSubmit} className="h-48 w-48">
 					<div
 						{...getRootProps({
-							className: "edit-user w-full h-full object-cover rounded-full",
+							className: "edit-user h-48 w-48 object-cover rounded-full",
 						})}
 					>
 						<input name="uploadFile" {...getInputProps()} />
-						{!meData?.me?.avatar ? (
-							<div className="flex justify-center items-center w-full border border-dashed rounded-full border-opacity-20 h-full">
-								<h1 className="text-4xl">
-									<User />
-								</h1>
-							</div>
-						) : (
-							<img
-								className="w-full h-full object-cover rounded-full"
-								src={imageSrc === "" ? meData?.me?.avatar : imageSrc}
-								alt=""
-							/>
-						)}
+
+						<div className="flex justify-center items-center w-full border border-dashed rounded-full border-opacity-20 h-full">
+							{avatar ?
+								// <Image className="rounded-full" src={imageSrc ? imageSrc : avatar} layout="fill" objectFit='cover' />
+								<img className="rounded-full w-full h-full object-cover bg-cover" src={imageSrc ? imageSrc : avatar} />
+								:
+								// <Image className="rounded-full" src={imageSrc ? imageSrc : '/avatar-placeholder.svg'} layout="fill" objectFit='cover' />
+								<img className="rounded-full w-full h-full object-cover bg-cover" src={imageSrc ? imageSrc : '/avatar-placeholder.svg'} />
+							}
+						</div>
+
 					</div>
 					{isUpload ? (
 						<div className="flex justify-between w-full my-3 text-white">
@@ -89,14 +93,14 @@ const UploadAvatar = () => {
 								onClick={handleCancel}
 								className="flex items-center"
 							>
-								<span className="mr-1 text-sm">Cancel</span>
+								<span className="mr-1 text-sm">Huỷ bỏ</span>
 							</Button>
 							<button
 								type="submit"
 								className="flex items-center px-3 bg-emerald-500 hover:bg-emerald-600 rounded-md"
 							>
 
-								<span className="mr-1 text-sm">Change</span>
+								<span className="mr-1 text-sm">Thay đổi</span>
 							</button>
 						</div>
 					) : (

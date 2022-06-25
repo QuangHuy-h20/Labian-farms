@@ -11,8 +11,9 @@ export const checkAuth: MiddlewareFn<Context> = async (
       "Not authenticated to perform GraphQL operations"
     );
   }
+  console.log(req.session.roleId);
 
-  if(req.session.roleId !== "executive-admin"){
+  if (req.session.roleId !== "executive-admin") {
     throw new Error("You do not have permission to access");
   }
 

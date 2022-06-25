@@ -1,12 +1,12 @@
 import { ComponentProps, useState } from "react";
 
 const Table = (props: ComponentProps<any>) => {
-  const initDataShow =
+  let initDataShow =
     props?.limit && props?.bodyData
       ? props?.bodyData?.slice(0, Number(props?.limit))
       : props?.bodyData;
 
-  const [dataShow, setDataShow] = useState(initDataShow);
+  // const [dataShow, setDataShow] = useState(initDataShow);
   const [currPage, setCurrPage] = useState(0);
 
   let pages = 1;
@@ -22,8 +22,8 @@ const Table = (props: ComponentProps<any>) => {
   const selectPage = (page: number) => {
     const start = Number(props.limit) * page;
     const end = start + Number(props.limit);
-
-    setDataShow(props.bodyData.slice(start, end));
+    initDataShow = props.bodyData.slice(start, end)
+    // setDataShow(props.bodyData.slice(start, end));
 
     setCurrPage(page);
   };
@@ -41,19 +41,18 @@ const Table = (props: ComponentProps<any>) => {
           ) : null}
           {props.bodyData && props.renderBody ? (
             <tbody className="bg-white">
-              {dataShow.map((item: any) => props.renderBody(item))}
+              {initDataShow.map((item: any) => props.renderBody(item))}
             </tbody>
           ) : null}
         </table>
       </div>
       {pages > 1 ? (
-        <div className="flex w-full justify-end items-center mt-5">
+        <div className="flex w-full justify-end items-center p-2 mt-5">
           {range.map((item, index) => (
             <div
               key={index}
-              className={`table__pagination-item ${
-                currPage === index ? "active" : ""
-              }`}
+              className={`table__pagination-item ${currPage === index ? "active" : ""
+                }`}
               onClick={() => selectPage(index)}
             >
               {item + 1}

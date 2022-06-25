@@ -14,7 +14,7 @@ const ItemCard = ({ item, notAvailable, className }: Props) => {
   return (
     <div className={cn("flex justify-between items-center py-2", className)}>
       <div className="flex items-center justify-between text-base">
-        <Image src={item.image1} width={72} height={72} objectFit="cover" />
+        <img className="object-cover bg-contain" src={item.image1} width={72} height={72} />
         <span
           className={cn("text-sm", notAvailable ? "text-red-500" : "text-body")}
         >

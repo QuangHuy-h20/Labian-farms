@@ -1,7 +1,7 @@
-mutation UpdateFarm($updateFarmInput: UpdateFarmInput!, $files: [Upload!]!){
+mutation UpdateFarm($updateFarmInput: UpdateFarmInput!, $file: Upload!){
   updateFarm(
     updateFarmInput:$updateFarmInput
-    files: $files
+    file: $file
   ){
   ...farmMutationResponse
   }

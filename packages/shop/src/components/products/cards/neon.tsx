@@ -17,7 +17,7 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
   const {
     name,
     slug,
-    price: salePrice,
+    price,
     originalPrice,
     unit,
     stock,
@@ -25,7 +25,7 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
   } = product ?? {};
 
   // const { price, basePrice, discount } = usePrice({
-  //   amount: salePrice! ? salePrice! : originalPrice!,
+  //   amount: price! ? price! : originalPrice!,
   //   baseAmount: originalPrice!,
   // });
 
@@ -48,27 +48,25 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
         onClick={handleProductQuickView}
       >
         <span className="sr-only">{slug}</span>
-        <Image
+        <img
           src={image1! ?? productPlaceholder}
           alt={name!}
-          layout="fill"
-          objectFit="contain"
-          className="product-image"
+          className="product-image object-cover bg-contain h-64"
         />
-        {discount && (
+        {discount && discount > 0 ? (
           <div className="absolute top-3 md:top-4 right-3 rounded text-xs leading-6 font-semibold px-1.5 sm:px-2 md:px-2.5 bg-emerald-500 text-white">
             {discount} %
           </div>
-        )}
+        ) : ""}
       </div>
       {/* End of product image */}
 
       <header className="p-3 md:p-6">
         <div className="flex items-center font-medium mb-2">
           <span className="text-slate-600 text-lg mr-2 font-semibold">
-            {moneyFormatter(salePrice)} / <span>{unit}</span>
+            {moneyFormatter(price)} / <span>{unit}</span>
           </span>
-          <del>{moneyFormatter(originalPrice)}</del>
+          <del>{originalPrice > price ? moneyFormatter(originalPrice) : null}</del>
         </div>
 
         {/* End of product price */}

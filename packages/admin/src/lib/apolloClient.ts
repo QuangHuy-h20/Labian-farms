@@ -59,6 +59,7 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
   const links = from([
     errorLink,
     uploadLink as unknown as ApolloLink,
+    
   ]);
 
   return new ApolloClient({
@@ -88,17 +89,17 @@ function createApolloClient(headers: IncomingHttpHeaders | null = null) {
             //     return { ...incoming, tours };
             //   },
             // },
-            toursByFarm: {
-              keyArgs: false,
-              merge(existing = [], incoming: any) {
-                console.log("existing ", existing);
-                console.log("incoming ", incoming);
+            // toursByFarm: {
+            //   keyArgs: false,
+            //   merge(existing = [], incoming: any) {
+            //     console.log("existing ", existing);
+            //     console.log("incoming ", incoming);
 
-                if (incoming && incoming.__ref) {
-                  return { ...existing, ...incoming }
-                }
-              }
-            }
+            //     if (incoming && incoming.__ref) {
+            //       return { ...existing, ...incoming }
+            //     }
+            //   }
+            // }
           },
         },
       },

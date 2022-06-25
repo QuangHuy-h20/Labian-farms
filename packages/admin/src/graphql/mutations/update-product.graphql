@@ -1,11 +1,8 @@
 mutation UpdateProduct(
   $updateProductInput: UpdateProductInput!
-  $files: [Upload!]!
+  $file: Upload!
 ) {
-  updateProduct(
-    updateProductInput: $updateProductInput
-    files: $files
-  ) {
+  updateProduct(updateProductInput: $updateProductInput, file: $file) {
     ...productMutationResponse
   }
 }

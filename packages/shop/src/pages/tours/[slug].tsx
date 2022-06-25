@@ -22,6 +22,8 @@ import { useRouter } from "next/router";
 import { limit } from "./index";
 import ProductsGrid from "@components/products/grid";
 import { toast } from "react-toastify";
+import Clock from "@components/icons/clock";
+import { formatDate } from "@utils/format-date";
 
 enum ApplyTourStatusValue {
   Apply = 1,
@@ -38,6 +40,8 @@ const TourPage = () => {
       slug: slug as string,
     },
   });
+  console.log(tourData);
+
   const [applyTour] = useApplyTourMutation();
 
   const {
@@ -65,6 +69,15 @@ const TourPage = () => {
       variables: {
         applyTourStatusValue: ApplyTourStatus.Apply,
         tourId: id,
+      },
+      update(cache, { data }) {
+        cache.writeQuery<TourQuery>({
+          query: TourDocument,
+          variables: { slug: data?.applyTour?.tour },
+          data: {
+            tour: data?.applyTour?.tour,
+          },
+        });
       },
       onCompleted: () => {
         toast.success("Chúc mừng bạn đã đăng ký thành công!");
@@ -95,15 +108,14 @@ const TourPage = () => {
   return (
     <>
       <div className="flex flex-col bg-gray-100 lg:flex-row lg:items-start lg:p-8">
-        <aside className="bg-white md:rounded h-full w-full lg:w-80 2xl:w-96 hidden lg:block">
+        <aside className="bg-white md:rounded h-full w-full lg:w-80 2xl:w-96 hidden lg:block sticky top-24 lg:top-28">
           <div className="max-h-full overflow-hidden">
             <Scrollbar className="w-full scrollbar_height">
               <div className="flex flex-col items-center w-full border-b border-gray-200 p-7">
-                <div className="relative mx-auto mb-8 overflow-hidden bg-gray-200 border border-gray-100 rounded-lg w-44 h-44">
-                  <Image
+                <div className="relative mx-auto mb-8 overflow-hidden bg-gray-200 border border-gray-100 rounded-lg w-56 h-56">
+                  <img
                     src={image1! ?? productPlaceholder}
-                    layout="fill"
-                    objectFit="cover"
+                    className="object-cover bg-contain w-full h-full"
                   />
                 </div>
 
@@ -112,17 +124,23 @@ const TourPage = () => {
                     ? "Đã tham gia"
                     : ""}
                 </h1>
-                <h3 className="mb-4 text-lg font-semibold text-center text-gray-600">
-                  {name!}{" "}
-                  <p className="text-emerald-400">
-                    {status! === "open" ? "Đang mở" : "Đã đóng"}
-                  </p>
+                <h3 className="text-lg font-semibold text-center text-gray-600">
+                  {name!}
                 </h3>
+                <div className={`my-3 py-2 px-4 rounded-md bg-${status === "open" ? "emerald" : "red"}-500`}>
+                  <p className="text-white font-medium ">{status === "open" ? "Đang mở" : "Đã đóng"}</p>
+                </div>
                 <div className="flex mb-4">
                   <div className="w-6 h-6 mr-2">
                     <ShopIcon />
                   </div>
-                  {farm?.name!}
+                  <p className="text-emerald-500 font-semibold">{farm?.name!}</p>
+                </div>
+                <div className="flex items-center mb-4">
+                  <div className="w-6 h-6 mr-2">
+                    <Clock />
+                  </div>
+                  <p className="text-gray-400 font-medium">{formatDate(startDate)} - {formatDate(endDate)}</p>
                 </div>
 
                 <div className="flex mb-6">
@@ -134,7 +152,7 @@ const TourPage = () => {
 
                 {meData?.me ? (
                   numberOfVisitor! === slot! &&
-                  applyTourStatus! === ApplyTourStatusValue!.UnApply ? (
+                    applyTourStatus! === ApplyTourStatusValue!.UnApply ? (
                     <Button
                       disabled={numberOfVisitor! === slot! ? true : false}
                       size="large"
@@ -143,11 +161,13 @@ const TourPage = () => {
                     </Button>
                   ) : (
                     <Button
+                      disabled={status !== "open" ? true : false}
                       variant={
                         applyTourStatus! === ApplyTourStatusValue!.Apply
                           ? "outline"
                           : "normal"
                       }
+                      className="text-white"
                       size="large"
                       onClick={
                         applyTourStatus! === ApplyTourStatusValue!.Apply
@@ -169,18 +189,16 @@ const TourPage = () => {
         </aside>
         <div className="flex w-full flex-col lg:px-4">
           <div className="relative h-full w-full overflow-hidden rounded">
-            <Image
+            <img
               src={image1! ?? productPlaceholder}
-              layout="responsive"
               width={2340}
-              height={640}
-              objectFit="cover"
-              className="h-full w-full"
+              height={600}
+              className="object-cover bg-contain w-full h-full"
             />
           </div>
           <div className="bg-white mt-8 p-4 w-full rounded-md">
             <h1 className="font-bold text-gray-600 text-2xl mb-3">Mô tả</h1>
-            <p>{description!}</p>
+            <p className="text-gray-400 font-medium">{description!}</p>
           </div>
 
           <div className="bg-white mt-8 p-4 rounded-md w-full">
@@ -215,10 +233,16 @@ export const getStaticProps: GetStaticProps<
   { slug: string }
 > = async ({ params }) => {
   const apolloClient = initializeApollo();
-  await apolloClient.query<TourQuery>({
+  const { data } = await apolloClient.query<TourQuery>({
     query: TourDocument,
     variables: { slug: params?.slug as string },
   });
+
+  if (!data.tour) {
+    return {
+      notFound: true
+    }
+  }
 
   return addApolloState(apolloClient, { props: {} });
 };

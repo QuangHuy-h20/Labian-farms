@@ -13,9 +13,7 @@ import {
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getErrorMessage } from "@utils/form-error";
-import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -28,33 +26,27 @@ import {
 } from "./form-utils";
 import ProductCategoryInput from "./product-category-input";
 
-type ProductFormProps = {
-  initialValues?: any;
-};
 
 const schema: yup.SchemaOf<Omit<ProductFormValues, "categoryId">> = yup
   .object()
   .shape({
-    name: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
+    name: yup.string().required("Vui lòng nhập thông tin.").default(""),
     description: yup.string().default(""),
     originalPrice: yup
       .number()
       .typeError("Định dạng phải là số")
       .positive("Giá không được âm")
-      .required("Trường dữ liệu bắt buộc."),
+      .required("Vui lòng nhập thông tin."),
     stock: yup
       .number()
       .typeError("Định dạng phải là số")
       .positive("Số lượng không được âm")
-      .required("Trường dữ liệu bắt buộc."),
-    unit: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
+      .required("Vui lòng nhập thông tin."),
+    unit: yup.string().required("Vui lòng nhập thông tin.").default(""),
     price: yup
       .number()
       .transform((value) => (isNaN(value) ? undefined : value))
-      .lessThan(
-        yup.ref("originalPrice"),
-        "Giá khuyến mãi không được lớn hơn giá gốc"
-      ),
+      .max(yup.ref("originalPrice"), "Giá khuyến mãi không được lớn hơn giá gốc")
   });
 
 export default function CreateOrUpdateProductForm({ initialValues }: any) {
@@ -175,7 +167,7 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
       updateProduct({
         variables: {
           updateProductInput: { ...inputValues, id: initialValues.id },
-          files: fileToUpload,
+          file: fileToUpload,
         },
       });
     } else {
@@ -183,7 +175,7 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
         variables: {
           farmId,
           createProductInput: inputValues,
-          files: fileToUpload,
+          file: fileToUpload,
         },
 
         update(cache, { data }) {
@@ -243,6 +235,7 @@ export default function CreateOrUpdateProductForm({ initialValues }: any) {
                   />
                 ) : (
                   <p className="text-center">
+
                     Kéo ảnh hoặc nhấp vào ô để chọn ảnh
                   </p>
                 )}

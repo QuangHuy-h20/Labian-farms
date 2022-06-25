@@ -31,11 +31,10 @@ const FarmSidebar: React.FC<FarmSidebarProps> = ({
           cardClassName
         )}
       >
-        <div className="relative w-16 h-16 mx-auto overflow-hidden bg-gray-200 border border-gray-100 rounded-lg ltr:mr-4 rtl:ml-4 shrink-0">
-          <Image
+        <div className="relative w-16 h-16 mx-auto overflow-hidden bg-gray-200 border border-gray-100 rounded-lg shrink-0">
+          <img
             src={farm?.logoImage ?? productPlaceholder}
-            layout="fill"
-            objectFit="cover"
+            className="w-full h-full object-cover bg-contain"
           />
         </div>
 
@@ -61,10 +60,9 @@ const FarmSidebar: React.FC<FarmSidebarProps> = ({
           <Scrollbar className={cn("w-full", "scrollbar_height")}>
             <div className="flex flex-col items-center w-full border-b border-gray-200 p-7">
               <div className="relative mx-auto mb-8 overflow-hidden bg-gray-200 border border-gray-100 rounded-lg w-44 h-44">
-                <Image
+                <img
                   src={farm?.logoImage! ?? productPlaceholder}
-                  layout="fill"
-                  objectFit="cover"
+                  className="w-full h-full object-cover bg-contain"
                 />
               </div>
 

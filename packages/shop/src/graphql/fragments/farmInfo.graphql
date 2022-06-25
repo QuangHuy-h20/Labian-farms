@@ -5,6 +5,7 @@ fragment farmInfo on Farm {
   description
   slug
   logoImage
+  coverImage
   createdAt
   count
   isActive

@@ -2,7 +2,7 @@ import NextLink, { LinkProps as NextLinkProps } from "next/link";
 
 interface LinkProps extends NextLinkProps {
   children?: any;
-  target?: boolean
+  target?: string;
 }
 const Link: React.FC<LinkProps & { className?: string; title?: string }> = ({
   href,
@@ -12,7 +12,9 @@ const Link: React.FC<LinkProps & { className?: string; title?: string }> = ({
 }) => {
   return (
     <NextLink href={href}>
-      <a target={target ? "_blank" : ""}{...props}>{children}</a>
+      <a target={target} {...props}>
+        {children}
+      </a>
     </NextLink>
   );
 };

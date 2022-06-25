@@ -11,8 +11,8 @@ export const moneyFormatter = (number, currency = ' ₫') => {
 };
 
 export const calDiscount = (p: any) => {
-  const { originalPrice, price } = p;
-  return Math.ceil(((originalPrice - price) / originalPrice) * 100);
+  // const { originalPrice, price } = p;
+  return Math.ceil(((p?.originalPrice - p?.price) / p?.originalPrice) * 100);
 };
 
 

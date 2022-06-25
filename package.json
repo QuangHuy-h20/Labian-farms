@@ -6,6 +6,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "dev:api": "cd packages/api && yarn api",
+    "dev:shop": "cd packages/shop && yarn dev",
+    "dev:admin": "cd packages/admin && yarn dev"
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   }

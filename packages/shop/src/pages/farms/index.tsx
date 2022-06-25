@@ -2,9 +2,11 @@ import FarmCard from '@components/ui/cards/farm';
 import ErrorMessage from '@components/ui/error-message';
 import ManufacturerLoader from '@components/ui/loaders/manufacturer-loader';
 import NotFound from '@components/ui/not-found';
-import { useFarmsQuery } from '@generated/graphql';
+import { FarmDocument, FarmsDocument, useFarmsQuery } from '@generated/graphql';
+import { addApolloState, initializeApollo } from '@lib/apolloClient';
 import { FARMS_LIMIT } from '@lib/constants';
 import rangeMap from '@lib/range-map';
+import { GetServerSideProps, GetServerSidePropsContext, GetStaticPropsContext } from 'next';
 import { NextPageWithLayout } from '../../types';
 
 
@@ -45,3 +47,18 @@ const FarmsPage: NextPageWithLayout = () => {
 };
 
 export default FarmsPage;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const apolloClient = initializeApollo({ headers: context.req.headers });
+
+  await apolloClient.query({
+    query: FarmsDocument,
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+
+};

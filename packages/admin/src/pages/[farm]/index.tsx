@@ -1,3 +1,4 @@
+import UpdateFarmCover from "@components/farm/update-farm-cover";
 import { EditIcon } from "@components/icons/edit";
 import { Eye } from "@components/icons/eye-icon";
 import { MapPin } from "@components/icons/map-pin";
@@ -49,14 +50,15 @@ const Farm = () => {
         <div className="py-8 px-6 bg-white rounded flex flex-col items-center">
           <div className="w-36 h-36 relative rounded-full mb-5">
             <div className="w-full h-full relative overflow-hidden flex items-center justify-center border border-gray-100 rounded-full">
-              <Image
+              <img
                 src={
                   data?.farm?.logoImage
                     ? data?.farm?.logoImage
                     : "/avatar-placeholder.svg"
                 }
-                layout="fill"
-                objectFit="contain"
+                className="object-fill h-full"
+              // layout="fill"
+              // objectFit="contain"
               />
             </div>
           </div>
@@ -100,11 +102,12 @@ const Farm = () => {
       </div>
       {/* Cover Photo */}
       <div className="order-1 xl:order-2 col-span-12 xl:col-span-8 3xl:col-span-9 h-full overflow-hidden relative rounded bg-white min-h-[400px]">
-        <Image
-          src="/farm-banner.jpg"
+        <UpdateFarmCover id={data?.farm?.id} image={data?.farm?.coverImage} />
+        {/* <Image
+          src={data?.farm?.coverImage ?? "/farm-banner.jpg"}
           layout="fill"
           objectFit="cover"
-        />
+        /> */}
 
         <LinkButton
           size="small"
@@ -119,7 +122,7 @@ const Farm = () => {
       <div className="order-4 xl:order-3 col-span-12 xl:col-span-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white p-4 rounded h-full">
           <div className="space-y-3">
-            <h2 className="text-gray-600 text-lg font-semibold">Sản phẩm</h2>
+            <h2 className="texxt-gray-600 text-lg font-semibold">Sản phẩm</h2>
 
             <div className="border border-gray-100">
               <div className="flex items-center py-3 px-4 border-b border-gray-100">
@@ -185,41 +188,49 @@ const Farm = () => {
             Tour tham quan đang mở
           </span>
           <div className="flex flex-col mt-4">
-            {tourData?.toursByFarm?.length === 0 ? <div className="text-center text-gray-500">Chưa có tour tham quan nào được tạo</div>
-              : tourData?.toursByFarm.map((tour) => (
-                <div className="flex justify-between items-center">
+            {tourData?.toursByFarm?.length > 0 ? (
+              tourData?.toursByFarm.map((tour) => (
+                <div
+                  key={tour.id}
+                  className="flex justify-between items-center"
+                >
                   <div className="flex">
                     <div className="mr-3">
-                      <Image
-                        className="rounded-lg"
+                      <img className=" rounded-md object-cover bg-cover w-20 h-20"
                         src={tour.image1}
-                        width={75}
-                        height={75}
-                        layout="fixed"
                       />
                     </div>
                     <div className="flex flex-col">
                       <span className="font-medium text-gray-500 mb-2">
                         {tour.name}
                       </span>
-                      <span className="text-sm text-gray-400 mb-1">
+                      {/* <span className="text-sm text-gray-400 mb-1">
                         {tour.description}
-                      </span>
+                      </span> */}
                       <span className="text-sm text-gray-400">
                         {tour.farm.address}
                       </span>
                     </div>
                   </div>
-                  <Link
-                    target={true}
-                    href={`http://localhost:3000/tours/${tour.slug}`}
-                    className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
-                    title="Xem tour"
-                  >
-                    <Eye width={28} />
-                  </Link>
+                  {tour.isActive ? (
+                    <Link
+                      target="_blank"
+                      href={`http://localhost:3000/tours/${tour.slug}`}
+                      className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
+                      title="Xem tour"
+                    >
+                      <Eye width={28} />
+                    </Link>
+                  ) : (
+                    ""
+                  )}
                 </div>
-              ))}
+              ))
+            ) : (
+              <>
+                <div className="text-gray-400">Chưa có nông trại nào được mở</div>
+              </>
+            )}
           </div>
         </div>
       </div>

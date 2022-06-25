@@ -10,7 +10,6 @@ import { getErrorMessage } from "@utils/form-error";
 import { useRouter } from "next/router";
 
 const ApproveTour = () => {
-  const router = useRouter()
   const [approveTourById, { loading }] = useApproveTourMutation({
     onCompleted: () => {
       closeModal();
@@ -26,9 +25,6 @@ const ApproveTour = () => {
   async function handleDelete() {
     approveTourById({
       variables: { id: modalData as string },
-      onCompleted:() =>{
-        router.reload()
-      }
     });
   }
   return (
@@ -36,13 +32,13 @@ const ApproveTour = () => {
       onCancel={closeModal}
       onDelete={handleDelete}
       deleteBtnLoading={loading}
-      deleteBtnText="Chấp thuận"
+      deleteBtnText="Tiếp tục"
       cancelBtnText="Quay lại"
       icon={
         <CheckMarkCircle className="mt-4 w-10 h-10 m-auto text-emerald-500" />
       }
       deleteBtnClassName="!bg-emerald-500 focus:outline-none hover:!bg-emerald-600 focus:!bg-emerald-600"
-      cancelBtnClassName="!bg-red-600 focus:outline-none hover:!bg-red-700 focus:!bg-red-700"
+      cancelBtnClassName="!bg-red-500 focus:outline-none hover:!bg-red-600 focus:!bg-red-600"
       title="Cho phép mở tour tham quan?"
       description=""
     />

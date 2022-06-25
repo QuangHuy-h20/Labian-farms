@@ -7,10 +7,8 @@ import {
 } from "@components/ui/modal/modal.context";
 import { useDisApproveFarmMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
-import { useRouter } from "next/router";
 
 const DisApproveFarm = () => {
-  const router = useRouter();
   const [disApproveFarmById, { loading }] = useDisApproveFarmMutation({
     onCompleted: () => {
       closeModal();
@@ -27,7 +25,7 @@ const DisApproveFarm = () => {
     disApproveFarmById({
       variables: { id: modalData as string },
       onCompleted: () => {
-        router.reload();
+        // router.reload();
       },
     });
   }

@@ -1,9 +1,9 @@
 mutation CreateProduct(
   $farmId: ID!
   $createProductInput: CreateProductInput!
-  $files: [Upload!]!
+  $file: Upload!
 ) {
-  createProduct(files: $files, createProductInput: $createProductInput, farmId: $farmId) {
+  createProduct(file: $file, createProductInput: $createProductInput, farmId: $farmId) {
   ...productMutationResponse
   }
 }

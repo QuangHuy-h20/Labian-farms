@@ -65,7 +65,7 @@ const Login = () => {
             </form>
           </div>
           <div className="hidden md:block">
-            <Image className="col-span 2 rounded-r-lg" src="/login-image.jpg" width={240} height={400} layout="responsive" objectFit="cover" />
+            <img className="col-span 2 rounded-r-lg w-96 object-cover bg-contain" style={{ height: "600px" }} src="https://storage.googleapis.com/labian_farms/login-img.jpg" />
           </div>
         </div>
       </WrapperForm>

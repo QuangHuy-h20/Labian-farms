@@ -1,16 +1,14 @@
 import ConfirmationCard from "@components/common/confirmation-card";
 import { CheckMarkCircle } from "@components/icons/checkmark-circle";
-import { CloseIcon } from "@components/icons/close-icon";
 import {
   useModalAction,
-  useModalState,
+  useModalState
 } from "@components/ui/modal/modal.context";
 import { useApproveFarmMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
-import { useRouter } from "next/router";
 
 const ApproveFarm = () => {
-  const router = useRouter();
+
   const [approveFarmById, { loading }] = useApproveFarmMutation({
     onCompleted: () => {
       closeModal();
@@ -26,9 +24,6 @@ const ApproveFarm = () => {
   async function handleDelete() {
     approveFarmById({
       variables: { id: modalData as string },
-      onCompleted: () => {
-        router.reload();
-      },
     });
   }
   return (

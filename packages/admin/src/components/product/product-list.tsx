@@ -12,6 +12,7 @@ type IProductList = {
 const ProductList = ({ products, permission }: IProductList) => {
   const router = useRouter();
   const TableTitle: Object[] = [
+    { key: "view", name: "" },
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên sản phẩm" },
     { key: "category", name: "Loại" },
@@ -27,11 +28,21 @@ const ProductList = ({ products, permission }: IProductList) => {
   const renderTableBody = (item: Product) => (
     <tr className="text-center border-b" key={item.id}>
       <td>
-        <Image className="rounded" src={item.image1} width={42} height={42} />
+        {item.isActive ? (
+          <ActionButtons
+            id={item.id}
+            detailsUrl={`http://localhost:3000/products/${item.id}`}
+          />
+        ) : (
+          ""
+        )}
+      </td>
+      <td className="flex justify-center">
+        <img className="rounded w-14 h-14" src={item.image1}  />
       </td>
       <td>{item.name}</td>
-      <td>{item.category.name}</td>
-      <td>{item.farm.name}</td>
+      <td>{item?.category?.name}</td>
+      <td>{item?.farm?.name}</td>
       <td>{`${numberFormatter(item.price, " đ")} / ${numberFormatter(
         item.originalPrice,
         " đ"
@@ -48,7 +59,9 @@ const ProductList = ({ products, permission }: IProductList) => {
         ) : (
           <ActionButtons
             id={item.id}
-            detailsUrl={`http://localhost:3000/products/${item.id}`}
+            approveProductButton={true}
+            isProductActive={item?.isActive}
+            deleteModalView="DELETE_PRODUCT"
           />
         )}
       </td>
@@ -59,7 +72,7 @@ const ProductList = ({ products, permission }: IProductList) => {
     <>
       <div className="rounded overflow-hidden shadow mb-6">
         <Table
-          limit="6"
+          limit="10"
           headData={TableTitle}
           renderHead={renderTableHead}
           bodyData={products}

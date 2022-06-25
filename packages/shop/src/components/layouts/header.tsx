@@ -5,6 +5,7 @@ import { useMeQuery } from "@generated/graphql";
 import { useModalAction } from "@components/modal/modal.context";
 import Dropdown from "@components/ui/dropdown";
 import Button from "@components/ui/button";
+import Image from "next/image";
 // import cn from 'classnames'
 // import useScrollDirection, { SCROLL_DOWN } from "@lib/use-scroll-direction";
 // import usePrefersReducedMotion from "@lib/use-prefers-reduced-motion";
@@ -18,31 +19,7 @@ import Button from "@components/ui/button";
 const Header = () => {
   const { data: meData, loading: meLoading } = useMeQuery();
   const { openModal } = useModalAction();
-  // const [isMounted, setIsMounted] = useState(!isHome);
-  // const scrollDirection = useScrollDirection({ initialDirection: SCROLL_DOWN });
-  // const [scrolledToTop, setScrolledToTop] = useState(true);
-  // const prefersReducedMotion = usePrefersReducedMotion();
 
-  // const handleScroll = () => {
-  //   setScrolledToTop(window.pageYOffset < 50);
-  // };
-
-  // useEffect(() => {
-  //   if (prefersReducedMotion) {
-  //     return;
-  //   }
-
-  //   const timeout = setTimeout(() => {
-  //     setIsMounted(true);
-  //   }, 100);
-
-  //   window.addEventListener('scroll', handleScroll);
-
-  //   return () => {
-  //     clearTimeout(timeout);
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, [isHome]);
 
   let body: any;
 
@@ -61,7 +38,7 @@ const Header = () => {
           </div>
         </div>
         <div className="h-12 w-12 flex justify-center items-center border rounded-full ml-2">
-          <User />
+          {meData?.me?.avatar ? <img className="rounded-full w-12 h-12 bg-contain" src={meData?.me?.avatar} /> : <User />}
         </div>
       </div>
     </Dropdown>

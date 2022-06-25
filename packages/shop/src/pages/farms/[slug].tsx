@@ -4,6 +4,7 @@ import ProductsGrid from "@components/products/grid";
 import { getLayout } from "@components/layouts/site-layout";
 import { useRouter } from "next/router";
 import {
+  FarmDocument,
   useFarmQuery,
   useProductsByFarmQuery,
   useToursByFarmQuery,
@@ -12,6 +13,8 @@ import FarmSidebar from "@components/shops/sidebar";
 import PageLoader from "@components/loader/page-loader";
 import TourList from "@components/tour/tour-list";
 import CartCounterButton from "@components/cart/cart-counter-button";
+import { addApolloState, initializeApollo } from "@lib/apolloClient";
+import { GetServerSidePropsContext } from "next";
 
 const FarmPage = () => {
   const router = useRouter();
@@ -45,11 +48,11 @@ const FarmPage = () => {
 
       <div className="flex w-full flex-col lg:px-4">
         <div className="relative h-full w-full overflow-hidden rounded">
-          <Image
-            src={farmData?.farm?.logoImage ?? productPlaceholder}
-            layout="responsive"
+          <img
+            src={farmData?.farm?.coverImage ?? productPlaceholder}
+            
             width={2340}
-            height={870}
+            height={640}
             className="h-full w-full"
           />
         </div>
@@ -76,3 +79,20 @@ const FarmPage = () => {
 };
 
 export default FarmPage;
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const apolloClient = initializeApollo({ headers: context.req.cookies});
+  const { data } = await apolloClient.query({
+    query: FarmDocument,
+    variables: { slug: context.query.slug },
+  });
+
+  if (!data?.farm) {
+    return {
+      notFound: true,
+    };
+  }
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+};

@@ -1,5 +1,5 @@
-mutation CreateFarm($createFarmInput: CreateFarmInput!, $files: [Upload!]!){
-  createFarm(createFarmInput: $createFarmInput, files: $files){
-  ...farmMutationResponse
+mutation CreateFarm($createFarmInput: CreateFarmInput! $file: Upload!){
+  createFarm(createFarmInput:$createFarmInput file:$file){
+    ...farmMutationResponse
   }
 }

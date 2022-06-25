@@ -1,13 +1,9 @@
 mutation CreateTour(
   $createTourInput: CreateTourInput!
-  $files: [Upload!]!
+  $file: Upload!
   $farmId: ID!
 ) {
-  createTour(
-    createTourInput: $createTourInput
-    files: $files
-    farmId: $farmId
-  ) {
+  createTour(createTourInput: $createTourInput, file: $file, farmId: $farmId) {
     ...tourMutationResponse
   }
 }

@@ -9,7 +9,7 @@ type CardProps = {
   className?: string;
 };
 const ProductCard: React.FC<CardProps> = ({ product, className }) => {
-  const { name, price, priceRoot, unit, image1 } = product ?? {};
+  const { id, name, price, priceRoot, unit, image1 } = product ?? {};
 
   const { openModal } = useModalAction();
 
@@ -28,10 +28,9 @@ const ProductCard: React.FC<CardProps> = ({ product, className }) => {
         onClick={handleProductQuickView}
       >
         <span className="sr-only">{name}</span>
-        <Image
+        <img
           src={image1}
           alt={name}
-          objectFit="cover"
           width={200}
           height={230}
         />

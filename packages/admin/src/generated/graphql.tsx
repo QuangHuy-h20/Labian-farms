@@ -183,8 +183,9 @@ export type Mutation = {
   activeEmail: UserMutationResponse;
   activeUser: Scalars['Boolean'];
   applyTour: TourMutationResponse;
-  approveFarm: Scalars['Boolean'];
-  approveTour: Scalars['Boolean'];
+  approveFarm: FarmMutationResponse;
+  approveProduct: ProductMutationResponse;
+  approveTour: TourMutationResponse;
   banUser: Scalars['Boolean'];
   /** Change user password */
   changePassword: UserMutationResponse;
@@ -207,9 +208,12 @@ export type Mutation = {
   /** Delete product */
   deleteProduct: ProductMutationResponse;
   /** Delete tour */
-  deleteTour: Scalars['Boolean'];
-  disApproveFarm: Scalars['Boolean'];
-  disApproveTour: Scalars['Boolean'];
+  deleteTour: TourMutationResponse;
+  /** Delete user */
+  deleteUser: Scalars['Boolean'];
+  disApproveFarm: FarmMutationResponse;
+  disApproveProduct: ProductMutationResponse;
+  disApproveTour: TourMutationResponse;
   /** Register for farmer */
   farmerRegister: UserMutationResponse;
   /** Forgot password */
@@ -265,6 +269,11 @@ export type MutationApproveFarmArgs = {
 };
 
 
+export type MutationApproveProductArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationApproveTourArgs = {
   id: Scalars['ID'];
 };
@@ -292,14 +301,14 @@ export type MutationCreateCategoryArgs = {
 
 export type MutationCreateFarmArgs = {
   createFarmInput: CreateFarmInput;
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
 };
 
 
 export type MutationCreateProductArgs = {
   createProductInput: CreateProductInput;
   farmId: Scalars['ID'];
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
 };
 
 
@@ -311,7 +320,7 @@ export type MutationCreateRoleArgs = {
 export type MutationCreateTourArgs = {
   createTourInput: CreateTourInput;
   farmId: Scalars['ID'];
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
 };
 
 
@@ -331,11 +340,22 @@ export type MutationDeleteProductArgs = {
 
 
 export type MutationDeleteTourArgs = {
+  farmId: Scalars['ID'];
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteUserArgs = {
   id: Scalars['ID'];
 };
 
 
 export type MutationDisApproveFarmArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDisApproveProductArgs = {
   id: Scalars['ID'];
 };
 
@@ -395,7 +415,7 @@ export type MutationUpdateCoverImageArgs = {
 
 
 export type MutationUpdateFarmArgs = {
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
   updateFarmInput: UpdateFarmInput;
 };
 
@@ -407,7 +427,7 @@ export type MutationUpdateLogoImageArgs = {
 
 
 export type MutationUpdateProductArgs = {
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
   updateProductInput: UpdateProductInput;
 };
 
@@ -418,7 +438,7 @@ export type MutationUpdateProfileArgs = {
 
 
 export type MutationUpdateTourArgs = {
-  files: Array<Scalars['Upload']>;
+  file: Scalars['Upload'];
   updateTourInput: UpdateTourInput;
 };
 
@@ -502,6 +522,7 @@ export type Product = {
   image3?: Maybe<Scalars['String']>;
   image4?: Maybe<Scalars['String']>;
   image5?: Maybe<Scalars['String']>;
+  isActive: Scalars['Boolean'];
   name: Scalars['String'];
   originalPrice: Scalars['Float'];
   price: Scalars['Float'];
@@ -619,7 +640,8 @@ export type QueryProductsByCategoryArgs = {
 
 
 export type QueryProductsByFarmArgs = {
-  farmId: Scalars['ID'];
+  farmId?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -789,9 +811,9 @@ export type UserRole = {
   roleName: Scalars['String'];
 };
 
-export type FarmInfoFragment = { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } };
+export type FarmInfoFragment = { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } };
 
-export type FarmMutationResponseFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+export type FarmMutationResponseFragment = { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type FieldErrorFragment = { __typename?: 'FieldError', field: string, message: string };
 
@@ -803,13 +825,13 @@ export type ProductMutationStatusFragment = { __typename?: 'ProductMutationRespo
 
 export type TourMutationStatusFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null };
 
-export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } };
+export type ProductInfoFragment = { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } };
 
-export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+export type ProductMutationResponseFragment = { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
-export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } };
+export type TourInfoFragment = { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } };
 
-export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
+export type TourMutationResponseFragment = { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null };
 
 export type UserInfoFragment = { __typename?: 'User', id: string, email: string, phone: string, nickname?: string | null, fullName?: string | null, gender?: string | null, address?: string | null, dateOfBirth?: any | null, avatar?: string | null, roleId: string, isActiveEmail: boolean };
 
@@ -835,14 +857,21 @@ export type ApproveFarmMutationVariables = Exact<{
 }>;
 
 
-export type ApproveFarmMutation = { __typename?: 'Mutation', approveFarm: boolean };
+export type ApproveFarmMutation = { __typename?: 'Mutation', approveFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
+export type ApproveProductMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type ApproveProductMutation = { __typename?: 'Mutation', approveProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type ApproveTourMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type ApproveTourMutation = { __typename?: 'Mutation', approveTour: boolean };
+export type ApproveTourMutation = { __typename?: 'Mutation', approveTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type BanUserMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -867,57 +896,65 @@ export type CreateCategoryMutation = { __typename?: 'Mutation', createCategory: 
 
 export type CreateFarmMutationVariables = Exact<{
   createFarmInput: CreateFarmInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+  file: Scalars['Upload'];
 }>;
 
 
-export type CreateFarmMutation = { __typename?: 'Mutation', createFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type CreateFarmMutation = { __typename?: 'Mutation', createFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type CreateProductMutationVariables = Exact<{
   farmId: Scalars['ID'];
   createProductInput: CreateProductInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+  file: Scalars['Upload'];
 }>;
 
 
-export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type CreateProductMutation = { __typename?: 'Mutation', createProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type CreateTourMutationVariables = Exact<{
   createTourInput: CreateTourInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+  file: Scalars['Upload'];
   farmId: Scalars['ID'];
 }>;
 
 
-export type CreateTourMutation = { __typename?: 'Mutation', createTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type CreateTourMutation = { __typename?: 'Mutation', createTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type DeleteProductMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null } };
+export type DeleteProductMutation = { __typename?: 'Mutation', deleteProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type DeleteTourMutationVariables = Exact<{
   id: Scalars['ID'];
+  farmId: Scalars['ID'];
 }>;
 
 
-export type DeleteTourMutation = { __typename?: 'Mutation', deleteTour: boolean };
+export type DeleteTourMutation = { __typename?: 'Mutation', deleteTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type DisApproveFarmMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DisApproveFarmMutation = { __typename?: 'Mutation', disApproveFarm: boolean };
+export type DisApproveFarmMutation = { __typename?: 'Mutation', disApproveFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+
+export type DisApproveProductMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DisApproveProductMutation = { __typename?: 'Mutation', disApproveProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type DisApproveTourMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DisApproveTourMutation = { __typename?: 'Mutation', disApproveTour: boolean };
+export type DisApproveTourMutation = { __typename?: 'Mutation', disApproveTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type RegisterMutationVariables = Exact<{
   registerInput: RegisterInput;
@@ -938,29 +975,37 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
-export type UpdateFarmMutationVariables = Exact<{
-  updateFarmInput: UpdateFarmInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+export type UpdateFarmCoverMutationVariables = Exact<{
+  id: Scalars['ID'];
+  file: Scalars['Upload'];
 }>;
 
 
-export type UpdateFarmMutation = { __typename?: 'Mutation', updateFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type UpdateFarmCoverMutation = { __typename?: 'Mutation', updateCoverImage: boolean };
+
+export type UpdateFarmMutationVariables = Exact<{
+  updateFarmInput: UpdateFarmInput;
+  file: Scalars['Upload'];
+}>;
+
+
+export type UpdateFarmMutation = { __typename?: 'Mutation', updateFarm: { __typename?: 'FarmMutationResponse', code: number, success: boolean, message?: string | null, farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type UpdateProductMutationVariables = Exact<{
   updateProductInput: UpdateProductInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+  file: Scalars['Upload'];
 }>;
 
 
-export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'ProductMutationResponse', code: number, success: boolean, message?: string | null, product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type UpdateTourMutationVariables = Exact<{
   updateTourInput: UpdateTourInput;
-  files: Array<Scalars['Upload']> | Scalars['Upload'];
+  file: Scalars['Upload'];
 }>;
 
 
-export type UpdateTourMutation = { __typename?: 'Mutation', updateTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
+export type UpdateTourMutation = { __typename?: 'Mutation', updateTour: { __typename?: 'TourMutationResponse', code: number, success: boolean, message?: string | null, tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null, errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null } };
 
 export type UpdateProfileMutationVariables = Exact<{
   profileInput: ProfileInput;
@@ -979,19 +1024,19 @@ export type FarmByFarmerQueryVariables = Exact<{
 }>;
 
 
-export type FarmByFarmerQuery = { __typename?: 'Query', farmByFarmer?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
+export type FarmByFarmerQuery = { __typename?: 'Query', farmByFarmer?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
 
 export type FarmQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
 
 
-export type FarmQuery = { __typename?: 'Query', farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
+export type FarmQuery = { __typename?: 'Query', farm?: { __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } } | null };
 
 export type FarmsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FarmsQuery = { __typename?: 'Query', allFarms?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> | null };
+export type FarmsQuery = { __typename?: 'Query', allFarms?: Array<{ __typename?: 'Farm', id: string, name: string, address: string, description: string, slug: string, logoImage?: string | null, coverImage?: string | null, createdAt: any, count?: number | null, isActive: boolean, products?: Array<{ __typename?: 'Product', id: string, name: string }> | null, owner: { __typename?: 'User', phone: string, email: string } }> | null };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1004,26 +1049,27 @@ export type ProductQueryVariables = Exact<{
 }>;
 
 
-export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null };
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } } | null };
 
 export type GetProductsByCategoryQueryVariables = Exact<{
   categoryId: Scalars['ID'];
 }>;
 
 
-export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type GetProductsByCategoryQuery = { __typename?: 'Query', productsByCategory?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type ProductsByFarmQueryVariables = Exact<{
-  farmId: Scalars['ID'];
+  farmId?: InputMaybe<Scalars['ID']>;
+  slug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type ProductsByFarmQuery = { __typename?: 'Query', productsByFarm?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type ProductsByFarmQuery = { __typename?: 'Query', productsByFarm?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type ProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', allProducts?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
+export type ProductsQuery = { __typename?: 'Query', allProducts?: Array<{ __typename?: 'Product', id: string, name: string, unAccentName: string, description: string, price: number, originalPrice: number, categoryId: string, farmId: number, image1?: string | null, unit: string, slug: string, stock: number, isActive: boolean, category: { __typename?: 'Category', id: string, name: string }, farm: { __typename?: 'Farm', id: string, name: string } }> | null };
 
 export type TourQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -1031,7 +1077,7 @@ export type TourQueryVariables = Exact<{
 }>;
 
 
-export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } } | null };
+export type TourQuery = { __typename?: 'Query', tour?: { __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } } | null };
 
 export type ToursByFarmQueryVariables = Exact<{
   farmId?: InputMaybe<Scalars['ID']>;
@@ -1039,12 +1085,12 @@ export type ToursByFarmQueryVariables = Exact<{
 }>;
 
 
-export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
+export type ToursByFarmQuery = { __typename?: 'Query', toursByFarm?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
 
 export type ToursQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
+export type ToursQuery = { __typename?: 'Query', tours?: Array<{ __typename?: 'Tour', id: string, slug: string, createdAt: any, name: string, description: string, startDate?: any | null, endDate?: any | null, status: string, slot: number, numberOfVisitor: number, isActive: boolean, image1?: string | null, farmId: number, customerAppliedTour?: Array<{ __typename?: 'User', email: string, phone: string }> | null, farm: { __typename?: 'Farm', name: string, address: string } }> | null };
 
 export type UserQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1073,6 +1119,7 @@ export const FarmInfoFragmentDoc = gql`
   description
   slug
   logoImage
+  coverImage
   createdAt
   count
   isActive
@@ -1126,6 +1173,7 @@ export const ProductInfoFragmentDoc = gql`
   unit
   slug
   stock
+  isActive
   category {
     id
     name
@@ -1168,6 +1216,10 @@ export const TourInfoFragmentDoc = gql`
   status
   slot
   numberOfVisitor
+  customerAppliedTour {
+    email
+    phone
+  }
   isActive
   image1
   farmId
@@ -1292,9 +1344,11 @@ export type ActiveUserMutationResult = Apollo.MutationResult<ActiveUserMutation>
 export type ActiveUserMutationOptions = Apollo.BaseMutationOptions<ActiveUserMutation, ActiveUserMutationVariables>;
 export const ApproveFarmDocument = gql`
     mutation ApproveFarm($id: ID!) {
-  approveFarm(id: $id)
+  approveFarm(id: $id) {
+    ...farmMutationResponse
+  }
 }
-    `;
+    ${FarmMutationResponseFragmentDoc}`;
 export type ApproveFarmMutationFn = Apollo.MutationFunction<ApproveFarmMutation, ApproveFarmMutationVariables>;
 
 /**
@@ -1321,11 +1375,46 @@ export function useApproveFarmMutation(baseOptions?: Apollo.MutationHookOptions<
 export type ApproveFarmMutationHookResult = ReturnType<typeof useApproveFarmMutation>;
 export type ApproveFarmMutationResult = Apollo.MutationResult<ApproveFarmMutation>;
 export type ApproveFarmMutationOptions = Apollo.BaseMutationOptions<ApproveFarmMutation, ApproveFarmMutationVariables>;
+export const ApproveProductDocument = gql`
+    mutation ApproveProduct($id: ID!) {
+  approveProduct(id: $id) {
+    ...productMutationResponse
+  }
+}
+    ${ProductMutationResponseFragmentDoc}`;
+export type ApproveProductMutationFn = Apollo.MutationFunction<ApproveProductMutation, ApproveProductMutationVariables>;
+
+/**
+ * __useApproveProductMutation__
+ *
+ * To run a mutation, you first call `useApproveProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveProductMutation, { data, loading, error }] = useApproveProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApproveProductMutation(baseOptions?: Apollo.MutationHookOptions<ApproveProductMutation, ApproveProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ApproveProductMutation, ApproveProductMutationVariables>(ApproveProductDocument, options);
+      }
+export type ApproveProductMutationHookResult = ReturnType<typeof useApproveProductMutation>;
+export type ApproveProductMutationResult = Apollo.MutationResult<ApproveProductMutation>;
+export type ApproveProductMutationOptions = Apollo.BaseMutationOptions<ApproveProductMutation, ApproveProductMutationVariables>;
 export const ApproveTourDocument = gql`
     mutation ApproveTour($id: ID!) {
-  approveTour(id: $id)
+  approveTour(id: $id) {
+    ...tourMutationResponse
+  }
 }
-    `;
+    ${TourMutationResponseFragmentDoc}`;
 export type ApproveTourMutationFn = Apollo.MutationFunction<ApproveTourMutation, ApproveTourMutationVariables>;
 
 /**
@@ -1450,8 +1539,8 @@ export type CreateCategoryMutationHookResult = ReturnType<typeof useCreateCatego
 export type CreateCategoryMutationResult = Apollo.MutationResult<CreateCategoryMutation>;
 export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<CreateCategoryMutation, CreateCategoryMutationVariables>;
 export const CreateFarmDocument = gql`
-    mutation CreateFarm($createFarmInput: CreateFarmInput!, $files: [Upload!]!) {
-  createFarm(createFarmInput: $createFarmInput, files: $files) {
+    mutation CreateFarm($createFarmInput: CreateFarmInput!, $file: Upload!) {
+  createFarm(createFarmInput: $createFarmInput, file: $file) {
     ...farmMutationResponse
   }
 }
@@ -1472,7 +1561,7 @@ export type CreateFarmMutationFn = Apollo.MutationFunction<CreateFarmMutation, C
  * const [createFarmMutation, { data, loading, error }] = useCreateFarmMutation({
  *   variables: {
  *      createFarmInput: // value for 'createFarmInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -1484,8 +1573,8 @@ export type CreateFarmMutationHookResult = ReturnType<typeof useCreateFarmMutati
 export type CreateFarmMutationResult = Apollo.MutationResult<CreateFarmMutation>;
 export type CreateFarmMutationOptions = Apollo.BaseMutationOptions<CreateFarmMutation, CreateFarmMutationVariables>;
 export const CreateProductDocument = gql`
-    mutation CreateProduct($farmId: ID!, $createProductInput: CreateProductInput!, $files: [Upload!]!) {
-  createProduct(files: $files, createProductInput: $createProductInput, farmId: $farmId) {
+    mutation CreateProduct($farmId: ID!, $createProductInput: CreateProductInput!, $file: Upload!) {
+  createProduct(file: $file, createProductInput: $createProductInput, farmId: $farmId) {
     ...productMutationResponse
   }
 }
@@ -1507,7 +1596,7 @@ export type CreateProductMutationFn = Apollo.MutationFunction<CreateProductMutat
  *   variables: {
  *      farmId: // value for 'farmId'
  *      createProductInput: // value for 'createProductInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -1519,8 +1608,8 @@ export type CreateProductMutationHookResult = ReturnType<typeof useCreateProduct
 export type CreateProductMutationResult = Apollo.MutationResult<CreateProductMutation>;
 export type CreateProductMutationOptions = Apollo.BaseMutationOptions<CreateProductMutation, CreateProductMutationVariables>;
 export const CreateTourDocument = gql`
-    mutation CreateTour($createTourInput: CreateTourInput!, $files: [Upload!]!, $farmId: ID!) {
-  createTour(createTourInput: $createTourInput, files: $files, farmId: $farmId) {
+    mutation CreateTour($createTourInput: CreateTourInput!, $file: Upload!, $farmId: ID!) {
+  createTour(createTourInput: $createTourInput, file: $file, farmId: $farmId) {
     ...tourMutationResponse
   }
 }
@@ -1541,7 +1630,7 @@ export type CreateTourMutationFn = Apollo.MutationFunction<CreateTourMutation, C
  * const [createTourMutation, { data, loading, error }] = useCreateTourMutation({
  *   variables: {
  *      createTourInput: // value for 'createTourInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *      farmId: // value for 'farmId'
  *   },
  * });
@@ -1556,10 +1645,10 @@ export type CreateTourMutationOptions = Apollo.BaseMutationOptions<CreateTourMut
 export const DeleteProductDocument = gql`
     mutation DeleteProduct($id: ID!) {
   deleteProduct(id: $id) {
-    ...productMutationStatus
+    ...productMutationResponse
   }
 }
-    ${ProductMutationStatusFragmentDoc}`;
+    ${ProductMutationResponseFragmentDoc}`;
 export type DeleteProductMutationFn = Apollo.MutationFunction<DeleteProductMutation, DeleteProductMutationVariables>;
 
 /**
@@ -1587,10 +1676,12 @@ export type DeleteProductMutationHookResult = ReturnType<typeof useDeleteProduct
 export type DeleteProductMutationResult = Apollo.MutationResult<DeleteProductMutation>;
 export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<DeleteProductMutation, DeleteProductMutationVariables>;
 export const DeleteTourDocument = gql`
-    mutation DeleteTour($id: ID!) {
-  deleteTour(id: $id)
+    mutation DeleteTour($id: ID!, $farmId: ID!) {
+  deleteTour(id: $id, farmId: $farmId) {
+    ...tourMutationResponse
+  }
 }
-    `;
+    ${TourMutationResponseFragmentDoc}`;
 export type DeleteTourMutationFn = Apollo.MutationFunction<DeleteTourMutation, DeleteTourMutationVariables>;
 
 /**
@@ -1607,6 +1698,7 @@ export type DeleteTourMutationFn = Apollo.MutationFunction<DeleteTourMutation, D
  * const [deleteTourMutation, { data, loading, error }] = useDeleteTourMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      farmId: // value for 'farmId'
  *   },
  * });
  */
@@ -1619,9 +1711,11 @@ export type DeleteTourMutationResult = Apollo.MutationResult<DeleteTourMutation>
 export type DeleteTourMutationOptions = Apollo.BaseMutationOptions<DeleteTourMutation, DeleteTourMutationVariables>;
 export const DisApproveFarmDocument = gql`
     mutation DisApproveFarm($id: ID!) {
-  disApproveFarm(id: $id)
+  disApproveFarm(id: $id) {
+    ...farmMutationResponse
+  }
 }
-    `;
+    ${FarmMutationResponseFragmentDoc}`;
 export type DisApproveFarmMutationFn = Apollo.MutationFunction<DisApproveFarmMutation, DisApproveFarmMutationVariables>;
 
 /**
@@ -1648,11 +1742,46 @@ export function useDisApproveFarmMutation(baseOptions?: Apollo.MutationHookOptio
 export type DisApproveFarmMutationHookResult = ReturnType<typeof useDisApproveFarmMutation>;
 export type DisApproveFarmMutationResult = Apollo.MutationResult<DisApproveFarmMutation>;
 export type DisApproveFarmMutationOptions = Apollo.BaseMutationOptions<DisApproveFarmMutation, DisApproveFarmMutationVariables>;
+export const DisApproveProductDocument = gql`
+    mutation DisApproveProduct($id: ID!) {
+  disApproveProduct(id: $id) {
+    ...productMutationResponse
+  }
+}
+    ${ProductMutationResponseFragmentDoc}`;
+export type DisApproveProductMutationFn = Apollo.MutationFunction<DisApproveProductMutation, DisApproveProductMutationVariables>;
+
+/**
+ * __useDisApproveProductMutation__
+ *
+ * To run a mutation, you first call `useDisApproveProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisApproveProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disApproveProductMutation, { data, loading, error }] = useDisApproveProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDisApproveProductMutation(baseOptions?: Apollo.MutationHookOptions<DisApproveProductMutation, DisApproveProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DisApproveProductMutation, DisApproveProductMutationVariables>(DisApproveProductDocument, options);
+      }
+export type DisApproveProductMutationHookResult = ReturnType<typeof useDisApproveProductMutation>;
+export type DisApproveProductMutationResult = Apollo.MutationResult<DisApproveProductMutation>;
+export type DisApproveProductMutationOptions = Apollo.BaseMutationOptions<DisApproveProductMutation, DisApproveProductMutationVariables>;
 export const DisApproveTourDocument = gql`
     mutation DisApproveTour($id: ID!) {
-  disApproveTour(id: $id)
+  disApproveTour(id: $id) {
+    ...tourMutationResponse
+  }
 }
-    `;
+    ${TourMutationResponseFragmentDoc}`;
 export type DisApproveTourMutationFn = Apollo.MutationFunction<DisApproveTourMutation, DisApproveTourMutationVariables>;
 
 /**
@@ -1775,9 +1904,41 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const UpdateFarmCoverDocument = gql`
+    mutation UpdateFarmCover($id: ID!, $file: Upload!) {
+  updateCoverImage(id: $id, file: $file)
+}
+    `;
+export type UpdateFarmCoverMutationFn = Apollo.MutationFunction<UpdateFarmCoverMutation, UpdateFarmCoverMutationVariables>;
+
+/**
+ * __useUpdateFarmCoverMutation__
+ *
+ * To run a mutation, you first call `useUpdateFarmCoverMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFarmCoverMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFarmCoverMutation, { data, loading, error }] = useUpdateFarmCoverMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUpdateFarmCoverMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFarmCoverMutation, UpdateFarmCoverMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFarmCoverMutation, UpdateFarmCoverMutationVariables>(UpdateFarmCoverDocument, options);
+      }
+export type UpdateFarmCoverMutationHookResult = ReturnType<typeof useUpdateFarmCoverMutation>;
+export type UpdateFarmCoverMutationResult = Apollo.MutationResult<UpdateFarmCoverMutation>;
+export type UpdateFarmCoverMutationOptions = Apollo.BaseMutationOptions<UpdateFarmCoverMutation, UpdateFarmCoverMutationVariables>;
 export const UpdateFarmDocument = gql`
-    mutation UpdateFarm($updateFarmInput: UpdateFarmInput!, $files: [Upload!]!) {
-  updateFarm(updateFarmInput: $updateFarmInput, files: $files) {
+    mutation UpdateFarm($updateFarmInput: UpdateFarmInput!, $file: Upload!) {
+  updateFarm(updateFarmInput: $updateFarmInput, file: $file) {
     ...farmMutationResponse
   }
 }
@@ -1798,7 +1959,7 @@ export type UpdateFarmMutationFn = Apollo.MutationFunction<UpdateFarmMutation, U
  * const [updateFarmMutation, { data, loading, error }] = useUpdateFarmMutation({
  *   variables: {
  *      updateFarmInput: // value for 'updateFarmInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -1810,8 +1971,8 @@ export type UpdateFarmMutationHookResult = ReturnType<typeof useUpdateFarmMutati
 export type UpdateFarmMutationResult = Apollo.MutationResult<UpdateFarmMutation>;
 export type UpdateFarmMutationOptions = Apollo.BaseMutationOptions<UpdateFarmMutation, UpdateFarmMutationVariables>;
 export const UpdateProductDocument = gql`
-    mutation UpdateProduct($updateProductInput: UpdateProductInput!, $files: [Upload!]!) {
-  updateProduct(updateProductInput: $updateProductInput, files: $files) {
+    mutation UpdateProduct($updateProductInput: UpdateProductInput!, $file: Upload!) {
+  updateProduct(updateProductInput: $updateProductInput, file: $file) {
     ...productMutationResponse
   }
 }
@@ -1832,7 +1993,7 @@ export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutat
  * const [updateProductMutation, { data, loading, error }] = useUpdateProductMutation({
  *   variables: {
  *      updateProductInput: // value for 'updateProductInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -1844,8 +2005,8 @@ export type UpdateProductMutationHookResult = ReturnType<typeof useUpdateProduct
 export type UpdateProductMutationResult = Apollo.MutationResult<UpdateProductMutation>;
 export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<UpdateProductMutation, UpdateProductMutationVariables>;
 export const UpdateTourDocument = gql`
-    mutation UpdateTour($updateTourInput: UpdateTourInput!, $files: [Upload!]!) {
-  updateTour(updateTourInput: $updateTourInput, files: $files) {
+    mutation UpdateTour($updateTourInput: UpdateTourInput!, $file: Upload!) {
+  updateTour(updateTourInput: $updateTourInput, file: $file) {
     ...tourMutationResponse
   }
 }
@@ -1866,7 +2027,7 @@ export type UpdateTourMutationFn = Apollo.MutationFunction<UpdateTourMutation, U
  * const [updateTourMutation, { data, loading, error }] = useUpdateTourMutation({
  *   variables: {
  *      updateTourInput: // value for 'updateTourInput'
- *      files: // value for 'files'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -2155,8 +2316,8 @@ export type GetProductsByCategoryQueryHookResult = ReturnType<typeof useGetProdu
 export type GetProductsByCategoryLazyQueryHookResult = ReturnType<typeof useGetProductsByCategoryLazyQuery>;
 export type GetProductsByCategoryQueryResult = Apollo.QueryResult<GetProductsByCategoryQuery, GetProductsByCategoryQueryVariables>;
 export const ProductsByFarmDocument = gql`
-    query ProductsByFarm($farmId: ID!) {
-  productsByFarm(farmId: $farmId) {
+    query ProductsByFarm($farmId: ID, $slug: String) {
+  productsByFarm(farmId: $farmId, slug: $slug) {
     ...productInfo
   }
 }
@@ -2175,10 +2336,11 @@ export const ProductsByFarmDocument = gql`
  * const { data, loading, error } = useProductsByFarmQuery({
  *   variables: {
  *      farmId: // value for 'farmId'
+ *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useProductsByFarmQuery(baseOptions: Apollo.QueryHookOptions<ProductsByFarmQuery, ProductsByFarmQueryVariables>) {
+export function useProductsByFarmQuery(baseOptions?: Apollo.QueryHookOptions<ProductsByFarmQuery, ProductsByFarmQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<ProductsByFarmQuery, ProductsByFarmQueryVariables>(ProductsByFarmDocument, options);
       }

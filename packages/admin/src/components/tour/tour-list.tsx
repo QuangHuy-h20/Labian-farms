@@ -1,5 +1,6 @@
 import ActionButtons from "@components/common/action-buttons";
 import ErrorMessage from "@components/ui/error-message";
+import { useModalAction } from "@components/ui/modal/modal.context";
 import PageLoader from "@components/ui/page-loader";
 import Table from "@components/ui/table";
 import { Tour, useToursByFarmQuery } from "@generated/graphql";
@@ -15,7 +16,6 @@ type ITourList = {
 
 const TourList = ({ tours, farmId, permission }: ITourList) => {
   const router = useRouter();
-
   const { data, loading, error } = useToursByFarmQuery({
     variables: { farmId },
   });
@@ -24,12 +24,14 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
   if (error) return <ErrorMessage message={error.message} />;
 
   const TableTitle: Object[] = [
+    { key: "view", name: "" },
     { key: "image", name: "Hình ảnh" },
     { key: "name", name: "Tên tour" },
-    { key: "address", name: "Địu chỉ" },
-    { key: "slot", name: "Số lượng tham gia tối đa" },
-    { key: "startDate", name: "Ngày bắt đầu" },
-    { key: "endDate", name: "Ngày kết thúc" },
+    { key: "address", name: "Địa chỉ" },
+    { key: "numberOfVisitor", name: "Số nguời đăng ký" },
+    // { key: "slot", name: "Giới hạn" },
+    { key: "date", name: "Ngày bắt đầu/Kết thúc" },
+    // { key: "endDate", name: "Ngày kết thúc" },
     { key: "action", name: "Thao tác" },
   ];
 
@@ -38,29 +40,44 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
   const renderTableBody = (item: Tour) => (
     <tr className="text-center border-b" key={item?.id!}>
       <td>
-        <Image
-          className="rounded"
+        {item.isActive ? (
+          <ActionButtons
+            id={item?.id}
+            isTourActive={item?.isActive}
+            detailsUrl={`localhost:3000/tours/${item?.slug}`}
+          />
+        ) : (
+          ""
+        )}
+      </td>
+      <td className="flex justify-center">
+        <img
+          className="rounded w-12 h-12"
           src={item?.image1! ?? siteSettings.product.placeholder}
-          width={42}
-          height={42}
+
         />
       </td>
       <td>{item?.name}</td>
       <td>{item?.farm?.address}</td>
-      <td>{item?.slot}</td>
-      <td>{new Date(item?.startDate).toLocaleDateString("vi-VN")}</td>
-      <td>{new Date(item?.endDate).toLocaleDateString("vi-VN")}</td>
+      <td>
+        <ActionButtons id={item?.id}
+          listUserApprove={item?.customerAppliedTour ?? []}
+          content={`${item?.customerAppliedTour?.length ?? 0} / ${item?.slot}`} />
+      </td>
+      <td>{new Date(item?.startDate).toLocaleDateString("vi-VN")} - {new Date(item?.endDate).toLocaleDateString("vi-VN")}</td>
       <td>
         {permission ? (
           <ActionButtons
             id={item?.id}
+            farmId={item.farmId.toString()}
             approveTourButton={true}
-            detailsUrl={`localhost:3000/tours/${item?.slug}`}
+            deleteModalView="DELETE_TOUR"
             isTourActive={item?.isActive}
           />
         ) : (
           <ActionButtons
             id={item.id}
+            farmId={item.farmId.toString()}
             editUrl={`${router.asPath}/${item.id}/edit`}
             deleteModalView="DELETE_TOUR"
           />
@@ -76,7 +93,7 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
           limit="6"
           headData={TableTitle}
           renderHead={renderTableHead}
-          bodyData={data?.toursByFarm! ?? tours}
+          bodyData={tours ?? data?.toursByFarm!}
           renderBody={renderTableBody}
         />
       </div>

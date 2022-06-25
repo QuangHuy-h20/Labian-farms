@@ -1,0 +1,3 @@
+mutation UpdateFarmCover($id: ID!, $file: Upload!) {
+  updateCoverImage(id: $id, file: $file)
+}

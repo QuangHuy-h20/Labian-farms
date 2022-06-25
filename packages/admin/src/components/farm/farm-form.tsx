@@ -6,7 +6,7 @@ import TextArea from "@components/ui/text-area";
 import {
   UpdateFarmInput,
   useCreateFarmMutation,
-  useUpdateFarmMutation
+  useUpdateFarmMutation,
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ROUTES } from "@utils/routes";
@@ -17,8 +17,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 // import { farmValidationSchema } from "./farm-validation-schema";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-
-
 
 const schema: yup.SchemaOf<UpdateFarmInput> = yup.object().shape({
   name: yup.string().required("Trường dữ liệu bắt buộc.").default(""),
@@ -31,7 +29,7 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
   const [createFarm, { loading: creating }] = useCreateFarmMutation({
     onCompleted: (data) => {
       if (data.createFarm.success) {
-        toast.success(data.createFarm.message)
+        toast.success(data.createFarm.message);
         router.push(ROUTES.DASHBOARD);
       } else toast.error(data.createFarm.message);
     },
@@ -53,11 +51,11 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
     shouldUnregister: true,
     ...(initialValues
       ? {
-          defaultValues: {
-            ...initialValues,
-            logoImage: initialValues.logoImage,
-          },
-        }
+        defaultValues: {
+          ...initialValues,
+          logoImage: initialValues.logoImage,
+        },
+      }
       : {}),
     resolver: yupResolver(schema),
   });
@@ -88,14 +86,17 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
       updateFarm({
         variables: {
           updateFarmInput: { ...values },
-          files: fileToUpload,
+          file: fileToUpload,
+        },
+        onCompleted() {
+          router.push(`/${router.query.farm}`);
         },
       });
     } else {
       createFarm({
         variables: {
           createFarmInput: { ...values },
-          files: fileToUpload,
+          file: fileToUpload,
         },
       });
     }

@@ -1,3 +1,5 @@
 mutation DisApproveFarm($id: ID!) {
-  disApproveFarm(id: $id)
+  disApproveFarm(id: $id){
+    ...farmMutationResponse
+  }
 }

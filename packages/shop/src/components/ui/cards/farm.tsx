@@ -6,16 +6,15 @@ import isEmpty from "lodash/isEmpty";
 import { productPlaceholder } from "@lib/placeholders";
 
 
-const FarmCard = ({farm}) => {
+const FarmCard = ({ farm }) => {
   return (
     <Link href={`${ROUTES.FARMS}/${farm.slug}`}>
       <div className="flex items-center p-5 border border-gray-200 rounded cursor-pointer relative">
         <div className="w-16 h-16 mr-2 relative flex shrink-0 items-center justify-center bg-gray-300 rounded-full overflow-hidden">
-          <Image
+          <img
             alt="Ảnh logo"
-            src={farm.logoImage ?? productPlaceholder}
-            layout="fill"
-            objectFit="cover"
+            src={farm?.logoImage ?? productPlaceholder}
+            className="w-full h-full object-cover bg-contain"
           />
         </div>
 

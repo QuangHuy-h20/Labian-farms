@@ -25,7 +25,7 @@ const Avatar: React.FC<AvatarProps> = ({
       )}
       {...rest}
     >
-      <Image alt={alt} src={src} layout="fill" priority={true} />
+      <img alt={alt} src={src} />
     </div>
   );
 };

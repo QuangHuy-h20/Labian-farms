@@ -15,14 +15,13 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
   return (
     <div className="flex p-3 justify-between w-full bg-white border my-4 border-gray-300 rounded-md">
       <Link className="flex flex-grow" href={`/tours/${tour.slug}`}>
-        <Image
+        <img
           className="rounded-md"
           src={tour.image1 ?? siteSettings.product.placeholder}
           width={320}
           height={200}
-          objectFit="cover"
         />
-        <div className="flex flex-col ml-3">
+        <div className="flex flex-col ml-3 max-w-[640px]">
           <h1 className="text-emerald-500 font-semibold text-xl mb-3">
             {tour.name}
           </h1>
@@ -30,7 +29,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour }) => {
             {tour.farm.address}
           </h3>
           <p className="text-gray-400 mb-4 line-clamp-3">{tour.description}</p>
-          
+
         </div>
       </Link>
       <div className="flex flex-col justify-between">

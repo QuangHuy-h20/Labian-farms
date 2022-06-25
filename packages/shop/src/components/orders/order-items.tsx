@@ -20,11 +20,11 @@ const OrderItemList = (_: any, record: any) => {
   return (
     <div className="flex items-center">
       <div className="w-16 h-16 flex shrink-0 rounded overflow-hidden relative">
-        <Image
+        <img
           src={record.image?.thumbnail ?? productPlaceholder}
           alt={name}
           className="w-full h-full object-cover"
-          layout="fill"
+          
         />
       </div>
 

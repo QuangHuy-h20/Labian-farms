@@ -11,6 +11,7 @@ fragment productInfo on Product {
   unit
   slug
   stock
+  isActive
   category {
     id
     name

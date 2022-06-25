@@ -40,11 +40,10 @@ export const ThumbsCarousel: React.FC<Props> = ({ gallery }) => {
 							key={`banner-gallery-${item.id}`}
 							className="flex items-center justify-center selection:bg-transparent"
 						>
-							<Image
+							<img
 								src={item?.thumbnail}
 								alt={`Banner gallery ${item.id}`}
-								width={300}
-								height={140}
+								className="w-80 h-48"
 							/>
 						</SwiperSlide>
 					))}

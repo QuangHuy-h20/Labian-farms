@@ -21,11 +21,11 @@ const FarmList = ({ farms }) => {
   const renderTableBody = (item: Farm) => (
     <tr className="text-center border-b" key={item.id}>
       <td>
-        <Image
-          className="rounded"
+        <img
+          className="rounded w-13 h-13"
           src={item.logoImage}
-          width={42}
-          height={42}
+          // width={42}
+          // height={42}
         />
       </td>
       <td>{item.name}</td>

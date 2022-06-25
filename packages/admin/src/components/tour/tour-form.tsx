@@ -18,6 +18,7 @@ import {
   Tour,
   ToursQuery,
   ToursDocument,
+  TourStatus,
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getErrorMessage } from "@utils/form-error";
@@ -63,8 +64,11 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fileToUpload, setFileToUpload] = useState<File>([] as any);
+
+  const { id, image1, startDate, endDate, status } = initialValues ?? {}
+
   const [imageSrc, setImageSrc] = useState(
-    initialValues ? initialValues.image1 : ""
+    image1 ?? ""
   );
   const {
     query: { farm },
@@ -109,7 +113,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
   const [updateTour, { loading: updating }] = useUpdateTourMutation({
     onCompleted: () => {
       toast.success("Cập nhật tour thành công");
-      router.push(ROUTES.TOURS);
+      router.back();
     },
     onError: (error) => {
       const serverErrors = getErrorMessage(error);
@@ -152,11 +156,13 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
   ) => {
     const inputValues = getTourInputValues(values, initialValues);
 
+    console.log(inputValues);
+
     if (initialValues) {
       updateTour({
         variables: {
-          updateTourInput: { ...inputValues, id: initialValues.id },
-          files: fileToUpload,
+          updateTourInput: { ...inputValues, id },
+          file: fileToUpload,
         },
       });
     } else {
@@ -164,7 +170,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
         variables: {
           farmId,
           createTourInput: inputValues,
-          files: fileToUpload,
+          file: fileToUpload,
         },
         update(cache, { data }) {
           cache.modify({
@@ -276,8 +282,8 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
               <Label>Ngày bắt đầu</Label>
               <Controller
                 defaultValue={
-                  initialValues?.startDate
-                    ? new Date(initialValues?.startDate).toISOString()
+                  startDate
+                    ? new Date(startDate)
                     : ""
                 }
                 control={control}
@@ -291,8 +297,8 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                     <DatePicker
                       dateFormat="dd/MM/yyyy"
                       placeholderText={
-                        initialValues?.startDate
-                          ? formatDate(initialValues?.startDate)
+                        startDate
+                          ? formatDate(startDate)
                           : "Nhập ngày bắt đầu tour"
                       }
                       onChange={(date) => onChange(date)}
@@ -301,7 +307,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      selected={value as any}
+                      selected={startDate ? new Date(value) : value as any}
                       className="border border-border-base"
                     />
                     <p className="text-left text-sm text-red-500 mt-1">
@@ -310,13 +316,9 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                   </>
                 )}
               />
-              <Label>Ngày kết thúc</Label>
+              <Label className="mt-4">Ngày kết thúc</Label>
               <Controller
-                defaultValue={
-                  initialValues?.endDate
-                    ? new Date(initialValues?.endDate).toISOString()
-                    : ""
-                }
+                defaultValue={endDate ? new Date(endDate) : ""}
                 control={control}
                 name="endDate"
                 rules={{ required: true }}
@@ -328,8 +330,8 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                     <DatePicker
                       dateFormat="dd/MM/yyyy"
                       placeholderText={
-                        initialValues?.endDate
-                          ? formatDate(initialValues?.endDate)
+                        endDate
+                          ? formatDate(endDate)
                           : "Nhập ngày kết thúc tour"
                       }
                       onChange={(date) => onChange(date)}
@@ -338,7 +340,7 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      selected={value as any}
+                      selected={endDate ? new Date(value) : value as any}
                       className="border border-border-base"
                     />
                     <p className="text-left text-sm text-red-500 mt-1">
@@ -347,7 +349,8 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                   </>
                 )}
               />
-              <Label>Trạng thái</Label>
+              <Label className="mt-4">
+                Trạng thái</Label>
               <Controller
                 name="status"
                 control={control}
@@ -355,21 +358,21 @@ export default function CreateOrUpdateTourForm({ initialValues }: any) {
                   <div className="w-1/3 mb-4 flex items-center justify-between">
                     <Radio
                       {...register("status")}
-                      defaultChecked={!!t.Closed}
+                      defaultChecked={!!(status === 'closed')}
                       id="closed"
                       type="radio"
                       disabled={initialValues ? false : true}
                       label={"Đóng tour"}
-                      value="CLOSED"
+                      value={t.Closed}
                     />
 
                     <Radio
                       {...register("status")}
-                      defaultChecked={!!t.Open}
+                      defaultChecked={status ? !!(status === "open") : true}
                       label={"Mở tour"}
                       id="open"
                       type="radio"
-                      value="OPEN"
+                      value={t.Open}
                     />
                   </div>
                 )}

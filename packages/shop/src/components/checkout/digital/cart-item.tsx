@@ -19,10 +19,9 @@ const CartItem = ({ item, notAvailable }: Props) => {
       key={item.id}
     >
       <div className="w-[42px] h-[42px] flex-shrink-0 bg-gray-100">
-        <Image
+        <img
           src={item?.image ?? productPlaceholder}
           alt={item.name}
-          layout="responsive"
           width={42}
           height={42}
           className="product-image rounded-md"

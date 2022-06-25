@@ -1,10 +1,9 @@
-import { Reference } from "@apollo/client";
 import ConfirmationCard from "@components/common/confirmation-card";
 import {
   useModalAction,
-  useModalState,
+  useModalState
 } from "@components/ui/modal/modal.context";
-import { Tour, useDeleteTourMutation } from "@generated/graphql";
+import { useDeleteTourMutation } from "@generated/graphql";
 import { getErrorMessage } from "@utils/form-error";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -19,7 +18,10 @@ const TourDeleteView = () => {
   async function handleDelete() {
     try {
       await deleteTour({
-        variables: { id: modalData.id as string },
+        variables: {
+          id: modalData.id as string,
+          farmId: modalData.farmId as string,
+        },
         update(cache, { data }) {
           if (data?.deleteTour!) {
             cache.modify({
@@ -37,9 +39,13 @@ const TourDeleteView = () => {
             });
           }
         },
-        onCompleted: () => {
-          toast.success("Xoá tour thành công");
-          router.reload();
+        onCompleted: (data) => {
+          if (data.deleteTour.success) {
+            toast.success("Xoá tour thành công");
+            router.reload();
+          } else {
+            toast.error(data.deleteTour.message);
+          }
         },
         onError: (error) => {
           toast.error(`${error}`);

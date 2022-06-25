@@ -27,7 +27,7 @@ const Modal = () => {
       {name === "RESET_PASSWORD" && <ResetPassword />}
       {name === "UPLOAD_AVATAR" && <UploadAvatar />}
       {name === "PRODUCT_DETAILS" && (
-        <ProductDetailsModalView productId={data} />
+        <ProductDetailsModalView productId={data.id} />
       )}
       {name === "FARM_INFO" && (
         <FarmInfoCard
