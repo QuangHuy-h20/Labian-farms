@@ -1,17 +1,16 @@
+import { useModalAction } from "@components/modal/modal.context";
 import { AddToCart } from "@components/products/add-to-cart/add-to-cart";
 import BackButton from "@components/ui/back-button";
-import { useModalAction } from "@components/modal/modal.context";
 import Truncate from "@components/ui/truncate";
+import { productPlaceholder } from "@lib/placeholders";
 import { ROUTES } from "@lib/routes";
 import { stickyShortDetailsAtom } from "@store/sticky-short-details-atom";
+import { calDiscount, moneyFormatter } from "@utils/helper";
 import classNames from "classnames";
 import { useAtom } from "jotai";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { Element, scroller } from "react-scroll";
 import { Waypoint } from "react-waypoint";
-import { calDiscount, moneyFormatter } from "@utils/helper";
-import { productPlaceholder } from "@lib/placeholders";
 
 type Props = {
   product: any;
@@ -77,9 +76,9 @@ const Details: React.FC<Props> = ({
           <div className="h-full product-gallery">
             <img
               src={product?.image1 ?? productPlaceholder}
-              className="object-cover bg-contain"
-              width={200}
-              height={250}
+              className="object-cover bg-contain w-full h-full"
+              // width={200}
+              // height={250}
             />
           </div>
         </div>

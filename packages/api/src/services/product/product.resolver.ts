@@ -138,6 +138,12 @@ export class ProductResolver {
     try {
       if (farmId) return await Product.find({ farmId });
       else return await Product.find({ slug });
+
+      // const farm = await Farm.findOne({id: farmId})
+
+      // if(farm?.isActive){
+      //   return null
+      // }
     } catch (error) {
       return null;
     }

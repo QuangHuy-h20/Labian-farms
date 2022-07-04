@@ -1,10 +1,7 @@
-import { Image } from "@components/ui/image";
 import cn from "classnames";
-import usePrice from "@lib/use-price";
 import { AddToCart } from "@components/products/add-to-cart/add-to-cart";
 import { useModalAction } from "@components/modal/modal.context";
 import { productPlaceholder } from "@lib/placeholders";
-import { PlusIcon } from "@components/icons/plus-icon";
 import { Product } from "@generated/graphql";
 import { moneyFormatter, calDiscount } from "@utils/helper";
 
@@ -15,6 +12,7 @@ type NeonProps = {
 
 const Neon: React.FC<NeonProps> = ({ product, className }) => {
   const {
+    id,
     name,
     slug,
     price,
@@ -34,7 +32,7 @@ const Neon: React.FC<NeonProps> = ({ product, className }) => {
   const { openModal } = useModalAction();
 
   function handleProductQuickView() {
-    return openModal("PRODUCT_DETAILS", product.id);
+    return openModal("PRODUCT_DETAILS", id);
   }
   return (
     <article

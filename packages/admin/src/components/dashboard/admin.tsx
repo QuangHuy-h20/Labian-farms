@@ -8,7 +8,6 @@ import StickerCard from "@components/widgets/sticker-card";
 import {
   useFarmsQuery,
   useProductsQuery,
-  useToursQuery,
   useUsersQuery
 } from "@generated/graphql";
 import usePrice from "@utils/use-price";

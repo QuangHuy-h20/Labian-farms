@@ -345,7 +345,6 @@ export class FarmResolver {
       //   existingFarm.logoImage = newImage;
       // }
       // });
-      console.log("Response", response);
 
       return {
         code: 200,

@@ -18,6 +18,8 @@ const ProductDetailsModalView = dynamic(
 
 const Modal = () => {
   const { name, data, isOpen } = useModalState();
+  console.log(data);
+  
   const { closeModal } = useModalAction();
   return (
     <ModalComponent open={isOpen} onClose={closeModal}>
@@ -25,9 +27,9 @@ const Modal = () => {
       {name === "REGISTER" && <Register />}
       {name === "FORGOT_PASSWORD" && <ForgotPassword />}
       {name === "RESET_PASSWORD" && <ResetPassword />}
-      {name === "UPLOAD_AVATAR" && <UploadAvatar />}
+      {name === "UPLOAD_AVATAR" && <UploadAvatar/>}
       {name === "PRODUCT_DETAILS" && (
-        <ProductDetailsModalView productId={data.id} />
+        <ProductDetailsModalView productId={data} />
       )}
       {name === "FARM_INFO" && (
         <FarmInfoCard

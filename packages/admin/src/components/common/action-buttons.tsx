@@ -182,6 +182,7 @@ const ActionButtons = ({
       )}
       {detailsUrl && (
         <Link
+          target="_blank"
           href={detailsUrl}
           className="ml-2 text-emerald-500 transition duration-200 hover:text-emerald-500-hover focus:outline-none"
           title="Xem"

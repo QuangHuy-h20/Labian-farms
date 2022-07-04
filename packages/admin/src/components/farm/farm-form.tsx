@@ -6,15 +6,13 @@ import TextArea from "@components/ui/text-area";
 import {
   UpdateFarmInput,
   useCreateFarmMutation,
-  useUpdateFarmMutation,
+  useUpdateFarmMutation
 } from "@generated/graphql";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ROUTES } from "@utils/routes";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { SubmitHandler, useForm } from "react-hook-form";
-// import { farmValidationSchema } from "./farm-validation-schema";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
@@ -30,7 +28,6 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
     onCompleted: (data) => {
       if (data.createFarm.success) {
         toast.success(data.createFarm.message);
-        router.push(ROUTES.DASHBOARD);
       } else toast.error(data.createFarm.message);
     },
   });
@@ -98,6 +95,9 @@ const CreateOrUpdateFarmForm = ({ initialValues }: { initialValues?: any }) => {
           createFarmInput: { ...values },
           file: fileToUpload,
         },
+        onCompleted() {
+          router.back()
+        }
       });
     }
   };

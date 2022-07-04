@@ -6,8 +6,8 @@ export const sendEmail = async (to: string, html: string) => {
 		port: 465,
 		secure: true,
 		auth: {
-			user: process.env.GMAIL_USERNAME,
-			pass: process.env.GMAIL_PASSWORD,
+			user: "noreply.labianfarms@gmail.com",
+			pass: "quanghuy1009",
 		},
 		tls: {
 			rejectUnauthorized: false

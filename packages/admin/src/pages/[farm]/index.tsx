@@ -89,15 +89,15 @@ const Farm = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 w-full mt-7">
+          {data?.farm?.isActive && (<div className="grid grid-cols-1 w-full mt-7">
             <a
-              href={`http://localhost:3000/${data?.farm?.slug}`}
+              href={`http://localhost:3000/farms/${data?.farm?.slug}`}
               target="_blank"
               className="inline-flex items-center justify-center flex-shrink-0 leading-none rounded outline-none transition duration-300 ease-in-out focus:outline-none focus:shadow focus:ring-1 focus:ring-emerald-700 !bg-gray-100 hover:!bg-emerald-600 !text-gray-600 hover:!text-white !font-medium px-5 py-0 h-12"
             >
-              Xem trang trại
+              Xem nông trại
             </a>
-          </div>
+          </div>)}
         </div>
       </div>
       {/* Cover Photo */}

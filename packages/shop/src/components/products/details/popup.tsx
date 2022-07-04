@@ -7,11 +7,13 @@ import { AttributesProvider } from "./attributes.context";
 import { useProductQuery } from "@generated/graphql";
 
 interface ProductPopupProps {
-  productId: number;
+  productId: string;
 }
 
 const Popup: React.FC<ProductPopupProps> = ({ productId }) => {
   const [showStickyShortDetails] = useAtom(stickyShortDetailsAtom);
+  console.log(productId);
+  
   const { data, loading } = useProductQuery({
     variables: { id: productId },
   });

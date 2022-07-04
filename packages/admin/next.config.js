@@ -3,7 +3,6 @@ module.exports = {
   images: {
     domains: ["storage.googleapis.com", "storage.cloud.google.com"],
     minimumCacheTTL: 1500000,
-    formats: ["image/avif", "image/webp"],
     // loader: "imgix",
     // path: "https://storage.cloud.google.com/labian_farms/",
   },

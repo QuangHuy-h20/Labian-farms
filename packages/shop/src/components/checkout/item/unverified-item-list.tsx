@@ -33,12 +33,12 @@ const UnverifiedItemList = ({ hideTitle = false }: { hideTitle?: boolean }) => {
       <div className="mt-4 space-y-2 border-t pt-3">
         <ItemInfoRow
           title="Phí vận chuyển"
-          value={moneyFormatter(deliveryFee)}
+          value={moneyFormatter(0)}
         />
         <div className="flex justify-between pt-3 border-t-4 border-double border-border-200">
           <p className="text-base font-semibold text-heading">Tổng tiền</p>
           <span className="text-base font-semibold text-heading">
-            {moneyFormatter(total + deliveryFee)}
+            {moneyFormatter(total + 0)}
           </span>
         </div>
       </div>

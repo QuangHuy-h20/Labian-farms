@@ -31,7 +31,7 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
     { key: "numberOfVisitor", name: "Số nguời đăng ký" },
     // { key: "slot", name: "Giới hạn" },
     { key: "date", name: "Ngày bắt đầu/Kết thúc" },
-    // { key: "endDate", name: "Ngày kết thúc" },
+    { key: "status", name: "Trạng thái" },
     { key: "action", name: "Thao tác" },
   ];
 
@@ -65,6 +65,7 @@ const TourList = ({ tours, farmId, permission }: ITourList) => {
           content={`${item?.customerAppliedTour?.length ?? 0} / ${item?.slot}`} />
       </td>
       <td>{new Date(item?.startDate).toLocaleDateString("vi-VN")} - {new Date(item?.endDate).toLocaleDateString("vi-VN")}</td>
+      <td>{item?.status === "open" ? <span className="text-emerald-400">Đang mở</span> : <span className="text-red-400">Đã đóng</span>}</td>
       <td>
         {permission ? (
           <ActionButtons

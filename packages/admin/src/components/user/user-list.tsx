@@ -23,15 +23,10 @@ const UserList = ({ users }) => {
 
   const renderTableBody = (item: User) => (
     <tr className="text-center border-b" key={item.id}>
-      <td>
-        <Image
-          layout="fixed"
-          className="rounded"
-          src={item.avatar ? item.avatar : "/rick-roll.webp"}
-          width={42}
-          height={42}
-        />
+      <td className="flex justify-center">
+        <img className="rounded w-14 h-14" src={item.avatar ? item.avatar : "/rick-roll.webp"} />
       </td>
+
       <td>{item.email}</td>
       <td>{item.phone}</td>
       <td>{formatDate(item.createdAt)}</td>
